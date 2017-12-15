@@ -1,0 +1,14 @@
+{
+  "name": "mon-petit-planning",
+  "version": "0.0.0",
+  "description": "MonPetitPlanning",
+  "main": "server.js",
+  "author": {
+    "name": "Hugo SUBTIL"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "multer": "^1.3.0",
+    "socket.io": "^2.0.4"
+  }
+}
