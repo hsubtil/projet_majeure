@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Connection Page</title>
+</head>
+
+<body>
+    <fieldset>
+        <legend>Connexion</legend>
+        <p>
+            <label for="Mail">Mail :</label><input name="pseudo" type="text" id="pseudo" /><br />
+            <label for="password">Password :</label><input type="password" name="password" id="password" />
+        </p>
+    </fieldset>
+    <p><input type="button" value="connect" onclick="javascript:connectionAttempt()" /></p>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:1337');
+        function connectionAttempt() {
+            console.log("IN");
+            var json_DATA = { "email": "nabil.fekir@ol.com", "password": "nf18" };
+            socket.emit('connection', json_DATA);
+        }
+    </script>
+</body>
+</html>

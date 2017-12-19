@@ -28,8 +28,14 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="app\controllers\io.controller.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="app\routes\default_route.js" />
     <Compile Include="server.js" />
+    <Content Include="config.json" />
+    <Content Include="index.html" />
+    <Content Include="public\index.html" />
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>
@@ -38,6 +44,7 @@
     <Folder Include="app\controllers\" />
     <Folder Include="app\routes\" />
     <Folder Include="app\utils\" />
+    <Folder Include="public\" />
     <Folder Include="uploads\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->

@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Connection Page</title>
+</head>
+
+<body>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://localhost:1337');
+        socket.on('connect_event', function (message) {
+                socket.emit('data_comm', socket.id)
+            })
+
+        function connectionAttempt() {
+            console.log("IN");
+            console.log(socket)
+            var json_DATA = { "email": "nabil.fekir@ol.com", "password": "nf18" };
+            socket.emit('auth_attempt', json_DATA);
+        }
+    </script>
+    <input type="button" value="connect" onclick="javascript:connectionAttempt()" />
+
+
+</body>
+</html>
