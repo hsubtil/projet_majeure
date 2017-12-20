@@ -49,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         socket.getmSocket().on("auth_success", onAuthSuccess);
         socket.getmSocket().on("auth_failed", onAuthFail);
 
+        checkConnectionToken();
+
 
         connect.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +62,11 @@ public class LoginActivity extends AppCompatActivity {
                 mEditor.commit();
                 socket.emitConnect(email.getText().toString(), password.getText().toString());
                 Toast.makeText(LoginActivity.this, "Login Attempt", Toast.LENGTH_LONG).show();
+
+                //TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
+                //Redicrection to Home page
+                Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intentLogged);
 
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -104,7 +111,6 @@ public class LoginActivity extends AppCompatActivity {
     private Emitter.Listener onAuthFail = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-
             return;
         }
     };
@@ -114,12 +120,18 @@ public class LoginActivity extends AppCompatActivity {
         long acutallogin = new Date().getTime();
         if (lastLogin != 0 && (acutallogin - lastLogin) < 300000) {
             Toast.makeText(LoginActivity.this, "Hello again !", Toast.LENGTH_LONG).show();
-           //TODO Redirection vers HOME PAGE
-            // Intent intentLogged = new Intent(LoginActivity.this, MainActivity.class);
-           // startActivity(intentLogged);
+           //Redirection vers Page Home
+            Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
+           startActivity(intentLogged);
         } else {
-            Toast.makeText(LoginActivity.this, "Authentication timeout", Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this, "Logged out", Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        socket.destroySocket();
     }
 }

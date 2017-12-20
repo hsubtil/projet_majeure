@@ -26,7 +26,7 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        URI uri = URI.create("http://192.168.1.102:1337/");
+        URI uri = URI.create("http://192.168.1.101:1337/");
         this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
