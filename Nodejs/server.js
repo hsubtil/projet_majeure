@@ -13,7 +13,8 @@ var app = express();
 var server = http.createServer(app);
 // init defalut route
 var defaultRoute = require("./app/routes/default_route.js");
-var IOController = require("./app/controllers/io.controller.js")
+var IOController = require("./app/controllers/io.controller.js");
+var LOG = require("./app/utils/log");
 
 app.use(bodyParser.json()); // support pour les ficher json 
 app.use(bodyParser.urlencoded({ extended: true })); 
@@ -28,7 +29,7 @@ server.listen(CONFIG.port, CONFIG.addr, function () {
     var host = this.address().address;
     var port = this.address().port;
 
-    console.log('[SERVER] App running at http://%s:%s', host, port);
+    LOG.log('[SERVER] App running at http://'+ host+':'+port);
 });
 IOController.listen(server);
 
