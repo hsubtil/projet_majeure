@@ -6,12 +6,17 @@
 </head>
 
 <body>
+    <h1>Node server login page</h1>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io.connect('http://localhost:1337');
         socket.on('connect_event', function (message) {
                 socket.emit('data_comm', socket.id)
-            })
+        })
+        socket.on('Nodeerror', function (data) {
+            console.log("IN ERROR");
+            alert("Error");
+        })
 
         function connectionAttempt() {
             console.log("IN");
