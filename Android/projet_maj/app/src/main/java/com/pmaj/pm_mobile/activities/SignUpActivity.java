@@ -35,9 +35,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText cp;
     private EditText city;
     private EditText country;
-    private CalendarView birthday;
-    private Button add_family;
-    private Button join_family;
+    private EditText birthday;
     private Button signUp;
 
 
@@ -57,17 +55,15 @@ public class SignUpActivity extends AppCompatActivity {
         cp = (EditText) findViewById(R.id.cp);
         city = (EditText) findViewById(R.id.city);
         country = (EditText) findViewById(R.id.country);
-        birthday = (CalendarView) findViewById(R.id.birthday);
-        add_family = (Button) findViewById(R.id.add_family);
-        join_family = (Button) findViewById(R.id.join_family);
+        birthday = (EditText) findViewById(R.id.birthday);
         signUp = (Button) findViewById(R.id.signUp);
 
         //Convert birthday from calendar to string
-        String dateformat ="dd/MM/yyyy";
-        SimpleDateFormat formatter = new SimpleDateFormat(dateformat);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(birthday.getDate());
-        final String string_birthday = formatter.format(calendar.getTime());
+        //String dateformat ="dd/MM/yyyy";
+        //SimpleDateFormat formatter = new SimpleDateFormat(dateformat);
+        //Calendar calendar = Calendar.getInstance();
+        //calendar.setTimeInMillis(birthday.getDate());
+        //final String string_birthday = formatter.format(calendar.getTime());
 
 
         mPrefs = getSharedPreferences("authToken", 0);
@@ -81,7 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(checkFields()){
-                    socket.emitSignUp(textToString(name),textToString(surname),textToString(email),textToString(password),textToString(address),textToString(cp),textToString(city),textToString(country),string_birthday);
+                    socket.emitSignUp(textToString(name),textToString(surname),textToString(email),textToString(password),textToString(address),textToString(cp),textToString(city),textToString(country),textToString(birthday));
                     Toast.makeText(SignUpActivity.this, "Sign Up Attempt", Toast.LENGTH_LONG).show();
                 }
 
@@ -96,14 +92,6 @@ public class SignUpActivity extends AppCompatActivity {
     }
     protected boolean checkFields (){
 
-        if(!checkConfirmation(email.getText().toString(),confemail.getText().toString())){
-            showErrorConfirmation(email, confemail);
-            return false;
-        }
-        if(!checkConfirmation(password.getText().toString(),confpassword.getText().toString())){
-            showErrorConfirmation(password,confpassword);
-            return false;
-        }
         if(name.getText().toString().equals(""))
         {
             showErrorEmptyField(name);
@@ -139,6 +127,18 @@ public class SignUpActivity extends AppCompatActivity {
             showErrorEmptyField(country);
             return false;
         }
+        if(birthday.getText().toString().equals("")){
+            showErrorEmptyField(birthday);
+            return false;
+        }
+        if(!checkConfirmation(email.getText().toString(),confemail.getText().toString())){
+            showErrorConfirmation(email, confemail);
+            return false;
+        }
+        if(!checkConfirmation(password.getText().toString(),confpassword.getText().toString())){
+            showErrorConfirmation(password,confpassword);
+            return false;
+        }
         return true;
     }
 
@@ -148,12 +148,12 @@ public class SignUpActivity extends AppCompatActivity {
         return false;
     }
     private void showErrorConfirmation(EditText field, EditText confField) {
-        field.setError("Les 2 champs ne sont pas identiques.");
-        confField.setError("Les 2 champs ne sont pas identiques");
+        field.setError("The 2 fields are different.");
+        confField.setError("The 2 fields are different.");
     }
 
     private void showErrorEmptyField(EditText field){
-        field.setError("Vous devez remplir ce champs.");
+        field.setError("You have to fill this field.");
     }
 
     private Emitter.Listener onSignUpSuccess = new Emitter.Listener() {
