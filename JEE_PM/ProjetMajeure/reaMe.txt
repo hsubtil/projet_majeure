@@ -5,7 +5,7 @@ creer serveur wildfly : checker add and Remove
 dans serveur/admin: (admin wildwild)
 - checker base de données (bon nom et test connexion),
 
-jdbc:mysql://mysql-projetmajeurecpe.alwaysdata.net:3306/projetmajeurecpe_mysq
+jdbc:mysql://mysql-projetmajeurecpe.alwaysdata.net:3306/projetmajeurecpe_mysql
 username:  149491_olivier
 pwd:   /CPE2017pm/
 
@@ -19,22 +19,15 @@ http://localhost:8080/FrontAuthWatcherWebService/rest/WatcherAuth
 { "login":"nabil", "password":"striker18"}
 { "login":"bastien", "password":"kikou"}
 
+CREATE DATABASE PM;
 
-CREATE TABLE PM_users (
-id INT (11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-login VARCHAR (50) NOT NULL, 
-password VARCHAR(50) NOT NULL,
-role VARCHAR(50)
-)
+CREATE TABLE PM.PM_users (id INT (11) PRIMARY KEY NOT NULL AUTO_INCREMENT,login VARCHAR (50) NOT NULL, password VARCHAR(50) NOT NULL,role VARCHAR(50));
 
 
-CREATE UNIQUE INDEX PM_users_login_uindex ON PM_users (login)
+CREATE UNIQUE INDEX PM_users_login_uindex ON PM.PM_users (login);
 
 
-INSERT INTO PM_users (login, password, role)
-VALUES ('toto', 'blague','NONE'),
-('nabil', 'striker18','ADMIN'),
-('bastien', 'kikou','USER')
+INSERT INTO PM.PM_users (login, password, role)VALUES ('toto', 'blague','NONE'),('nabil', 'striker18','ADMIN'),('bastien', 'kikou','USER');
 
 
 http://localhost:1337/login : pour checker lien node et JEE

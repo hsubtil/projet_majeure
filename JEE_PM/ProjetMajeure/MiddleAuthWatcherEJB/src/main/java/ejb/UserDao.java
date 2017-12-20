@@ -21,7 +21,7 @@ public class UserDao {
 		// TODO Auto-generated constructor stub
 	}
 		
-	public Role checkUser(User user) {
+	public Role CheckUser(User user) {
 		
 		UserModel userQuery = null;
 
@@ -40,5 +40,28 @@ public class UserDao {
 	}
 			
 		return userQuery.role();
+	}
+	
+	public boolean AddUser(User user) {
+		
+	System.out.println("AddUser");
+	UserModel userToAdd = new UserModel();
+	userToAdd.setLogin(user.getLogin());
+	userToAdd.setPassword(user.getPassword());
+	
+	userToAdd.setRole(user.getRole());
+	
+	try{
+		em.persist(userToAdd);
+		em.getTransaction().commit();
+		em.getTransaction().begin();		
+	}
+	catch(Exception e){
+		return false;
+	}
+	
+		
+	
+	return true;
 	}
 }

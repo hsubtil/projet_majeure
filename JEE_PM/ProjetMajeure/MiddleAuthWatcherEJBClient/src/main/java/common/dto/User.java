@@ -13,7 +13,7 @@ import common.model.Role;
 public class User implements Serializable {
 		
 	@NotNull
-	private String login;
+	private String email;
 	
 	@NotNull
 	private String password;
@@ -24,11 +24,11 @@ public class User implements Serializable {
 	private String role;
 
 	public String getLogin() {
-		return this.login;
+		return this.email;
 	}
 
-	public void setLogin(String login) {
-		this.login = login;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {
@@ -61,7 +61,7 @@ public class User implements Serializable {
 
 	@Override
 	public String toString() {
-		return "User [login=" + login + ", password=" + password + ", validAuth=" + validAuth + ", role=" + role +  "]";
+		return "User [login=" + email + ", password=" + password + ", validAuth=" + validAuth + ", role=" + role +  "]";
 	}
 
 }
