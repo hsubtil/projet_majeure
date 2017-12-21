@@ -1,5 +1,5 @@
 var io = require('socket.io-client');
-var request_url = "http://192.168.1.101:1337";
+var request_url = "http://192.168.1.102:1337";
 
 class Comm {
    constructor() {
@@ -7,6 +7,7 @@ class Comm {
        this.comm.io = {};
        this.socket = "";
        this.emitOnConnect = this.emitOnConnect.bind(this);
+       this.result = null;
 
    }
 
@@ -16,11 +17,6 @@ class Comm {
 
    
    emitOnConnect(message) {
-       console.log("message");
-       console.log("socket");
-       console.log(this.socket);
-       console.log("this.comm.io.uuid");
-       console.log(this.comm.io.uuid);
        this.socket.emit('connection', this.comm.io.uuid, function (test) {
            console.log(test);
        });
@@ -32,11 +28,27 @@ class Comm {
        this.comm.io.uuid = uuid;
        this.socket.on('connection', message => { this.emitOnConnect(message) });
    }
-   //TO DO : Hugo -> Change JSON parse in NODE project
-   emitConnect(json) {
+
+   emitConnect(json, CB) {
        this.socket.emit('auth_attempt',json);
+       this.socket.on('auth_success', function (data) {
+        console.log("auth_success");
+        this.result = true;
+        CB(this.result);
+       });
+       this.socket.on('auth_failed', function (data) {
+        console.log("auth_failed");
+        this.result = false;
+        CB(this.result);
+       });
+       this.socket.on('node_error', function (data) {
+        console.log("error");
+        this.result = false;
+        CB(this.result);
+       });
    }
    
+
 }
 
 module.exports = Comm;
