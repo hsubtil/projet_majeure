@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
 import com.pmaj.pm_mobile.tools.NetworkCom;
@@ -36,12 +37,6 @@ public class HomeActivity extends AppCompatActivity {
         code_button = (Button) findViewById(R.id.code_button);
         add_family = (Button) findViewById(R.id.add_family);
 
-        /*family_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });*/
 
         log_out.setOnClickListener(new View.OnClickListener() {
             @Override

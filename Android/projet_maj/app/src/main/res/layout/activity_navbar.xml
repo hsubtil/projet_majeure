@@ -24,7 +24,8 @@
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/log_out"
             android:clickable="true"
-            android:src="@drawable/icon_profil" />
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/ic_profil" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
