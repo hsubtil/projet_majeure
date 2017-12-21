@@ -3,6 +3,8 @@ var CONFIG = require("../../config.json");
 process.env.CONFIG = JSON.stringify(CONFIG);
 var LOG = require("../utils/log");
 var REQUEST = require("./requetes");
+var DB = require("../../db/database.js");
+
 
 var path = require("path");
 var http = require('http');
@@ -14,6 +16,7 @@ var socket_map = {};
 this.listen = function (server) {
     LOG.debug("[SOCKET] In io.controller.js");
     var io = require('socket.io').listen(server);
+    var db = new DB();
 
     io.sockets.on('connection', function (socket) {
         LOG.log("[SOCKET] New client " + socket.id);
@@ -45,6 +48,9 @@ this.listen = function (server) {
 
         socket.on('request_profile', function (json_object) {
             LOG.log("[SOCKET] Request user profile");
+            // TEST DB
+            db.getAllUsers();
+           // DB.getAll();
             socket.emit('request_profile_reply', { 'email': "nabil.fekir@ol.com",'name':"nabil",'surname':"fekir",'address':"Rue du stade",'cp':"69110",'city':"Decines",'country':"France",'birthday':"19-12-93"})
         });
 

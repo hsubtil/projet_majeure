@@ -7,7 +7,6 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser'); //test
 
-
 // init server
 var app = express();
 var server = http.createServer(app);

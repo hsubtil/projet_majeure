@@ -6,17 +6,20 @@
 </head>
 
 <body>
-    <h1>Node server login page</h1>
+    <h1>Node server test page</h1>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io.connect('http://localhost:1337');
         socket.on('connect_event', function (message) {
-                socket.emit('data_comm', socket.id)
+            socket.emit('data_comm', socket.id)
         })
         socket.on('node_error', function (data) {
             console.log("IN ERROR");
             alert("Error");
         })
+        socket.on('request_profile_reply', function (data) {
+            console.log(data);
+        });
 
         function connectionAttempt() {
             console.log("IN");
@@ -24,8 +27,14 @@
             var json_DATA = { 'email': "nabil", 'password': "striker18" };
             socket.emit('auth_attempt', json_DATA);
         }
+        function testDB() {
+            // request_profile
+            socket.emit('request_profile');          
+
+        }
     </script>
     <input type="button" value="connect" onclick="javascript:connectionAttempt()" />
+    <input type="button" value="MongoDB Test" onclick="javascript:testDB()" />
 
 
 </body>
