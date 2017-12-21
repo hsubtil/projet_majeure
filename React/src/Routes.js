@@ -1,14 +1,17 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
+import AppliedRoute from "./components/AppliedRoute";
 import Home from "./containers/Home";
 import NF from "./components/404";
 import Login from "./containers/Login";
 import Signup from "./containers/Signup";
+import MainPage from "./containers/MainPage";
 
-export default () =>
+  export default ({ childProps }) =>
   <Switch>
-    <Route path="/" exact component={Home} />
-    <Route path="/login" exact component={Login} />
-    <Route path="/signup" exact component={Signup} />
+    <AppliedRoute path="/" exact component={Home} props={childProps} />
+    <AppliedRoute path="/login" exact component={Login} props={childProps} />
+    <AppliedRoute path="/signup" exact component={Signup} props={childProps} />
+    <AppliedRoute path="/mainpage" exact component={MainPage} props={childProps} />
     <Route component={NF} />
   </Switch>;

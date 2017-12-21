@@ -28,11 +28,26 @@ export default class Login extends Component {
     });
   }
 
-  handleSubmit = event => {
+  /*handleSubmit = event => {
     //var json = { 'email':"test", 'password':"test"};
     var json = JSON.stringify(this.state);
     alert(json);
     this.comm.emitConnect(json);
+  }*/
+
+  handleSubmit = async event => {
+    event.preventDefault();
+    try {
+      var json = this.state;
+      this.comm.emitConnect(json,function(bool){
+        console.log(bool);
+        if(bool === true){
+          this.props.userHasAuthenticated(true);
+        }
+      });
+    } catch (e) {
+      alert(e);
+    }
   }
 
   render() {
