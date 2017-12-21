@@ -15,7 +15,7 @@ public class UserModel implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY )
 	@Column(name="id")
 	private int id;
 	
