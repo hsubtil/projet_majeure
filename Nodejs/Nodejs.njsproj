@@ -38,6 +38,9 @@
     <Compile Include="app\utils\log.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="db\database.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="server.js" />
     <Content Include="config.json" />
     <Content Include="public\index.html" />
@@ -49,6 +52,7 @@
     <Folder Include="app\controllers\" />
     <Folder Include="app\routes\" />
     <Folder Include="app\utils\" />
+    <Folder Include="db\" />
     <Folder Include="public\" />
     <Folder Include="uploads\" />
   </ItemGroup>
