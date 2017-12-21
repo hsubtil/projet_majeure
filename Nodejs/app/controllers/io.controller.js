@@ -2,8 +2,8 @@
 var CONFIG = require("../../config.json");
 process.env.CONFIG = JSON.stringify(CONFIG);
 var LOG = require("../utils/log");
+var REQUEST = require("./requetes");
 
-var fs = require("fs");
 var path = require("path");
 var http = require('http');
 
@@ -22,13 +22,36 @@ this.listen = function (server) {
         socket.on('auth_attempt', function (json_object) {
             LOG.log("[SOCKET] Connection event");
             LOG.log(json_object);
-            connection(socket, JSON.stringify(json_object));
+            REQUEST.connection(socket, json_object);
             //TODO add redirection for Olivier 
         });
+
         socket.on('signUp_attempt', function (json_object) {
             LOG.log("[SOCKET] Sign Up event");
             LOG.log(json_object);
         });
+        /*
+        *  param : JSON {'mail':''}
+        *  return : JSON { 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]}
+        *  Request to MongoDB a user families
+        *
+        */
+
+        // request_profile 
+        socket.on('request_family', function (json_object) {
+            LOG.log("[SOCKET] Request family info");
+            socket.emit('request_family_reply', { 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]})
+        });
+
+        socket.on('request_profile', function (json_object) {
+            LOG.log("[SOCKET] Request user profile");
+            socket.emit('request_profile_reply', { 'email': "nabil.fekir@ol.com",'name':"nabil",'surname':"fekir",'address':"Rue du stade",'cp':"69110",'city':"Decines",'country':"France",'birthday':"19-12-93"})
+        });
+
+        socket.on('chat', function (msg) {
+            socket.broadcast.emit('chat', msg);
+        });
+
         socket.on('disconnect', function () {
             LOG.log("[SOCKET] Client " + socket.id+" disconnect event");
             delete socket_map[socket.id];
@@ -38,71 +61,6 @@ this.listen = function (server) {
 
 }
 
-//TODO put somewhere 
-function connection(socket, json_string) {
-    LOG.log('debug',"[DEBUG] in connection "+ json_string.length);
-    var options = {
-        host: CONFIG.jeeserver,
-        port: CONFIG.jeeport,
-        path: '/FrontAuthWatcherWebService/rest/WatcherAuth',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Content-Length': json_string.length
-        }
-    };
-
-    var req = http.request(options, function (res) {
-        var msg = '';
-        res.setEncoding('utf8');
-        LOG.log("[HTTP] -> Send to JEE Auth attempt " + JSON.stringify(json_string));
-        LOG.log("[HTTP] -> Request to JEE server with options " + JSON.stringify(options));
-
-        res.on('data', function (chunk) {
-            msg += chunk;
-        });
-        res.on('end', function () {
-            console.log(msg);
-            if (msg === "") {
-                LOG.error("[HTTP] <- Empty reply form JEE Auth attempt " + JSON.stringify(json_string));
-                response.send(msg);
-            }
-            else {
-                var nodeReply = GenerateConnectionJSON(JSON.parse(msg),socket.id)
-               // var reply = JSON.parse(msg + "'sessionID':" + socket.id + "");
-                //Reply JSON
-                if (reply['validAuth'] === false) {
-                    LOG.log("[HTTP] <- Auth is false form JEE Auth attempt " + JSON.stringify(json_string));
-                    socket.emit('auth_reply', nodeReply);
-                }
-                else {
-                    LOG.log("[HTTP] <- Auth is true form JEE Auth attempt " + JSON.stringify(json_string));
-                    socket.emit('auth_reply', nodeReply);
-                }
-            }
-        });
-    });
-
-    req.on('error', function (e) {
-        LOG.error("[HTTP] <- Error in the comm with JEE server " );
-        LOG.error(e);
-        socket.emit('Nodeerror', { 'error': "Error in nodejs server" });
-        LOG.debug('Test ici !')
-    });
-    req.setTimeout(5000);
-    req.end();
-}
-
-function GenerateConnectionJSON(inputJson, socketId) {
-    var outputJson;
-    var login = inputJson['login'];
-    var auth = inputJson['validAuth'];
-    return {'login': login, 'validAuth': auth, 'sessionID': socketId };
-}
-
-function test() {
-
-}
 /*
 function registration(socket, json_object) {
     LOG.log('debug', "[DEBUG] in connection " + json_string.length);

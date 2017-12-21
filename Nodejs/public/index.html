@@ -13,7 +13,7 @@
         socket.on('connect_event', function (message) {
                 socket.emit('data_comm', socket.id)
         })
-        socket.on('Nodeerror', function (data) {
+        socket.on('node_error', function (data) {
             console.log("IN ERROR");
             alert("Error");
         })
@@ -21,7 +21,7 @@
         function connectionAttempt() {
             console.log("IN");
             console.log(socket)
-            var json_DATA = { "email": "nabil.fekir@ol.com", "password": "nf18" };
+            var json_DATA = { 'email': "nabil", 'password': "striker18" };
             socket.emit('auth_attempt', json_DATA);
         }
     </script>
