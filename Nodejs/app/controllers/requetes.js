@@ -81,7 +81,7 @@ this.connection = function (socket, json) {
 }
 
 this.register = function (socket, json) {
-
+    //TODOs
 }
 
 
