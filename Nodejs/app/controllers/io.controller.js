@@ -47,11 +47,15 @@ this.listen = function (server) {
         });
 
         socket.on('request_profile', function (json_object) {
-            LOG.log("[SOCKET] Request user profile");
-            // TEST DB
-            db.getAllUsers();
-           // DB.getAll();
-            socket.emit('request_profile_reply', { 'email': "nabil.fekir@ol.com",'name':"nabil",'surname':"fekir",'address':"Rue du stade",'cp':"69110",'city':"Decines",'country':"France",'birthday':"19-12-93"})
+            LOG.log("[SOCKET] Request user profil");
+            DB.connect(db, function (error) {
+                LOG.debug("IN REQUEST PROFILE");
+                LOG.debug(json_object);
+                DB.getUserByMail(db, json_object['email'], function (res) {
+                    socket.emit('request_profile_reply', res);
+                });                
+                // socket.emit('request_profile_reply', { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" })
+            });
         });
 
         socket.on('chat', function (msg) {

@@ -27,14 +27,14 @@
             var json_DATA = { 'email': "nabil", 'password': "striker18" };
             socket.emit('auth_attempt', json_DATA);
         }
-        function testDB() {
+        function requestProfile() {
             // request_profile
-            socket.emit('request_profile');          
+            socket.emit('request_profile', { 'email': "nabil.fekir@ol.com" });          
 
         }
     </script>
     <input type="button" value="connect" onclick="javascript:connectionAttempt()" />
-    <input type="button" value="MongoDB Test" onclick="javascript:testDB()" />
+    <input type="button" value="Request Profile" onclick="javascript:requestProfile()" />
 
 
 </body>
