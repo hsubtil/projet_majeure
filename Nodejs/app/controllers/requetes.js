@@ -2,27 +2,33 @@
 var CONFIG = require("../../config.json");
 process.env.CONFIG = JSON.stringify(CONFIG);
 var LOG = require("../utils/log");
-
 var http = require('http');
 
 module.exports = this;
 
-
+/*
 function GenerateConnectionJSON(inputJson, socketId) {
     var outputJson;
     var login = inputJson['login'];
     var auth = inputJson['validAuth'];
     return { 'login': login, 'validAuth': auth, 'sessionID': socketId };
 }
+*/
 
-//TODO put somewhere 
-this.connection = function (socket, json) {
+/*
+*   param :
+*       socket :
+*       json :  
+*       cb : callback function (optional)
+*   
+*/
+this.connection = function (socket, json, cb) {
     var json_string = JSON.stringify(json);
     LOG.debug("In connection " + json_string);
     
     var options = {
-        host: "192.168.1.103",
-        port: "8080",
+        host: CONFIG.jeeserver,
+        port: CONFIG.jeeport,
         path: '/FrontAuthWatcherWebService/rest/WatcherAuth',
         method: 'POST',
         headers: {
@@ -30,7 +36,6 @@ this.connection = function (socket, json) {
             'Content-Length': json_string.length
         }
     };
-    //FrontAuthWatcherWebService/rest/WatcherAuth
 
     LOG.debug("Avant request");
     var req = http.request(options, function (res) {
@@ -39,16 +44,16 @@ this.connection = function (socket, json) {
         var msg = '';
         res.setEncoding('utf8');
  
-
         res.on('data', function (chunk) {
             msg += chunk;
         });
         res.on('end', function () {
-            LOG.debug("TESTTTTTTT");
             console.log(msg);
             if (msg === "") {
-                LOG.error("[HTTP] <- Empty reply form JEE Auth attempt " +json_string);
-                socket.emit('auth_failed', "");
+                LOG.error("[HTTP] <- Empty reply form JEE Auth attempt " + json_string);
+                socket.emit('auth_failed', null);
+                if (cb)
+                    cb("auth_failed");
             }
             else {
                 LOG.debug(msg);
@@ -57,10 +62,14 @@ this.connection = function (socket, json) {
                 if (reply['validAuth'] === false) {
                     LOG.log("[HTTP] <- Auth is false form JEE Auth attempt " + reply);
                     socket.emit('auth_failed', reply);
+                    if (cb)
+                        cb("auth_failed");
                 }
                 else {
                     LOG.log("[HTTP] <- Auth is true form JEE Auth attempt " + reply);
                     socket.emit('auth_success', reply);
+                    if (cb)
+                        cb(null);
                 }
             }
         });
@@ -68,7 +77,10 @@ this.connection = function (socket, json) {
 
     req.on('timeout', function () {
         LOG.error("Timeout");
+        if (cb)
+            cb("Timeout");
     });
+
     req.on('error', function (e) {
         LOG.error("[HTTP] <- Error in the comm with JEE server ");
         LOG.error(e);
@@ -80,8 +92,84 @@ this.connection = function (socket, json) {
     req.end();
 }
 
-this.register = function (socket, json) {
-    //TODOs
+/*
+*   param :
+*       socket :
+*       json :  
+*       cb : callback function (optional)
+*   
+*/
+this.register = function (socket, json, cb) {
+    var json_string = JSON.stringify(json);
+    LOG.debug("In register " + json_string);
+
+    var options = {
+        host: CONFIG.jeeserver,
+        port: CONFIG.jeeport,
+        path: '/FrontAuthWatcherWebService/rest/WatcherAuth',     //  Check Path With Olivier
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Content-Length': json_string.length
+        }
+    };
+
+    var req = http.request(options, function (res) {
+        LOG.log("[HTTP] -> Send to JEE Registration attempt " + json_string);
+        LOG.log("[HTTP] -> Request to JEE server with options " + JSON.stringify(options));
+        var msg = '';
+        res.setEncoding('utf8');
+
+        res.on('data', function (chunk) {
+            msg += chunk;
+        });
+
+        res.on('end', function () {
+            console.log(msg);
+            if (msg === "") {
+                LOG.error("[HTTP] <- Empty reply form JEE Registration attempt " + json_string);
+                socket.emit('registration_failed', null);
+                if (cb)
+                    cb("register_failed");
+            }
+            else {
+                LOG.debug(msg);
+                var reply = JSON.parse(msg);
+                // var reply = JSON.parse(msg + "'sessionID':" + socket.id + "");
+                if (reply['validRegister'] === false) {   // ASK OLIVIER
+                    LOG.log("[HTTP] <- Registration is false form JEE Registration attempt " + reply);
+                    socket.emit('registration_failed', reply);
+                    if (cb)
+                        cb("register_failed");
+                }
+                else {
+                    LOG.log("[HTTP] <- Registration is true form JEE Registration attempt " + reply);
+                    socket.emit('registration_success', reply);
+                    if (cb)
+                        cb(null);
+                }
+            }
+        });
+    });
+
+    req.on('timeout', function () {
+        LOG.error("[HTTP] Jee server reply Timeout");
+        if (cb)
+            cb("Timeout");
+    });
+
+    req.on('error', function (e) {
+        LOG.error("[HTTP] <- Error in the comm with JEE server ");
+        LOG.error(e);
+        socket.emit('node_error', { 'error': "Error in nodejs server. Communication with JEE server." });
+        LOG.log("[SOCKET] Emit error event");
+        if (cb)
+            cb(e);
+    });
+    req.write(json_string);
+    req.setTimeout(10000);
+    req.end();
+
 }
 
 
