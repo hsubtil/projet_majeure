@@ -2,6 +2,7 @@
 var CONFIG = require("../../config.json");
 process.env.CONFIG = JSON.stringify(CONFIG);
 var LOG = require("../utils/log");
+// JEE Client
 var REQUEST = require("./requetes");
 var DB = require("../../db/database.js");
 
@@ -14,114 +15,94 @@ var io;
 var socket_map = {};
 
 this.listen = function (server) {
-    LOG.debug("[SOCKET] In io.controller.js");
+    LOG.debug("In io.controller.js");
     var io = require('socket.io').listen(server);
+    // Create new db object
     var db = new DB();
 
     io.sockets.on('connection', function (socket) {
         LOG.log("[SOCKET] New client " + socket.id);
         socket_map[socket.id] = socket;
 
+        /*
+        *  param : JSON {'mail':"",'password':""}
+        *  return : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
+        *  When Front server send an auth event, ask to JEE server if auth is valid or not. 
+        */
         socket.on('auth_attempt', function (json_object) {
             LOG.log("[SOCKET] Connection event");
             LOG.log(json_object);
             REQUEST.connection(socket, json_object);
-            //TODO add redirection for Olivier 
         });
 
-        socket.on('signUp_attempt', function (json_object) {
+        /*
+        *  param : JSON {'mail':"",'password':""}
+        *  return : JSON
+        *  Registration attempt. If JEE reply with error (user alredy exist or insertion problem), no insertion in MongoDb. 
+        */
+        socket.on('sign_up_attempt', function (json_object) {
             LOG.log("[SOCKET] Sign Up event");
             LOG.log(json_object);
+            REQUEST.register(socket, json_object, function (error) {
+                if (!error) {
+                    DB.connect(db, function (error) {
+                        DB.register(db, json_object);
+                        DB.disconnect(db);
+                    });
+                }
+            });  
         });
+
         /*
         *  param : JSON {'mail':''}
         *  return : JSON { 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]}
         *  Request to MongoDB a user families
         *
         */
-
-        // request_profile 
         socket.on('request_family', function (json_object) {
             LOG.log("[SOCKET] Request family info");
             socket.emit('request_family_reply', { 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]})
         });
 
+        /*
+        *  param : JSON {'mail':''}
+        *  return : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
+        *  Request to MongoDB a user profile
+        *
+        */
         socket.on('request_profile', function (json_object) {
             LOG.log("[SOCKET] Request user profil");
             DB.connect(db, function (error) {
                 LOG.debug("IN REQUEST PROFILE");
                 LOG.debug(json_object);
+                DB.getAllUsers(db);
                 DB.getUserByMail(db, json_object['email'], function (res) {
                     socket.emit('request_profile_reply', res);
-                });                
-                // socket.emit('request_profile_reply', { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" })
+                    DB.disconnect(db);
+                });   
             });
         });
 
+        /*
+        *  param : null
+        *  return : null
+        *  Chat
+        *
+        */
         socket.on('chat', function (msg) {
             socket.broadcast.emit('chat', msg);
         });
 
+        /*
+        *  param : null
+        *  return : null
+        *  Disconnect a client from the socket_map
+        *
+        */
         socket.on('disconnect', function () {
             LOG.log("[SOCKET] Client " + socket.id+" disconnect event");
             delete socket_map[socket.id];
-
         });
     });
 
 }
-
-/*
-function registration(socket, json_object) {
-    LOG.log('debug', "[DEBUG] in connection " + json_string.length);
-    var options = {
-        host: CONFIG.jeeserver,
-        port: CONFIG.jeeport,
-        path: '/FrontAuthWatcherWebService/rest/WatcherAuth',   // ASK OLIVIER
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Content-Length': json_string.length
-        }
-    };
-
-    var req = http.request(options, function (res) {
-        var msg = '';
-        res.setEncoding('utf8');
-        LOG.log('log', "[HTTP] -> Send to JEE Register attempt " + JSON.stringify(json_string));
-        LOG.log('log', "[HTTP] -> Request to JEE server with options " + JSON.stringify(options));
-
-        res.on('data', function (chunk) {
-            msg += chunk;
-        });
-        res.on('end', function () {
-            console.log(msg);
-            if (msg === "") {
-                LOG.log('error', "[HTTP] <- Empty reply form JEE Auth attempt " + JSON.stringify(json_string));
-                response.send(msg);
-            }
-            else {
-                GenerateConnectionJSON(JSON.parse(msg), socket.id)
-                // var reply = JSON.parse(msg + "'sessionID':" + socket.id + "");
-                //Reply JSON
-                if (reply['validAuth'] === false) {
-                    LOG.log('log', "[HTTP] <- Auth is false form JEE Auth attempt " + JSON.stringify(json_string));
-                    socket.emit('auth_reply', reply);
-                }
-                else {
-                    LOG.log('log', "[HTTP] <- Auth is true form JEE Auth attempt " + JSON.stringify(json_string));
-                    socket.emit('auth_reply', reply);
-                }
-            }
-        });
-    });
-
-    req.on('error', function (e) {
-        LOG.log('error', "[HTTP] <- Error in the comm with JEE server ");
-        LOG.log('error', e);
-    });
-    req.setTimeout(5000);
-    req.end();
-
-}
-*/
