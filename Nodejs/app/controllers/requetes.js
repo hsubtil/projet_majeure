@@ -7,25 +7,16 @@ var http = require('http');
 module.exports = this;
 
 /*
-function GenerateConnectionJSON(inputJson, socketId) {
-    var outputJson;
-    var login = inputJson['login'];
-    var auth = inputJson['validAuth'];
-    return { 'login': login, 'validAuth': auth, 'sessionID': socketId };
-}
-*/
-
-/*
 *   param :
-*       socket :
-*       json :  
+*       socket : Client socket
+*       json : JSON with all the info for the connection. The json will be send to jee server.
 *       cb : callback function (optional)
-*   
+*   This function is responsible for sending request to JEE server for the connection of a user. It's also responsible of sending the reply. 
 */
 this.connection = function (socket, json, cb) {
     var json_string = JSON.stringify(json);
     LOG.debug("In connection " + json_string);
-    
+
     var options = {
         host: CONFIG.jeeserver,
         port: CONFIG.jeeport,
@@ -43,7 +34,7 @@ this.connection = function (socket, json, cb) {
         LOG.log("[HTTP] -> Request to JEE server with options " + JSON.stringify(options));
         var msg = '';
         res.setEncoding('utf8');
- 
+
         res.on('data', function (chunk) {
             msg += chunk;
         });
@@ -63,7 +54,7 @@ this.connection = function (socket, json, cb) {
                     LOG.log("[HTTP] <- Auth is false form JEE Auth attempt " + reply);
                     socket.emit('auth_failed', reply);
                     if (cb)
-                        cb("auth_failed");
+                        cb("auth_failed","Auth is not valid.");
                 }
                 else {
                     LOG.log("[HTTP] <- Auth is true form JEE Auth attempt " + reply);
@@ -76,7 +67,7 @@ this.connection = function (socket, json, cb) {
     });
 
     req.on('timeout', function () {
-        LOG.error("Timeout");
+        LOG.error("[HTTP] Jee server reply Timeout");
         if (cb)
             cb("Timeout");
     });
@@ -94,10 +85,10 @@ this.connection = function (socket, json, cb) {
 
 /*
 *   param :
-*       socket :
-*       json :  
+*       socket : Client Socket.
+*       json : JSON with all the info requierd for the registration of a new user in the database.
 *       cb : callback function (optional)
-*   
+*   Function responsible for the insertion in JEE database and MongoDB of a new user. 
 */
 this.register = function (socket, json, cb) {
     var json_string = JSON.stringify(json);
@@ -144,7 +135,6 @@ this.register = function (socket, json, cb) {
                 }
                 else {
                     LOG.log("[HTTP] <- Registration is true form JEE Registration attempt " + reply);
-                    socket.emit('registration_success', reply);
                     if (cb)
                         cb(null);
                 }
