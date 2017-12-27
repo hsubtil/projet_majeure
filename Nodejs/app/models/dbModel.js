@@ -1,9 +1,9 @@
 ﻿"use strict";
 var MongoClient = require('mongodb').MongoClient;
 var jwt = require('jsonwebtoken');
-var LOG = require("../app/utils/log");
+var LOG = require("../utils/log");
 
-var CONFIG = require("../config.json");
+var CONFIG = require("../../config.json");
 process.env.CONFIG = JSON.stringify(CONFIG);
 
 
@@ -23,7 +23,7 @@ function Db() {
     this.dbURI = "mongodb://localhost:27017/monpetitplanning";
     this.users_collection = "users";
     this.families_collection = "families";
-    this.database=null;
+    this.database = null;
 }
 
 /*
@@ -36,7 +36,7 @@ Db.connect = function (db_object, cb) {
     MongoClient.connect(db_object.dbURI, function (error, db) {
         if (error) {
             LOG.error("[DB] " + error);
-            if(cb)
+            if (cb)
                 cb(error);
         }
         LOG.log("[DB] Connection to " + db_object.db_name);
@@ -77,25 +77,25 @@ Db.getAllUsers = function (db_object, cb) {
 *       cb : callback function (optional)
 *   Get a user with an email. Return a specific user profil with his mail address.
 */
-Db.getUserByMail = function (db_object,user_mail,cb) {
-        LOG.log("[DB] Looking for user with email: " + user_mail);
-        db_object.database.collection(db_object.users_collection).find({email: user_mail }).toArray(function (error,result) {
-            if (error) throw error;
-            if (result[0] === undefined) {
-                LOG.error("[DB] User not found : " + user_mail);
-                if (cb)
-                    cb("Error, user not found.");
-            }
-            else {
-                var user = result[0];
-                LOG.log("[DB] User found " + JSON.stringify(user));
-                if (cb) {
-                    cb(user);
-                }
-                    
+Db.getUserByMail = function (db_object, user_mail, cb) {
+    LOG.log("[DB] Looking for user with email: " + user_mail);
+    db_object.database.collection(db_object.users_collection).find({ email: user_mail }).toArray(function (error, result) {
+        if (error) throw error;
+        if (result[0] === undefined) {
+            LOG.error("[DB] User not found : " + user_mail);
+            if (cb)
+                cb("Error, user not found.");
+        }
+        else {
+            var user = result[0];
+            LOG.log("[DB] User found " + JSON.stringify(user));
+            if (cb) {
+                cb(user);
             }
 
-        });
+        }
+
+    });
 }
 
 /*
@@ -122,6 +122,29 @@ Db.register = function (db_object, new_user_json, cb) {
 }
 
 /*
+*
+*/
+Db.getUserFamilies = function (db_object, user_mail,cb) {
+    LOG.log("[DB] Looking for user families : " + user_mail);
+    db_object.database.collection(db_object.families_collection).find({ email: user_mail }).toArray(function (error, result) {
+        if (error) throw error;
+        if (result[0] === undefined) {
+            LOG.error("[DB] User not found : " + user_mail);
+            if (cb)
+                cb("Error, user not found.");
+        }
+        else {
+            var families = result[0];
+            LOG.log("[DB] User families " + JSON.stringify(families));
+            if (cb) {
+                cb(families);
+            }
+
+        }
+
+    });
+}
+/*
 *   param :
 *       db_object : object of type Db()
 *       cb : callback function (optional)
@@ -135,7 +158,8 @@ Db.disconnect = function (db_object, cb) {
             if (cb)
                 cb(err);
         }
-        if(cb)
+        if (cb)
             cb(null);
     });
 }
+

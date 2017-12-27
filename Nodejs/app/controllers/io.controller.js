@@ -4,11 +4,12 @@ process.env.CONFIG = JSON.stringify(CONFIG);
 var LOG = require("../utils/log");
 // JEE Client
 var REQUEST = require("./requetes");
-var DB = require("../../db/database.js");
+var DB = require("./dbController.js");
 
 
 var path = require("path");
 var http = require('http');
+var jwt = require('jsonwebtoken');
 
 module.exports = this;
 var io;
@@ -18,8 +19,7 @@ this.listen = function (server) {
     LOG.debug("In io.controller.js");
     var io = require('socket.io').listen(server);
     // Create new db object
-    var db = new DB();
-
+    
     io.sockets.on('connection', function (socket) {
         LOG.log("[SOCKET] New client " + socket.id);
         socket_map[socket.id] = socket;
@@ -31,8 +31,12 @@ this.listen = function (server) {
         */
         socket.on('auth_attempt', function (json_object) {
             LOG.log("[SOCKET] Connection event");
-            LOG.log(json_object);
-            REQUEST.connection(socket, json_object);
+            LOG.log(json_object['email']);
+            REQUEST.connection(socket, json_object, function (err) {
+               if (!err) {
+                createToken(json_object['email'], socket);
+                }
+            });
         });
 
         /*
@@ -45,10 +49,7 @@ this.listen = function (server) {
             LOG.log(json_object);
             REQUEST.register(socket, json_object, function (error) {
                 if (!error) {
-                    DB.connect(db, function (error) {
-                        DB.register(db, json_object);
-                        DB.disconnect(db);
-                    });
+                    DB.register(json_object);
                 }
             });  
         });
@@ -61,7 +62,13 @@ this.listen = function (server) {
         */
         socket.on('request_family', function (json_object) {
             LOG.log("[SOCKET] Request family info");
-            socket.emit('request_family_reply', { 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]})
+            checkAuth(json_object['token'],socket, function (err) {
+                if (!err) {
+                    DB.getFamilies(json_object['email'], function (res) {
+                        socket.emit('request_family_reply', res);
+                    })
+                }
+            });
         });
 
         /*
@@ -72,14 +79,13 @@ this.listen = function (server) {
         */
         socket.on('request_profile', function (json_object) {
             LOG.log("[SOCKET] Request user profil");
-            DB.connect(db, function (error) {
-                LOG.debug("IN REQUEST PROFILE");
-                LOG.debug(json_object);
-                DB.getAllUsers(db);
-                DB.getUserByMail(db, json_object['email'], function (res) {
-                    socket.emit('request_profile_reply', res);
-                    DB.disconnect(db);
-                });   
+            LOG.debug(json_object);
+            checkAuth(json_object['token'],socket, function (err) {
+                if (!err) {
+                    DB.getProfile(json_object['email'],function (res) {
+                        socket.emit('request_profile_reply', res);
+                    });
+                }
             });
         });
 
@@ -106,3 +112,41 @@ this.listen = function (server) {
     });
 
 }
+
+/**
+ * 
+ * @param {any} token
+ * @param {any} socket
+ * @param {any} cb
+ */
+function checkAuth(token, socket, cb) {
+    jwt.verify(token, CONFIG.tokenkey, function (err, decoded) {
+        if (err) {
+            LOG.error("[AUTH] Token is false !");
+            socket.emit("auth_failed","Token is false.");
+            cb(err);
+        } else {
+            LOG.debug("[AUTH] Token is valid");
+            LOG.debug(decoded.foo) // bar
+            if (cb) {
+                cb(null);
+            }
+        }
+
+    });
+}
+
+/**
+ * 
+ * @param {any} email
+ * @param {any} socket
+ */
+function createToken(email, socket) {
+    DB.getProfile(email, function (res) {
+        var token = JSON.stringify({ token: jwt.sign(res, CONFIG.tokenkey) });
+        LOG.debug(token);
+        socket.emit('registration_success', token);
+    });
+}
+
+
