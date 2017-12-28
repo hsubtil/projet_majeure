@@ -20,9 +20,19 @@
         socket.on('request_profile_reply', function (data) {
             console.log(data);
         });
+        socket.on('request_family_reply', function (data) {
+            console.log(data);
+        });
         socket.on('registration_success', function (data) {
             console.log(data);
         });
+        socket.on('load_messages_reply', function (data) {
+            console.log(data);
+        })
+        socket.on('new_message_available', function (data) {
+            console.log(data);
+            alert("New message");
+        })
 
         function connectionAttempt() {
             console.log("IN");
@@ -49,11 +59,40 @@
         function newUser() {
             socket.emit('sign_up_attempt', { 'email': "test.fekir@ol.com", 'name': "test", 'surname': "test", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" });
         }
+        function newMessage() {
+            socket.emit('new_message', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'msg': { 'user': "Hugo", 'code': "181818", 'date': "2017-12-28 16:42:12", 'content': "Carrément !" }
+            });
+        }
+        function getMessages() {
+            socket.emit('load_messages', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'code': "181818"
+            });
+        }
+        function selectFamily() {
+            socket.emit('selected_family', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'code': "181818"
+            });
+        }
+        function newFamily() {
+            socket.emit('new_family', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "hugo.subtil@ol.com"
+                , 'family': { 'name': "Subtil", 'id': "36s496", 'code': "SubtilFam" }
+            });
+        }
     </script>
     <input type="button" value="connect" onclick="javascript:connectionAttempt()" />
     <input type="button" value="Request Profile" onclick="javascript:requestProfile()" />
     <input type="button" value="Request Families" onclick="javascript:requestFamilies()" />
     <input type="button" value="New user" onclick="javascript:newUser()" />
+    <input type="button" value="New Message" onclick="javascript:newMessage()" />
+    <input type="button" value="Get Messages" onclick="javascript:getMessages()" />
+    <input type="button" value="Select famlily" onclick="javascript:selectFamily()" />
+    <input type="button" value="New famlily" onclick="javascript:newFamily()" />
 
 
 </body>
