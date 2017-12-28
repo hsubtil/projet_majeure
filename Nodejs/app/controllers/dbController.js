@@ -6,6 +6,8 @@ var db = new DB();
 
 module.exports = this;
 
+/***************************************************************************** USERS *****************************************************************************/
+
 this.register = function (json_object){
     DB.connect(db, function (error) {
         if (!err) {
@@ -26,7 +28,7 @@ this.getProfile = function (email,cb) {
         });
     });
 }
-    /*****************************************************************************FAMILIES*****************************************************************************/
+/***************************************************************************** FAMILIES *****************************************************************************/
 this.getFamilies = function (email,cb) {
     DB.connect(db, function (error) {
         DB.getUserFamilies(db, email, function (res) {
@@ -40,6 +42,45 @@ this.getFamilies = function (email,cb) {
 
 }
 
+this.addFamily = function (email, family, cb) {
+    DB.connect(db, function (error) {
+        DB.addFamily(db, email, family, function (res) {
+            if (cb) {
+                cb(res);
+            }
+            DB.disconnect(db);
+        });
+    });
+}
+
 // TO DO : 
 // Update families
 // Create families
+
+    /***************************************************************************** CHAT *****************************************************************************/
+
+this.saveMessage = function (msg, cb) {
+    DB.connect(db, function (err) {
+        if (!err) {
+            DB.saveMessage(db, msg, function (error) {
+                if (cb) {
+                    cb(error);
+                }
+            });
+        }
+        DB.disconnect(db);
+    });
+}
+
+this.loadMessages = function (code, cb) {
+    DB.connect(db, function (err) {
+        if (!err) {
+            DB.loadMessages(db, code, function (error,res) {
+                if (cb) {
+                    cb(error,res);
+                }
+            });
+        }
+        DB.disconnect(db);
+    });
+}

@@ -14,6 +14,7 @@ var jwt = require('jsonwebtoken');
 module.exports = this;
 var io;
 var socket_map = {};
+var families_map = { 'families':[] };
 
 this.listen = function (server) {
     LOG.debug("In io.controller.js");
@@ -23,6 +24,8 @@ this.listen = function (server) {
     io.sockets.on('connection', function (socket) {
         LOG.log("[SOCKET] New client " + socket.id);
         socket_map[socket.id] = socket;
+
+/***************************************************************************** USERS *****************************************************************************/
 
         /*
         *  param : JSON {'mail':"",'password':""}
@@ -34,7 +37,8 @@ this.listen = function (server) {
             LOG.log(json_object['email']);
             REQUEST.connection(socket, json_object, function (err) {
                if (!err) {
-                createToken(json_object['email'], socket);
+                   createToken(json_object['email'], socket);
+                   // Emit connection for chat
                 }
             });
         });
@@ -56,13 +60,32 @@ this.listen = function (server) {
 
         /*
         *  param : JSON {'mail':''}
+        *  return : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
+        *  Request to MongoDB a user profile
+        *
+        */
+        socket.on('request_profile', function (json_object) {
+            LOG.log("[SOCKET] Request user profil");
+            LOG.debug(json_object);
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.getProfile(json_object['email'], function (res) {
+                        socket.emit('request_profile_reply', res);
+                    });
+                }
+            });
+        });
+
+/***************************************************************************** FAMILIES *****************************************************************************/
+        /*
+        *  param : JSON {'mail':''}
         *  return : JSON { 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]}
         *  Request to MongoDB a user families
         *
         */
         socket.on('request_family', function (json_object) {
             LOG.log("[SOCKET] Request family info");
-            checkAuth(json_object['token'],socket, function (err) {
+            checkToken(json_object['token'],socket, function (err) {
                 if (!err) {
                     DB.getFamilies(json_object['email'], function (res) {
                         socket.emit('request_family_reply', res);
@@ -72,31 +95,84 @@ this.listen = function (server) {
         });
 
         /*
-        *  param : JSON {'mail':''}
-        *  return : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
-        *  Request to MongoDB a user profile
-        *
+            param: json_object : JSON {token:, code}
+            Save the family choice of a user.
+            
         */
-        socket.on('request_profile', function (json_object) {
-            LOG.log("[SOCKET] Request user profil");
-            LOG.debug(json_object);
-            checkAuth(json_object['token'],socket, function (err) {
+        socket.on('selected_family', function (json_object) {
+            LOG.log("[SOCKET] Save selected family.");
+            checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
-                    DB.getProfile(json_object['email'],function (res) {
-                        socket.emit('request_profile_reply', res);
+                    families_map['families'].push({ 'code': json_object['code'], 'socket': socket });
+                    LOG.log(families_map);
+                }
+            });
+        });
+
+        socket.on('switch_family', function (json_object) {
+            // TO DOs
+        });
+
+        /*
+            param: json_object JSON {'token','email', 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]}
+        */
+        socket.on('new_family', function (json_object) {
+            LOG.log("[SOCKET] New family ")
+            var user = json_object['email'];
+            LOG.log("[SOCKET] New family for user "+ JSON.stringify(user));
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.addFamily(json_object['email'], json_object['family'])
+                }
+            });
+        });
+
+
+
+/***************************************************************************** CHAT *****************************************************************************/
+
+        /*
+        *  param : json_object, JSON {token:, msg:{code:, user:, date: , content: }}
+        *           date format : YYYY-mm-dd HH:MM:ss
+        *  return : null
+        *  New message event.
+        *
+        * 
+        */
+        socket.on('new_message', function (json_object) {
+            LOG.log("[SOCKET] New message.")
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.saveMessage(json_object['msg'], function (err) {
+                        if (!err) {
+                            console.log(families_map['families']);
+                            for (var element in families_map['families']) {
+                                LOG.debug(families_map['families'][element]['code']);
+                                LOG.debug(json_object['msg']['code']);
+                                if (families_map['families'][element]['code'] === json_object['msg']['code']) {
+                                    LOG.log("[SOCKET] Emit new message available event");
+                                    families_map['families'][element]['socket'].emit('new_message_available', json_object['msg']); // Emit new message to all family members connected
+                                }
+                            }
+                            // socket.broadcast.emit('new_message_available', msg); // emit only on a family 
+                        }
                     });
                 }
             });
         });
 
-        /*
-        *  param : null
-        *  return : null
-        *  Chat
-        *
-        */
-        socket.on('chat', function (msg) {
-            socket.broadcast.emit('chat', msg);
+        socket.on('load_messages', function (json_object) {
+            var family_code = json_object['code'];
+            LOG.log("[SOCKET] Load messages for family " + JSON.stringify(family_code))
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.loadMessages(family_code, function (err, msgs) {
+                        if (!err) {
+                            socket.emit('load_messages_reply', msgs);
+                        }
+                    });
+                }
+            });
         });
 
         /*
@@ -119,15 +195,15 @@ this.listen = function (server) {
  * @param {any} socket
  * @param {any} cb
  */
-function checkAuth(token, socket, cb) {
+function checkToken(token, socket, cb) {
     jwt.verify(token, CONFIG.tokenkey, function (err, decoded) {
         if (err) {
             LOG.error("[AUTH] Token is false !");
-            socket.emit("auth_failed","Token is false.");
+            LOG.error(err);
+            socket.emit("auth_failed",err);
             cb(err);
         } else {
             LOG.debug("[AUTH] Token is valid");
-            LOG.debug(decoded.foo) // bar
             if (cb) {
                 cb(null);
             }
@@ -143,7 +219,7 @@ function checkAuth(token, socket, cb) {
  */
 function createToken(email, socket) {
     DB.getProfile(email, function (res) {
-        var token = JSON.stringify({ token: jwt.sign(res, CONFIG.tokenkey) });
+        var token = JSON.stringify({ token: jwt.sign(res, CONFIG.tokenkey) });   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
         LOG.debug(token);
         socket.emit('registration_success', token);
     });

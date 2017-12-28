@@ -23,6 +23,7 @@ function Db() {
     this.dbURI = "mongodb://localhost:27017/monpetitplanning";
     this.users_collection = "users";
     this.families_collection = "families";
+    this.family_chat = "family-chat";
     this.database = null;
 }
 
@@ -143,6 +144,78 @@ Db.getUserFamilies = function (db_object, user_mail,cb) {
         }
 
     });
+}
+
+Db.addFamily = function (db_object, mail, family_info, cb) {
+    LOG.log("[DB] Adding new family : " + family_info);
+    var newvalues;
+    db_object.database.collection(db_object.families_collection).find({ email: mail }).toArray(function (error, result) {
+        if (result[0] === undefined) {
+            LOG.error("[DB] User not found : " + user_mail);
+            if (cb)
+                cb("Error, user not found.");
+        }
+        else {
+            var user = result[0];
+            var newvalues = { "$addToSet": { "families": family_info } };
+            LOG.log("[DB] User id " + user);
+            db_object.database.collection(db_object.families_collection).update(user, newvalues, function (err, res) {
+                if (err) {
+                    LOG.error("[DB] Error in updating family")
+                    LOG.error(err);
+                } else {
+                    LOG.log("[DB] Document updated");
+                }
+            });
+            if (cb) {
+                cb(user);
+            }
+
+        }
+    });
+
+}
+/*
+*  param : msg, JSON {code:, user:, date: , content: }
+*/
+Db.saveMessage = function (db_object,msg, cb) {
+    LOG.log("[DB] Saving message in DB :" + JSON.stringify(msg));
+    db_object.database.collection(db_object.family_chat).insert(msg, null, function (err, result) {
+        if (err) {
+            LOG.error("[DB] Error in DB insertion of new msg " + JSON.stringify(msg));
+            LOG.error(err);
+            if (cb)
+                cb(err);
+        }
+        LOG.log("[DB] New msg saved.");
+        if (cb)
+            cb(null);
+    });
+    
+}
+
+/*
+    param : db_object
+            code : family code
+            cb : callback
+
+    Function that retrive all the messages relative to a family. 
+*/
+Db.loadMessages = function (db_object, code, cb) {
+    LOG.log("[DB] Get all messages.")
+    db_object.database.collection(db_object.family_chat).find({ code: code }).toArray(function (err, result) {
+        if (err) {
+            LOG.error("[DB] Error in DB when reading msgs " + JSON.stringify(msg));
+            LOG.error(err);
+            if (cb)
+                cb(err,null);
+        }
+        LOG.log("[DB] All messages retrived from db");
+        LOG.debug(JSON.stringify(result));
+        if (cb)
+            cb(null,result);
+    });
+
 }
 /*
 *   param :
