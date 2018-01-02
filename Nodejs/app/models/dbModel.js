@@ -102,6 +102,41 @@ Db.getUserByMail = function (db_object, user_mail, cb) {
 /*
 *   param :
 *       db_object : object of type Db()
+*       user_mail : mail of the profil to find.
+*       new_info: info to update in the profile
+*       cb : callback function (optional)
+*   Get a user with an email and update him.
+*/
+Db.updateUserByMail = function (db_object, user_mail, new_info, cb) {
+    LOG.log("[DB] Looking for user with email: " + user_mail);
+    db_object.database.collection(db_object.users_collection).find({ email: user_mail }).toArray(function (error, result) {
+        if (result[0] === undefined) {
+            LOG.error("[DB] User not found for update : " + user_mail);
+            if (cb)
+                cb("Error, user not found.");
+        }
+        else {
+            var user = result[0];
+            var newvalues = { "$set": new_info };
+            LOG.log("[DB] User id " + JSON.stringify(user));
+            db_object.database.collection(db_object.users_collection).update(user, newvalues, function (err, res) {
+                if (err) {
+                    LOG.error("[DB] Error in updating user")
+                    LOG.error(err);
+                } else {
+                    LOG.log("[DB] Document updated");
+                }
+            });
+            if (cb) {
+                cb(user);
+            }
+
+        }
+    });
+}
+/*
+*   param :
+*       db_object : object of type Db()
 *       new_user_json : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
 *       cb : callback function (optional)
 *  Register. Insert a new user in the database.
@@ -125,7 +160,7 @@ Db.register = function (db_object, new_user_json, cb) {
 /*
 *
 */
-Db.getUserFamilies = function (db_object, user_mail,cb) {
+Db.getUserFamilies = function (db_object, user_mail, cb) {
     LOG.log("[DB] Looking for user families : " + user_mail);
     db_object.database.collection(db_object.families_collection).find({ email: user_mail }).toArray(function (error, result) {
         if (error) throw error;
@@ -147,7 +182,7 @@ Db.getUserFamilies = function (db_object, user_mail,cb) {
 }
 
 Db.addFamily = function (db_object, mail, family_info, cb) {
-    LOG.log("[DB] Adding new family : " + family_info);
+    LOG.log("[DB] Adding new family : " + JSON.stringify(family_info));
     var newvalues;
     db_object.database.collection(db_object.families_collection).find({ email: mail }).toArray(function (error, result) {
         if (result[0] === undefined) {
@@ -158,7 +193,7 @@ Db.addFamily = function (db_object, mail, family_info, cb) {
         else {
             var user = result[0];
             var newvalues = { "$addToSet": { "families": family_info } };
-            LOG.log("[DB] User id " + user);
+            LOG.log("[DB] User id " + JSON.stringify(user));
             db_object.database.collection(db_object.families_collection).update(user, newvalues, function (err, res) {
                 if (err) {
                     LOG.error("[DB] Error in updating family")

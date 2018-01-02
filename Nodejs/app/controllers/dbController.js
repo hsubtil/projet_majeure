@@ -28,6 +28,16 @@ this.getProfile = function (email,cb) {
         });
     });
 }
+
+this.updateUser = function (mail, new_info, cb) {
+    DB.connect(db, function (error){
+        DB.updateUserByMail(db, mail, new_info, function (res) {
+            if (cb)
+                cb(res);
+            DB.disconnect(db);
+        });
+    });
+}
 /***************************************************************************** FAMILIES *****************************************************************************/
 this.getFamilies = function (email,cb) {
     DB.connect(db, function (error) {

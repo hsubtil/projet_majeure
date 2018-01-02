@@ -76,6 +76,22 @@ this.listen = function (server) {
             });
         });
 
+         /*
+        *  param : JSON { 'token': 'email': "nabil.fekir@ol.com", 'profile':{'name': ....} }
+        *  Update in MongoDB a user profile. Not all fields are requierd for the profile. 
+        *
+        */
+        socket.on('update_user_profil', function (json_object) {
+            LOG.log("[SOCKET] Update user profil " + json_object['email']);
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.updateUser(json_object['email'], json_object['profile'], function (err) {
+                        LOG.debug("Profile updated");
+                    })
+                }
+            });
+        })
+
 /***************************************************************************** FAMILIES *****************************************************************************/
         /*
         *  param : JSON {'mail':''}
@@ -104,13 +120,36 @@ this.listen = function (server) {
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     families_map['families'].push({ 'code': json_object['code'], 'socket': socket });
+                    console.log(families_map['families']);
                     LOG.log(families_map);
+                    //socket.emit('selected_family_reply', families_map);
                 }
             });
         });
 
+        /*
+            param
+                json_object:{'token':,'email':,'current_family_id':,'next_family_id'}
+            Switch family id for a socket.
+        */
         socket.on('switch_family', function (json_object) {
-            // TO DOs
+            LOG.log("[SOCKET] Switch family from " + json_object['current_family_id'] + " to " + json_object['next_family_id']);
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    var i = 0;
+                    for (var element in families_map['families']) {
+                        LOG.debug(i);
+                        LOG.debug(element);
+                        if (families_map['families'][element]['socket'] === socket) {
+                            families_map['families'].splice(i, 1);  // Remove from family array
+                            families_map['families'].push({ 'code': json_object['next_family_id'], 'socket': socket });  // add to family array
+                        }
+                        i++;
+                    }
+                    LOG.log(families_map['families']);
+                }
+            });
+
         });
 
         /*
@@ -147,10 +186,10 @@ this.listen = function (server) {
                         if (!err) {
                             console.log(families_map['families']);
                             for (var element in families_map['families']) {
-                                LOG.debug(families_map['families'][element]['code']);
                                 LOG.debug(json_object['msg']['code']);
                                 if (families_map['families'][element]['code'] === json_object['msg']['code']) {
                                     LOG.log("[SOCKET] Emit new message available event");
+                                    console.log(families_map['families'][element]['socket']);
                                     families_map['families'][element]['socket'].emit('new_message_available', json_object['msg']); // Emit new message to all family members connected
                                 }
                             }
@@ -191,9 +230,9 @@ this.listen = function (server) {
 
 /**
  * 
- * @param {any} token
- * @param {any} socket
- * @param {any} cb
+ * @param {String} token
+ * @param {Sstring} socket
+ * @param {Function} cb
  */
 function checkToken(token, socket, cb) {
     jwt.verify(token, CONFIG.tokenkey, function (err, decoded) {
@@ -213,9 +252,9 @@ function checkToken(token, socket, cb) {
 }
 
 /**
- * 
- * @param {any} email
- * @param {any} socket
+ *
+ * @param {String} email
+ * @param {String} socket
  */
 function createToken(email, socket) {
     DB.getProfile(email, function (res) {

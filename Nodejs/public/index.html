@@ -84,15 +84,33 @@
                 , 'family': { 'name': "Subtil", 'id': "36s496", 'code': "SubtilFam" }
             });
         }
+
+        function switchFamily() {
+            socket.emit('switch_family', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "piapiapia@ol.com"
+                , 'current_family_id': "181818"
+                , 'next_family_id': "36test"
+            });
+        }
+        function updateProfile() {
+            socket.emit('update_user_profil', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "piapiapia@ol.com"
+                , 'profile': { 'name': "Pia", 'city': "SuperCulins" }
+            });
+        }
     </script>
     <input type="button" value="connect" onclick="javascript:connectionAttempt()" />
     <input type="button" value="Request Profile" onclick="javascript:requestProfile()" />
+    <input type="button" value="Update Profile" onclick="javascript:updateProfile()" />
     <input type="button" value="Request Families" onclick="javascript:requestFamilies()" />
     <input type="button" value="New user" onclick="javascript:newUser()" />
     <input type="button" value="New Message" onclick="javascript:newMessage()" />
     <input type="button" value="Get Messages" onclick="javascript:getMessages()" />
     <input type="button" value="Select famlily" onclick="javascript:selectFamily()" />
     <input type="button" value="New famlily" onclick="javascript:newFamily()" />
+    <input type="button" value="Switch family" onclick="javascript:switchFamily()" />
 
 
 </body>
