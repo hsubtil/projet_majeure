@@ -58,7 +58,6 @@ this.connection = function (socket, json, cb) {
                 }
                 else {
                     LOG.log("[HTTP] <- Auth is true form JEE Auth attempt " + reply);
-                    socket.emit('auth_success', reply);
                     if (cb)
                         cb(null);
                 }
@@ -69,13 +68,13 @@ this.connection = function (socket, json, cb) {
     req.on('timeout', function () {
         LOG.error("[HTTP] Jee server reply Timeout");
         if (cb)
-            cb("Timeout");
+            cb("Timeout in the communication with JEE server.");
     });
 
     req.on('error', function (e) {
         LOG.error("[HTTP] <- Error in the comm with JEE server ");
         LOG.error(e);
-        socket.emit('node_error', { 'error': "Error in nodejs server" });
+        socket.emit('node_error', "Error in requetes.js function:connection");
         LOG.log("[SOCKET] Emit error event");
     });
     req.write(json_string);
@@ -127,7 +126,7 @@ this.register = function (socket, json, cb) {
                 LOG.debug(msg);
                 var reply = JSON.parse(msg);
                 // var reply = JSON.parse(msg + "'sessionID':" + socket.id + "");
-                if (reply['validRegister'] === false) {   // ASK OLIVIER
+                if (reply['validRegister'] === false) {   //************************************************************************ ASK OLIVIER
                     LOG.log("[HTTP] <- Registration is false form JEE Registration attempt " + reply);
                     socket.emit('registration_failed', reply);
                     if (cb)
@@ -135,6 +134,7 @@ this.register = function (socket, json, cb) {
                 }
                 else {
                     LOG.log("[HTTP] <- Registration is true form JEE Registration attempt " + reply);
+                    socket.emit('registration_success');
                     if (cb)
                         cb(null);
                 }
@@ -151,7 +151,7 @@ this.register = function (socket, json, cb) {
     req.on('error', function (e) {
         LOG.error("[HTTP] <- Error in the comm with JEE server ");
         LOG.error(e);
-        socket.emit('node_error', { 'error': "Error in nodejs server. Communication with JEE server." });
+        socket.emit('node_error', "Error in request.js function:register");
         LOG.log("[SOCKET] Emit error event");
         if (cb)
             cb(e);

@@ -2,6 +2,8 @@
 
 
 /*
+
+PLUS UTILISE
 * User Schema
 * JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
 */

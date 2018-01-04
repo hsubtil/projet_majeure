@@ -15,7 +15,11 @@
         })
         socket.on('node_error', function (data) {
             console.log("IN ERROR");
-            alert("Error");
+            console.log(data);
+        })
+        socket.on('auth_failed', function (data) {
+            console.log("auth_failed");
+            console.log(data);
         })
         socket.on('request_profile_reply', function (data) {
             console.log(data);
@@ -35,8 +39,7 @@
         })
 
         function connectionAttempt() {
-            console.log("IN");
-            console.log(socket)
+            console.log("Connection Attempt");
             var json_DATA = { 'email': "nabil.fekir@ol.com", 'password': "striker18" };
             socket.emit('auth_attempt', json_DATA);
         }
@@ -72,7 +75,7 @@
             });
         }
         function selectFamily() {
-            socket.emit('selected_family', {
+            socket.emit('select_family', {
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
                 , 'code': "181818"
             });
@@ -81,7 +84,14 @@
             socket.emit('new_family', {
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
                 , 'email': "hugo.subtil@ol.com"
-                , 'family': { 'name': "Subtil", 'id': "36s496", 'code': "SubtilFam" }
+                , 'family': "Lacazette"
+            });
+        }
+        function addFamilyToUser() {
+            socket.emit('add_family_to_user', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "hugo.subtil@ol.com"
+                , 'code': "a177a1f8-255d-40a1-a757-30ba22766b52"
             });
         }
 
@@ -90,7 +100,7 @@
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
                 , 'email': "piapiapia@ol.com"
                 , 'current_family_id': "181818"
-                , 'next_family_id': "36test"
+                , 'next_family_id':"a177a1f8-255d-40a1-a757-30ba22766b52"
             });
         }
         function updateProfile() {
@@ -101,16 +111,33 @@
             });
         }
     </script>
-    <input type="button" value="connect" onclick="javascript:connectionAttempt()" />
-    <input type="button" value="Request Profile" onclick="javascript:requestProfile()" />
-    <input type="button" value="Update Profile" onclick="javascript:updateProfile()" />
-    <input type="button" value="Request Families" onclick="javascript:requestFamilies()" />
-    <input type="button" value="New user" onclick="javascript:newUser()" />
-    <input type="button" value="New Message" onclick="javascript:newMessage()" />
-    <input type="button" value="Get Messages" onclick="javascript:getMessages()" />
-    <input type="button" value="Select famlily" onclick="javascript:selectFamily()" />
-    <input type="button" value="New famlily" onclick="javascript:newFamily()" />
-    <input type="button" value="Switch family" onclick="javascript:switchFamily()" />
+    
+
+    <table>
+        <tr>
+            <td>Connection : </td>
+            <td><input type="button" value="Connect" onclick="javascript:connectionAttempt()" /> </td>
+            <td> <input type="button" value="New user" onclick="javascript:newUser()" /></td>
+        </tr>
+        <tr>
+            <td>Family :</td>
+            <td><input type="button" value="New famlily" onclick="javascript:newFamily()" /></td>
+            <td><input type="button" value="Select famlily" onclick="javascript:selectFamily()" /></td>
+            <td><input type="button" value="Switch family" onclick="javascript:switchFamily()" /></td>
+            <td><input type="button" value="Add family to user" onclick="javascript:addFamilyToUser()" /></td>
+            <td><input type="button" value="Request User Families" onclick="javascript:requestFamilies()" /></td>
+        </tr>
+        <tr>
+            <td>Messages :</td>
+            <td><input type="button" value="Get Messages" onclick="javascript:getMessages()" /></td>
+            <td><input type="button" value="New Message" onclick="javascript:newMessage()" /></td>
+        </tr>
+        <tr>
+            <td>Profile : </td>
+            <td><input type="button" value="Request Profile" onclick="javascript:requestProfile()" /></td>
+            <td><input type="button" value="Update Profile" onclick="javascript:updateProfile()" /></td>
+        </tr>
+    </table>
 
 
 </body>

@@ -24,6 +24,7 @@ function Db() {
     this.users_collection = "users";
     this.families_collection = "families";
     this.family_chat = "family-chat";
+    this.family_list = "families-list";
     this.database = null;
 }
 
@@ -181,7 +182,65 @@ Db.getUserFamilies = function (db_object, user_mail, cb) {
     });
 }
 
-Db.addFamily = function (db_object, mail, family_info, cb) {
+Db.getFamily = function (db_object, family_name, cb) {
+    LOG.log("[DB] Get family from family list: " + JSON.stringify(family_name));
+    var newvalues;
+    db_object.database.collection(db_object.family_list).find({ name: family_name }).toArray(function (error, result) {
+        if (error) throw error;
+        if (result[0] === undefined) {
+            LOG.error("[DB] Family not found : " + family_name);
+            if (cb)
+                cb("Family, user not found.",null);
+        }
+        else {
+            var family = result[0];
+            LOG.log("[DB] Get family " + JSON.stringify(family));
+            if (cb) {
+                cb(null,family);
+            }
+
+        }
+    });
+}
+
+Db.getFamilyWithCode = function (db_object, family_code, cb) {
+    LOG.log("[DB] Get family from family list with code: " + JSON.stringify(family_code));
+    var newvalues;
+    db_object.database.collection(db_object.family_list).find({ code: family_code }).toArray(function (error, result) {
+        if (error) throw error;
+        if (result[0] === undefined) {
+            LOG.error("[DB] Family not found : " + family_name);
+            if (cb)
+                cb("Family, user not found.", null);
+        }
+        else {
+            var family = result[0];
+            LOG.log("[DB] Get family " + JSON.stringify(family));
+            if (cb) {
+                cb(null, family);
+            }
+
+        }
+    });
+}
+
+Db.addFamily = function (db_object, family_info, cb) {
+    LOG.log("[DB] Adding new family to family list: " + JSON.stringify(family_info));
+    var newvalues;
+    db_object.database.collection(db_object.family_list).insert(family_info, null, function (err, result) {
+        if (err) {
+            LOG.error("[DB] Error in DB insertion of new family in family-list " + JSON.stringify(family_info));
+            LOG.error(err);
+            if (cb)
+                cb(err);
+        }
+        LOG.log("[DB] New family saved ");
+        if (cb)
+            cb(null);
+    });
+}
+
+Db.addFamilyToUser = function (db_object, mail, family_info, cb) {
     LOG.log("[DB] Adding new family : " + JSON.stringify(family_info));
     var newvalues;
     db_object.database.collection(db_object.families_collection).find({ email: mail }).toArray(function (error, result) {
@@ -237,7 +296,7 @@ Db.saveMessage = function (db_object,msg, cb) {
     Function that retrive all the messages relative to a family. 
 */
 Db.loadMessages = function (db_object, code, cb) {
-    LOG.log("[DB] Get all messages.")
+    LOG.log("[DB] Get all messages for family with code " + code);
     db_object.database.collection(db_object.family_chat).find({ code: code }).toArray(function (err, result) {
         if (err) {
             LOG.error("[DB] Error in DB when reading msgs " + JSON.stringify(msg));

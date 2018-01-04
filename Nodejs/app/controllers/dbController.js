@@ -3,6 +3,7 @@
 var LOG = require("../utils/log");
 var DB = require("../models/dbModel.js");
 var db = new DB();
+var FAMILY = require("../models/familyModel.js");
 
 module.exports = this;
 
@@ -52,9 +53,44 @@ this.getFamilies = function (email,cb) {
 
 }
 
-this.addFamily = function (email, family, cb) {
+this.getFamily = function (name, cb) {
     DB.connect(db, function (error) {
-        DB.addFamily(db, email, family, function (res) {
+        DB.getFamily(db, name, function (err,res) {
+            if (cb) {
+                cb(err,res);
+            }
+            DB.disconnect(db);
+        });
+    });
+
+}
+
+this.getFamilyWithCode = function (code, cb) {
+    DB.connect(db, function (error) {
+        DB.getFamilyWithCode(db, code, function (err, res) {
+            DB.disconnect(db);
+            if (cb) {
+                cb(err, res);
+            }
+        });
+    });
+}
+
+this.addFamily = function (family_object, cb) {
+    DB.connect(db, function (error) {
+        var familyJSON = family_object.getFamilyJson();
+        DB.addFamily(db, familyJSON, function (res) {
+            if (cb) {
+                cb(res);
+            }
+            DB.disconnect(db);
+        });
+    });
+}
+
+this.addFamilyToUser = function (email, family, cb) {
+    DB.connect(db, function (error) {
+        DB.addFamilyToUser(db, email, family, function (res) {
             if (cb) {
                 cb(res);
             }

@@ -5,6 +5,7 @@ var LOG = require("../utils/log");
 // JEE Client
 var REQUEST = require("./requetes");
 var DB = require("./dbController.js");
+var FAMILY = require("../models/familyModel.js");
 
 
 var path = require("path");
@@ -33,12 +34,11 @@ this.listen = function (server) {
         *  When Front server send an auth event, ask to JEE server if auth is valid or not. 
         */
         socket.on('auth_attempt', function (json_object) {
-            LOG.log("[SOCKET] Connection event");
-            LOG.log(json_object['email']);
+            LOG.log("[SOCKET] Connection event" + JSON.stringify(json_object['email']) );
             REQUEST.connection(socket, json_object, function (err) {
-               if (!err) {
-                   createToken(json_object['email'], socket);
-                   // Emit connection for chat
+                if (!err) {
+                    createToken(json_object['email'], socket);
+                    // Emit connection for chat
                 }
             });
         });
@@ -59,7 +59,7 @@ this.listen = function (server) {
         });
 
         /*
-        *  param : JSON {'mail':''}
+        *  param : JSON {'token':'mail':''}
         *  return : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
         *  Request to MongoDB a user profile
         *
@@ -72,6 +72,9 @@ this.listen = function (server) {
                     DB.getProfile(json_object['email'], function (res) {
                         socket.emit('request_profile_reply', res);
                     });
+                }
+                else {
+                    socket.emit('error', err);
                 }
             });
         });
@@ -88,6 +91,9 @@ this.listen = function (server) {
                     DB.updateUser(json_object['email'], json_object['profile'], function (err) {
                         LOG.debug("Profile updated");
                     })
+                }
+                else {
+                    socket.emit('error', err);
                 }
             });
         })
@@ -111,11 +117,11 @@ this.listen = function (server) {
         });
 
         /*
-            param: json_object : JSON {token:, code}
+            param: json_object : JSON {token:, code:}
             Save the family choice of a user.
             
         */
-        socket.on('selected_family', function (json_object) {
+        socket.on('select_family', function (json_object) {
             LOG.log("[SOCKET] Save selected family.");
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
@@ -153,15 +159,42 @@ this.listen = function (server) {
         });
 
         /*
-            param: json_object JSON {'token','email', 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]}
+            param: json_object JSON {'token','email', 'family': "Monge" }}
+            Create a new family and add it to the user families. 
         */
         socket.on('new_family', function (json_object) {
             LOG.log("[SOCKET] New family ")
             var user = json_object['email'];
-            LOG.log("[SOCKET] New family for user "+ JSON.stringify(user));
+            var family = new FAMILY();
+            family.name = json_object['family'];
+            family.generateCode();
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
-                    DB.addFamily(json_object['email'], json_object['family'])
+                    DB.addFamily(family, function (err) {
+                        if (!err) {
+                            DB.getFamily(family.name, function (err, reply) {
+                                if (!err) {
+                                    LOG.log("[SOCKET] New family for user " + JSON.stringify(user));
+                                    DB.addFamilyToUser(user, reply);
+                                }
+                            });
+                        }
+                    });                  
+                }
+            });
+        });
+
+        /*
+            param : JSON {'token','email','code'}
+        */
+        socket.on('add_family_to_user', function (json_object) {
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.getFamilyWithCode(json_object['code'], function (err, res) {
+                        if (!err) {
+                            DB.addFamilyToUser(json_object['email'],res);
+                        }
+                    });
                 }
             });
         });
@@ -231,7 +264,7 @@ this.listen = function (server) {
 /**
  * 
  * @param {String} token
- * @param {Sstring} socket
+ * @param {String} socket
  * @param {Function} cb
  */
 function checkToken(token, socket, cb) {
@@ -260,7 +293,7 @@ function createToken(email, socket) {
     DB.getProfile(email, function (res) {
         var token = JSON.stringify({ token: jwt.sign(res, CONFIG.tokenkey) });   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
         LOG.debug(token);
-        socket.emit('registration_success', token);
+        socket.emit('auth_success', token);
     });
 }
 
