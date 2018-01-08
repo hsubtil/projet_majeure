@@ -91,12 +91,13 @@ this.connection = function (socket, json, cb) {
 */
 this.register = function (socket, json, cb) {
     var json_string = JSON.stringify(json);
+
     LOG.debug("In register " + json_string);
 
     var options = {
         host: CONFIG.jeeserver,
         port: CONFIG.jeeport,
-        path: '/FrontAuthWatcherWebService/rest/WatcherAuth',     //  Check Path With Olivier
+        path: '/FrontAuthWatcherWebService/rest/WatcherAddUser', 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=utf-8',
@@ -106,7 +107,7 @@ this.register = function (socket, json, cb) {
 
     var req = http.request(options, function (res) {
         LOG.log("[HTTP] -> Send to JEE Registration attempt " + json_string);
-        LOG.log("[HTTP] -> Request to JEE server with options " + JSON.stringify(options));
+                LOG.log("[HTTP] -> Request to JEE server with options " + JSON.stringify(options));
         var msg = '';
         res.setEncoding('utf8');
 
@@ -126,15 +127,13 @@ this.register = function (socket, json, cb) {
                 LOG.debug(msg);
                 var reply = JSON.parse(msg);
                 // var reply = JSON.parse(msg + "'sessionID':" + socket.id + "");
-                if (reply['validRegister'] === false) {   //************************************************************************ ASK OLIVIER
+                if (reply === false) {   
                     LOG.log("[HTTP] <- Registration is false form JEE Registration attempt " + reply);
-                    socket.emit('registration_failed', reply);
                     if (cb)
                         cb("register_failed");
                 }
                 else {
                     LOG.log("[HTTP] <- Registration is true form JEE Registration attempt " + reply);
-                    socket.emit('registration_success');
                     if (cb)
                         cb(null);
                 }
@@ -143,7 +142,7 @@ this.register = function (socket, json, cb) {
     });
 
     req.on('timeout', function () {
-        LOG.error("[HTTP] Jee server reply Timeout");
+        LOG.error("[HTTP] Jee server reply Timeout. Olivier your firewall ?");
         if (cb)
             cb("Timeout");
     });

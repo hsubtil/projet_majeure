@@ -11,7 +11,7 @@ module.exports = this;
 
 this.register = function (json_object){
     DB.connect(db, function (error) {
-        if (!err) {
+        if (!error) {
             DB.register(db, json_object);
             DB.disconnect(db);
         }

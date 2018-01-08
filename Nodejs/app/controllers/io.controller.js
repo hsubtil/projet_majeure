@@ -37,7 +37,11 @@ this.listen = function (server) {
             LOG.log("[SOCKET] Connection event" + JSON.stringify(json_object['email']) );
             REQUEST.connection(socket, json_object, function (err) {
                 if (!err) {
-                    createToken(json_object['email'], socket);
+                    createToken(json_object['email'], function (token) {
+                        if (token) {
+                            socket.emit('auth_success', token);
+                        }
+                    });
                     // Emit connection for chat
                 }
             });
@@ -51,9 +55,17 @@ this.listen = function (server) {
         socket.on('sign_up_attempt', function (json_object) {
             LOG.log("[SOCKET] Sign Up event");
             LOG.log(json_object);
-            REQUEST.register(socket, json_object, function (error) {
+            var json_jee = { 'email': json_object['email'], 'password': json_object['password'], 'role': "USER" };
+            delete json_object['password'];
+            REQUEST.register(socket, json_jee, function (error) {
+                LOG.log("Error debug");
+                LOG.log(error);
                 if (!error) {
                     DB.register(json_object);
+                    socket.emit('registration_success');
+                }
+                else {
+                    socket.emit('registration_failed', error);
                 }
             });  
         });
@@ -289,11 +301,11 @@ function checkToken(token, socket, cb) {
  * @param {String} email
  * @param {String} socket
  */
-function createToken(email, socket) {
+function createToken(email, cb) {
     DB.getProfile(email, function (res) {
-        var token = JSON.stringify({ token: jwt.sign(res, CONFIG.tokenkey) });   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
-        LOG.debug(token);
-        socket.emit('auth_success', token);
+        var token = { "token": jwt.sign(res, CONFIG.tokenkey) };   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
+        LOG.debug(JSON.stringify(token));
+        cb(token);
     });
 }
 

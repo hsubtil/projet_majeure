@@ -31,6 +31,9 @@
     <Compile Include="app\controllers\dbController.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="app\controllers\google\quickstart.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="app\controllers\io.controller.js">
       <SubType>Code</SubType>
     </Compile>
@@ -49,6 +52,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="server.js" />
+    <Content Include="app\controllers\google\client_id.json" />
     <Content Include="config.json" />
     <Content Include="public\index.html" />
     <Content Include="package.json" />
@@ -57,6 +61,7 @@
   <ItemGroup>
     <Folder Include="app\" />
     <Folder Include="app\controllers\" />
+    <Folder Include="app\controllers\google\" />
     <Folder Include="app\models\" />
     <Folder Include="app\routes\" />
     <Folder Include="app\utils\" />

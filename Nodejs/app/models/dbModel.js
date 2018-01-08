@@ -145,14 +145,15 @@ Db.updateUserByMail = function (db_object, user_mail, new_info, cb) {
 */
 Db.register = function (db_object, new_user_json, cb) {
     LOG.log("[DB] Registration to DB attempt " + JSON.stringify(new_user_json));
-    db_object.database.collection(db_object.families_collection).insert(new_user_json, null, function (err, result) {
+    db_object.database.collection(db_object.users_collection).insert(new_user_json, null, function (err, result) {
         if (err) {
             LOG.error("[DB] Error in DB insertion of new user " + JSON.stringify(new_user_json));
             LOG.error(err);
             if (cb)
                 cb(err);
+        } else {
+            LOG.log("[DB] New user saved ");
         }
-        LOG.log("[DB] New user saved ");
         if (cb)
             cb(null);
     });
