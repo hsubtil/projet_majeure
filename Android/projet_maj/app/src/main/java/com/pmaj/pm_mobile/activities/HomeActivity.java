@@ -57,17 +57,17 @@ public class HomeActivity extends AppCompatActivity {
         icon_profil = (ImageView) findViewById(R.id.icon_profil);
         family_list = (RecyclerView) findViewById(R.id.family_list);
 
+        family_list.setHasFixedSize(true);
 
-
-
-        socket.emitGetFamilies(mPrefs.getString("authToken", ""), getIntent().getStringExtra("email"));
-
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        family_list.setLayoutManager(mLayoutManager);
 
         log_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor mEditor = mPrefs.edit();
                 mEditor.putLong("lastLogin", 0);
+                mEditor.putString("authToken",null);
                 mEditor.commit();
 
                 //Redicrection to Login page
@@ -84,6 +84,9 @@ public class HomeActivity extends AppCompatActivity {
                 socket.emitGetProfile(mPrefs.getString("authToken", ""), getIntent().getStringExtra("email"));
             }
         });
+
+        socket.emitGetFamilies(mPrefs.getString("authToken", ""), getIntent().getStringExtra("email"));
+
     }
 
     private Emitter.Listener onFamiliesSuccess = new Emitter.Listener() {
@@ -115,15 +118,14 @@ public class HomeActivity extends AppCompatActivity {
     };
 
 
-    private void displayFamilies(List<Family> familyList) {
-        family_list.setHasFixedSize(true);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        family_list.setLayoutManager(mLayoutManager);
-
-        RecyclerView.Adapter myAdapter = new MyAdapter(familyList, HomeActivity.this);
-        family_list.setAdapter(myAdapter);
-
+    private void displayFamilies(final List<Family> familyList) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RecyclerView.Adapter myAdapter = new MyAdapter(familyList, HomeActivity.this);
+                family_list.setAdapter(myAdapter);
+            }
+        });
     }
 
 

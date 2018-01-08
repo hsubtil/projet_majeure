@@ -50,14 +50,14 @@ public class LoginActivity extends AppCompatActivity {
         socket.getmSocket().on("auth_failed", onAuthFail);
 
 
-        //TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
+       /* //TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
         //Redicrection to Home page
         SharedPreferences.Editor TempEditor = mPrefs.edit();
         // Shared preference declaration
         TempEditor.putString("authToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI").apply();
         Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
         intentLogged.putExtra("email","test.fekir@ol.com");
-        startActivity(intentLogged);
+        startActivity(intentLogged);*/
 
         checkConnectionToken();
 
