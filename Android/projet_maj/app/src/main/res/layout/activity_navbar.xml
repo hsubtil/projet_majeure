@@ -6,25 +6,32 @@
     android:layout_height="match_parent"
     tools:context="com.pmaj.pm_mobile.activities.HomeActivity">
     <LinearLayout
-        android:id="@+id/toolbar"
+        android:id="@+id/toolbarlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/log_out"
+        <Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="225dp"
-            android:text="Log Out"/>
+            tools:targetApi="lollipop">
 
-        <ImageView
-            android:id="@+id/icon_profil"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/log_out"
-            android:clickable="true"
-            android:src="@drawable/icon_profil" />
+            <Button
+                android:id="@+id/log_out"
+                android:layout_width="wrap_content"
+                android:layout_height="40sp"
+                android:layout_marginLeft="225dp"
+                android:text="Log Out" />
+
+            <ImageView
+                android:id="@+id/icon_profil"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/log_out"
+                android:clickable="true"
+                android:src="@drawable/ic_person_black_24dp" />
+
+        </Toolbar>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

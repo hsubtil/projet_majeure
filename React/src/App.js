@@ -22,6 +22,7 @@ userHasAuthenticated = authenticated => {
 
 handleLogout = event => {
   this.userHasAuthenticated(false);
+  localStorage.removeItem("token");
 }
 
   render() {

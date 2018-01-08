@@ -26,7 +26,7 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        URI uri = URI.create("http://192.168.1.101:1337/");
+        URI uri = URI.create("http://192.168.1.100:1337/");
         this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
@@ -66,41 +66,30 @@ public class NetworkCom {
         mSocket.emit("signUp_attempt",json);
     }
 
-  /*  public void emitUserTyping(String login, String sessionToken){// String mimType, String data){
+    public void emitGetProfile(String token,String email){
         JSONObject json = new JSONObject();
         try {
-            json.put("login", login);
-            json.put("token",sessionToken);
-            //attachment.put("mimeType",mimType);
-            //attachment.put("data",data);
+            json.put("token", token);
+            json.put("email",email);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("user_typing_outbound_msg",json);
+        mSocket.emit("request_profile",json);
+    }
 
-    }*/
-   /* public void emitMessage(String login, String sessionToken, String uuid, String message){// String mimType, String data){
+    public void emitGetFamilies(String token,String email){
         JSONObject json = new JSONObject();
-        JSONObject attachment = new JSONObject();
-        List attaArray = new ArrayList();
         try {
-            json.put("login", login);
-            json.put("token",sessionToken);
-            json.put("uuid",uuid);
-            json.put("message",message);
-            json.put("attachments",attaArray);
-            //attachment.put("mimeType",mimType);
-            //attachment.put("data",data);
-
-
+            json.put("token", token);
+            json.put("email",email);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("outbound_msg",json);
+        mSocket.emit("request_family",json);
+    }
 
-    }*/
 
     public void destroySocket() {
         mSocket.disconnect();

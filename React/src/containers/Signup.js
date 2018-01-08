@@ -27,6 +27,18 @@ export default class Signup extends Component {
     'birthday': ""
   };
 
+    this.state_true = {
+    'email': "",
+    'password': "",
+    'name': "",
+    'surname': "",
+    'address': "",
+    'cp': "",
+    'city': "",
+    'country': "",
+    'birthday': ""
+  };
+
     this.comm.socketConnection("6969");
 
   }
@@ -47,9 +59,35 @@ export default class Signup extends Component {
   }
 
   handleSubmit = async event => {
-    var json = JSON.stringify(this.state);
-    alert(json);
-    this.comm.emitConnect(json);
+    event.preventDefault();
+    try {
+
+      this.state_true.email = this.state.email;
+      this.state_true.password = this.state.password;
+      this.state_true.name = this.state.name;
+      this.state_true.surname = this.state.surname;
+      this.state_true.adress = this.state.adress;
+      this.state_true.cp = this.state.cp;
+      this.state_true.city = this.state.city;
+      this.state_true.country = this.state.country;
+      this.state_true.birthday = this.state.birthday;
+
+      console.log(this.state_true.email);
+      var json = this.state_true;
+      var jjson = await this.comm.emitConnect2(json);
+      jjson = JSON.parse(jjson);
+      if(jjson.result === true){
+        console.log("signed");
+        alert("Signed in !")
+      }
+      else{
+        console.log("not signed");
+        alert("Signed in Failed")
+      }
+    } catch (e) {
+      console.log("CATCH");
+      alert(e);
+    }
   }
 
   render() {

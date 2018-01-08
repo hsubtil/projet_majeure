@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "./Login.css";
 
+var io = require('socket.io-client');
 
 export default class Login extends Component {
   constructor(props) {
@@ -15,7 +16,9 @@ export default class Login extends Component {
       password: ""
     };
 
+
     this.comm.socketConnection("6969");
+    
   }
 
   validateForm() {
@@ -28,24 +31,25 @@ export default class Login extends Component {
     });
   }
 
-  /*handleSubmit = event => {
-    //var json = { 'email':"test", 'password':"test"};
-    var json = JSON.stringify(this.state);
-    alert(json);
-    this.comm.emitConnect(json);
-  }*/
-
   handleSubmit = async event => {
     event.preventDefault();
     try {
       var json = this.state;
-      this.comm.emitConnect(json,function(bool){
-        console.log(bool);
-        if(bool === true){
-          this.props.userHasAuthenticated(true);
-        }
-      });
+      var jjson = await this.comm.emitConnect(json);
+      jjson = JSON.parse(jjson);
+      if(jjson.result === true){
+        console.log("authentificated");
+        this.props.userHasAuthenticated(true);
+        localStorage.setItem("token", jjson.datas.token);
+        alert("authentificated !");
+
+      }
+      else{
+        console.log("not authentificated");
+        alert("Not authentificated !");
+      }
     } catch (e) {
+      console.log("CATCH");
       alert(e);
     }
   }

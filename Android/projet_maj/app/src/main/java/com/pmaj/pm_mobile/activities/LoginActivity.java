@@ -49,6 +49,16 @@ public class LoginActivity extends AppCompatActivity {
         socket.getmSocket().on("auth_success", onAuthSuccess);
         socket.getmSocket().on("auth_failed", onAuthFail);
 
+
+       /* //TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
+        //Redicrection to Home page
+        SharedPreferences.Editor TempEditor = mPrefs.edit();
+        // Shared preference declaration
+        TempEditor.putString("authToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI").apply();
+        Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
+        intentLogged.putExtra("email","test.fekir@ol.com");
+        startActivity(intentLogged);*/
+
         checkConnectionToken();
 
 
@@ -62,11 +72,6 @@ public class LoginActivity extends AppCompatActivity {
                 mEditor.commit();
                 socket.emitConnect(email.getText().toString(), password.getText().toString());
                 Toast.makeText(LoginActivity.this, "Login Attempt", Toast.LENGTH_LONG).show();
-
-                //TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
-                //Redicrection to Home page
-                Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivity(intentLogged);
 
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -96,12 +101,11 @@ public class LoginActivity extends AppCompatActivity {
 
             SharedPreferences.Editor mEditor = mPrefs.edit();
             // Shared preference declaration
-            mEditor.putString("sessionToken", token).apply();
-            String authToken = Helper.createAuthToken(email.getText().toString(), password.getText().toString());
-            mEditor.putString("authToken", authToken).apply(); // Create / update TOKEN
+            mEditor.putString("authToken", token).apply();
 
             //Redicrection to Home page
             Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
+            intentLogged.putExtra("email",email.getText().toString());
             startActivity(intentLogged);
 
             return;
@@ -118,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
     private void checkConnectionToken() {
         Long lastLogin = mPrefs.getLong("lastLogin", 36);
         long acutallogin = new Date().getTime();
-        if (lastLogin != 0 && (acutallogin - lastLogin) < 300000) {
+        if (lastLogin != 0 && (acutallogin - lastLogin) < 3000) {
             Toast.makeText(LoginActivity.this, "Hello again !", Toast.LENGTH_LONG).show();
            //Redirection vers Page Home
             Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
@@ -128,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
     }
+
 
     @Override
     protected void onDestroy() {
