@@ -1,0 +1,54 @@
+/etc/init.d/mysql start
+
+
+TO Do:
+
+creer serveur wildfly : checker add and Remove
+
+dans serveur/admin: (admin wildwild)
+- checker base de données (bon nom et test connexion),
+
+jdbc:mysql://mysql-projetmajeurecpe.alwaysdata.net:3306/projetmajeurecpe_mysql
+username:  149491_olivier
+pwd:   /CPE2017pm/
+
+
+sue https://phpmyadmin.alwaysdata.com/:
+-creer table PM_users,index et add users
+
+Tester sur postman
+http://localhost:8080/FrontAuthWatcherWebService/rest/WatcherAuth
+{ "login":"toto", "password":"blague"}
+{ "login":"nabil", "password":"striker18"}
+{ "login":"bastien", "password":"kikou"}
+
+mysql -h localhost -u root -p
+
+toortoor
+
+CREATE DATABASE PM;
+
+CREATE TABLE PM.PM_users (id INT (11) PRIMARY KEY NOT NULL AUTO_INCREMENT,login VARCHAR (50) NOT NULL, password VARCHAR(50) NOT NULL,role VARCHAR(50));
+
+
+CREATE UNIQUE INDEX PM_users_login_uindex ON PM.PM_users (login);
+
+
+INSERT INTO PM.PM_users (login, password, role)VALUES ('toto', 'blague','NONE'),('nabil', 'striker18','ADMIN'),('bastien@gmail.com', 'pwd','USER');
+
+INSERT INTO PM.PM_users (login, password, role)VALUES ('bastien@gmail.com', 'pwd','USER');
+
+
+http://localhost:1337/login : pour checker lien node et JEE
+
+dans pesistence.xml a modifier en fonction du nom de BD ajouter sur wildfly
+<jta-data-source>java:/ASI2</jta-data-source>
+
+nouvelle instalation de wildfly:
+-standalone full
+-add new deployement mysql.jar
+
+Nouvelle instal d eclipse add plugin jboss
+
+
+

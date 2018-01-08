@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".activities.SignUpActivity" />
         <activity android:name=".activities.HomeActivity" />
-        <activity android:name=".activities.ProfilActivity"></activity>
+        <activity android:name=".activities.ProfilActivity" />
+        <activity android:name=".activities.NavBarActivity"></activity>
     </application>
 
 </manifest>

@@ -28,13 +28,32 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="app\controllers\dbController.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="app\controllers\google\quickstart.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="app\controllers\io.controller.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="app\controllers\requetes.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="app\models\dbModel.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="app\models\familyModel.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="app\models\userModel.js" />
     <Compile Include="app\routes\default_route.js" />
+    <Compile Include="app\utils\log.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="server.js" />
+    <Content Include="app\controllers\google\client_id.json" />
     <Content Include="config.json" />
-    <Content Include="index.html" />
     <Content Include="public\index.html" />
     <Content Include="package.json" />
     <Content Include="README.md" />
@@ -42,6 +61,8 @@
   <ItemGroup>
     <Folder Include="app\" />
     <Folder Include="app\controllers\" />
+    <Folder Include="app\controllers\google\" />
+    <Folder Include="app\models\" />
     <Folder Include="app\routes\" />
     <Folder Include="app\utils\" />
     <Folder Include="public\" />

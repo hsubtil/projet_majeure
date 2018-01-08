@@ -6,21 +6,138 @@
 </head>
 
 <body>
+    <h1>Node server test page</h1>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io.connect('http://localhost:1337');
         socket.on('connect_event', function (message) {
-                socket.emit('data_comm', socket.id)
-            })
+            socket.emit('data_comm', socket.id)
+        })
+        socket.on('node_error', function (data) {
+            console.log("IN ERROR");
+            console.log(data);
+        })
+        socket.on('auth_failed', function (data) {
+            console.log("auth_failed");
+            console.log(data);
+        })
+        socket.on('request_profile_reply', function (data) {
+            console.log(data);
+        });
+        socket.on('request_family_reply', function (data) {
+            console.log(data);
+        });
+        socket.on('registration_success', function (data) {
+            console.log(data);
+        });
+        socket.on('load_messages_reply', function (data) {
+            console.log(data);
+        })
+        socket.on('new_message_available', function (data) {
+            console.log(data);
+            alert("New message");
+        })
 
         function connectionAttempt() {
-            console.log("IN");
-            console.log(socket)
-            var json_DATA = { "email": "nabil.fekir@ol.com", "password": "nf18" };
+            console.log("Connection Attempt");
+            var json_DATA = { 'email': "test.fekir@ol.com", 'password': "nabilon" };
             socket.emit('auth_attempt', json_DATA);
         }
+        function requestProfile() {
+            // request_profile
+            socket.emit('request_profile', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "nabil.fekir@ol.com"
+            });
+
+        }
+        function requestFamilies() {
+            // request_profile
+            socket.emit('request_family', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "nabil.fekir@ol.com"
+            });
+
+        }
+        function newUser() {
+            socket.emit('sign_up_attempt', { 'email': "mouctar.diakhaby@ol.com", "password":"mouctar", 'name': "Moumou", 'surname': "test", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" });
+        }
+        function newMessage() {
+            socket.emit('new_message', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'msg': { 'user': "Hugo", 'code': "181818", 'date': "2017-12-28 16:42:12", 'content': "Carrément !" }
+            });
+        }
+        function getMessages() {
+            socket.emit('load_messages', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'code': "181818"
+            });
+        }
+        function selectFamily() {
+            socket.emit('select_family', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'code': "181818"
+            });
+        }
+        function newFamily() {
+            socket.emit('new_family', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "hugo.subtil@ol.com"
+                , 'family': "Lacazette"
+            });
+        }
+        function addFamilyToUser() {
+            socket.emit('add_family_to_user', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "hugo.subtil@ol.com"
+                , 'code': "a177a1f8-255d-40a1-a757-30ba22766b52"
+            });
+        }
+
+        function switchFamily() {
+            socket.emit('switch_family', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "piapiapia@ol.com"
+                , 'current_family_id': "181818"
+                , 'next_family_id':"a177a1f8-255d-40a1-a757-30ba22766b52"
+            });
+        }
+        function updateProfile() {
+            socket.emit('update_user_profil', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'email': "piapiapia@ol.com"
+                , 'profile': { 'name': "Pia", 'city': "SuperCulins" }
+            });
+        }
     </script>
-    <input type="button" value="connect" onclick="javascript:connectionAttempt()" />
+    
+
+    <table>
+        <tr>
+            <td>Connection : </td>
+            <td><input type="button" value="Connect" onclick="javascript:connectionAttempt()" /> </td>
+            <td> <input type="button" value="New user" onclick="javascript:newUser()" /></td>
+        </tr>
+        <tr>
+            <td>Family :</td>
+            <td><input type="button" value="New famlily" onclick="javascript:newFamily()" /></td>
+            <td><input type="button" value="Select famlily" onclick="javascript:selectFamily()" /></td>
+            <td><input type="button" value="Switch family" onclick="javascript:switchFamily()" /></td>
+            <td><input type="button" value="Add family to user" onclick="javascript:addFamilyToUser()" /></td>
+            <td><input type="button" value="Request User Families" onclick="javascript:requestFamilies()" /></td>
+        </tr>
+        <tr>
+            <td>Messages :</td>
+            <td><input type="button" value="Get Messages" onclick="javascript:getMessages()" /></td>
+            <td><input type="button" value="New Message" onclick="javascript:newMessage()" /></td>
+        </tr>
+        <tr>
+            <td>Profile : </td>
+            <td><input type="button" value="Request Profile" onclick="javascript:requestProfile()" /></td>
+            <td><input type="button" value="Update Profile" onclick="javascript:updateProfile()" /></td>
+        </tr>
+    </table>
 
 
 </body>
