@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.socket.client.IO;
 import io.socket.client.Manager;
 import io.socket.client.Socket;
 
@@ -25,12 +26,8 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        this.options = new Manager.Options();
-        //TODO récupérer path et URI pour connection au serveur
-        options.path = "/chat-rest/socket.io";
-        URI uri = URI.create("https://training.loicortola.com/");
-        this.mManager = new Manager(uri, options);
-        this.mSocket = mManager.socket("/2.0/ws");
+        URI uri = URI.create("http://192.168.1.101:1337/");
+        this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
 

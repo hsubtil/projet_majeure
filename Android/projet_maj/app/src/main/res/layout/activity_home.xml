@@ -5,41 +5,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.pmaj.pm_mobile.activities.HomeActivity">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:id="@+id/toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/log_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Log Out"
-            />
 
-        <ImageView
-            android:id="@+id/icon_profil"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/icon_profil"
-            android:layout_toRightOf="@+id/log_out"/>
-    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar">
-        <TextView
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/navbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/activity_navbar" />
+
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="HOME"
-            android:gravity="center_horizontal"
-            android:foregroundGravity="center_vertical"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@id/navbar">
+
+            <TextView
+                android:id="@+id/home_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
+                android:text="HOME" />
+
+            <ScrollView
+                android:id="@+id/scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/home_title">
+
+                <ListView
+                    android:id="@+id/famille_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"></ListView>
+            </ScrollView>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/content">
+
+            <Button
+                android:id="@+id/add_family"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:gravity="center_horizontal"
+                android:text="+ Ajouter une famille" />
+        </RelativeLayout>
 
     </RelativeLayout>
-
-</RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

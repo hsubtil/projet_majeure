@@ -88,46 +88,20 @@
             android:layout_below="@+id/address_infos"
             android:hint="Country" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/country"
-            android:text="Birthday" />
-
-        <CalendarView
+        <EditText
             android:id="@+id/birthday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/country"></CalendarView>
-
-        <LinearLayout
-            android:id="@+id/familly_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/birthday"
-            android:orientation="horizontal">
+            android:layout_below="@+id/country"
+            android:hint="Birthday : dd-MM-YYYY"/>
 
-            <Button
-                android:id="@+id/add_family"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Add Family" />
-
-            <Button
-                android:id="@+id/join_family"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Join Familly" />
-        </LinearLayout>
 
         <Button
             android:id="@+id/signUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Sign Up"
-            android:layout_below="@+id/familly_buttons"
+            android:layout_below="@+id/birthday"
             android:gravity="center_horizontal"/>
     </RelativeLayout>
 </ScrollView>
