@@ -7,24 +7,17 @@
     tools:context="com.pmaj.pm_mobile.activities.HomeActivity">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/navbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <include layout="@layout/activity_navbar" />
-
-        </LinearLayout>
+            <include layout="@layout/activity_navbar"/>
 
 
         <RelativeLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/navbar">
+            android:layout_marginTop="50sp">
 
             <TextView
                 android:id="@+id/home_title"
