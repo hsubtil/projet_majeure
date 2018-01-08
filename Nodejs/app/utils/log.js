@@ -1,4 +1,6 @@
 ﻿"use strict";
+const dateTime = require('date-time');
+
 module.exports = this;
 
 // RED -> "\x1b[31m"
@@ -24,7 +26,8 @@ this.logConsole = function(code, msg) {
 }
 
 this.debug = function (msg) {
-    this.logConsole('debug', '[DEBUG] ' + msg);
+  var d = dateTime({local: false});
+    this.logConsole('debug', '[DEBUG] ['+d.toString()+']' + msg);
 }
 
 this.log = function (msg) {
