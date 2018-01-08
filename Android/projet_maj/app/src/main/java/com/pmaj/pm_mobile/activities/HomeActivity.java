@@ -13,12 +13,17 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
+import com.pmaj.pm_mobile.model.Family;
 import com.pmaj.pm_mobile.tools.Helper;
+import com.pmaj.pm_mobile.tools.MyAdapter;
 import com.pmaj.pm_mobile.tools.NetworkCom;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,29 +50,18 @@ public class HomeActivity extends AppCompatActivity {
         //Socket
         socket = new NetworkCom();
         socket.getmSocket().on("request_profile_reply", onProfilSuccess);
+        socket.getmSocket().on("request_family_reply", onFamiliesSuccess);
         socket.getmSocket().on("error", onProfilFail);
 
         log_out = (Button) findViewById(R.id.log_out);
         icon_profil = (ImageView) findViewById(R.id.icon_profil);
         family_list = (RecyclerView) findViewById(R.id.family_list);
 
-        // family_button = (Button) findViewById(R.id.family_button);
-        //code_button = (Button) findViewById(R.id.code_button);
-        //add_family = (Button) findViewById(R.id.add_family);
-
-        family_list.setHasFixedSize(true);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        family_list.setLayoutManager(mLayoutManager);
 
 
 
-        /*family_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        socket.emitGetFamilies(mPrefs.getString("authToken", ""), getIntent().getStringExtra("email"));
 
-            }
-        });*/
 
         log_out.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,9 +86,42 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void displayFamilies() {
+    private Emitter.Listener onFamiliesSuccess = new Emitter.Listener() {
 
-        RecyclerView.Adapter myAdapter = new MyAdapter(response.body(), HomeActivity.this);
+        @Override
+        public void call(Object... args) {
+            JSONObject obk = (JSONObject) args[0];
+            //JSON { ‘email’:, ‘families’:[]}
+
+            try {
+                JSONArray familyArray = (JSONArray) obk.getJSONArray("families");
+
+                List<Family> list = new ArrayList<Family>();
+                for (int i=0; i<familyArray.length(); i++) {
+                    JSONObject familyObj = (JSONObject) familyArray.getJSONObject(i);
+                    Family f = new Family();
+                    f.setName(familyObj.getString("name"));
+                    f.setCode(familyObj.getString("code"));
+                    list.add(f);
+                }
+
+                displayFamilies(list);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return;
+        }
+    };
+
+
+    private void displayFamilies(List<Family> familyList) {
+        family_list.setHasFixedSize(true);
+
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        family_list.setLayoutManager(mLayoutManager);
+
+        RecyclerView.Adapter myAdapter = new MyAdapter(familyList, HomeActivity.this);
         family_list.setAdapter(myAdapter);
 
     }

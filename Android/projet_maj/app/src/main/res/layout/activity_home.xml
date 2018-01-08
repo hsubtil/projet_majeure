@@ -38,30 +38,46 @@
                 android:id="@+id/scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/home_title">
+                android:layout_below="@+id/home_title"
+                android:layout_centerHorizontal="true">
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/family_list"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:scrollbars="vertical"/>
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/familyLinLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/family_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="vertical" />
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/familyLinLayout">
+
+                        <Button
+                            android:id="@+id/add_family"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="25dp"
+                            android:gravity="center_horizontal"
+                            android:text="+ Ajouter une famille" />
+                    </RelativeLayout>
+                </LinearLayout>
             </ScrollView>
 
+
         </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/content">
-
-            <Button
-                android:id="@+id/add_family"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:gravity="center_horizontal"
-                android:text="+ Ajouter une famille" />
-        </RelativeLayout>
 
     </RelativeLayout>
 

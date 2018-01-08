@@ -6,17 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.pmaj.pm_mobile.R;
 import com.pmaj.pm_mobile.model.Family;
 
+import java.util.List;
 
-import com.pmaj.pm_mobile.activities.HomeActivity;
 
 
-/**
- * Created by Hugo on 20/10/2017.
- */
-
-//TODO PROBLEM DE CONFIG AVEC ADAPTER
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     private List<Family> dataset;
@@ -30,7 +27,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         public ViewHolder(View v) {
             super(v);
             family = v.findViewById(R.id.family);
-            code = v.findViewById(R.id.code);
+           // code = v.findViewById(R.id.code);
         }
     }
 
@@ -54,8 +51,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.family.setText(dataset.get(position).getLogin());
-        holder.code.setText(dataset.get(position).getMessage());
+        holder.family.setText(dataset.get(position).getName());
+       // holder.code.setText(dataset.get(position).getCode());
 
     }
 
