@@ -53,15 +53,15 @@ public class UserDao {
 	
 	try{
 		em.persist(userToAdd);
-		em.getTransaction().commit();
-		em.getTransaction().begin();		
+		//em.getTransaction().commit();
+		//em.getTransaction().begin();		
 	}
 	catch(Exception e){
+		System.out.println("Fail addUser: exception " + e.getMessage());
 		return false;
-	}
+	}	
 	
-		
-	
+	System.out.println("Sucess addUser");
 	return true;
 	}
 }

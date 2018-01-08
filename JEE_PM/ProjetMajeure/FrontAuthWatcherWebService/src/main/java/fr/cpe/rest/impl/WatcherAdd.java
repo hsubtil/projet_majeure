@@ -17,9 +17,10 @@ public class WatcherAdd implements IWatcherAdd {
 	public boolean addUser(User user) {
 		System.out.println("WS user received: " + user.toString());
 		
-		add.AddUser(user);
-		System.out.println("WS user addes to DB: " + user.toString());		
-		
+		user = add.AddUser(user);			
+		if(user.getValidAuth()) {
+			System.out.println("WS user added to DB: " + user.toString());
+		}
 		return user.getValidAuth();
 	}
 

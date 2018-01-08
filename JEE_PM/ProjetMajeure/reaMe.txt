@@ -1,3 +1,6 @@
+/etc/init.d/mysql start
+
+
 TO Do:
 
 creer serveur wildfly : checker add and Remove
