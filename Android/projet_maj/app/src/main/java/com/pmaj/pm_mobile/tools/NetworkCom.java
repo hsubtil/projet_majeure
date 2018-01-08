@@ -66,6 +66,18 @@ public class NetworkCom {
         mSocket.emit("signUp_attempt",json);
     }
 
+    public void emitGetProfile(String token,String email){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("email",email);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("request_profile",json);
+    }
+
   /*  public void emitUserTyping(String login, String sessionToken){// String mimType, String data){
         JSONObject json = new JSONObject();
         try {

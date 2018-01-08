@@ -9,14 +9,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/family_button"
+        <TextView
+            android:id="@+id/family"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/famille_list"
-            android:hint="FAMILY 1"/>
-        <Button
-            android:id="@+id/code_button"
+            android:hint="FAMILY 1"
+            android:layout_marginRight="20sp"/>
+        <TextView
+            android:id="@+id/code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/lien_famille"
