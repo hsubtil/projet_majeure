@@ -1,5 +1,5 @@
 var io = require('socket.io-client');
-var request_url = "http://192.168.1.102:1337";
+var request_url = "http://192.168.1.100:1337";
 
 class Comm {
    constructor() {
@@ -8,7 +8,6 @@ class Comm {
        this.socket = "";
        this.emitOnConnect = this.emitOnConnect.bind(this);
        this.result = null;
-
    }
 
    toString() {
@@ -29,23 +28,55 @@ class Comm {
        this.socket.on('connection', message => { this.emitOnConnect(message) });
    }
 
-   emitConnect(json, CB) {
-       this.socket.emit('auth_attempt',json);
-       this.socket.on('auth_success', function (data) {
-        console.log("auth_success");
-        this.result = true;
-        CB(this.result);
-       });
-       this.socket.on('auth_failed', function (data) {
-        console.log("auth_failed");
-        this.result = false;
-        CB(this.result);
-       });
-       this.socket.on('node_error', function (data) {
-        console.log("error");
-        this.result = false;
-        CB(this.result);
-       });
+   emitConnect(json) {
+        return new Promise((resolve, reject) => 
+        {
+        this.socket.emit('auth_attempt',json);
+        this.socket.on('auth_success', function (data) {
+          console.log("auth_success");
+
+          var json = JSON.stringify({ result : true, datas : data})
+          resolve(json);
+        });
+        this.socket.on('auth_failed', function (data) {
+          console.log("auth_failed");
+
+          var json = JSON.stringify({ result : false, datas : data})
+          resolve(json);
+        });
+        this.socket.on('node_error', function (data) {
+          console.log("error");
+
+          var json = JSON.stringify({ result : false, datas : data})
+          resolve(json);
+        });
+
+    })
+   }
+   emitConnect2(json){
+        return new Promise((resolve, reject) => 
+        {
+        this.socket.emit('sign_up_attempt',json);
+        this.socket.on('registration_success', function (data) {
+          console.log("registration_success");
+
+          var json = JSON.stringify({ result : true, datas : data})
+          resolve(json);
+        });
+        this.socket.on('registration_failed', function (data) {
+          console.log("registration_failed");
+
+          var json = JSON.stringify({ result : false, datas : data})
+          resolve(json);
+        });
+        this.socket.on('node_error', function (data) {
+          console.log("error");
+
+          var json = JSON.stringify({ result : false, datas : data})
+          resolve(json);
+        });
+
+    })
    }
    
 
