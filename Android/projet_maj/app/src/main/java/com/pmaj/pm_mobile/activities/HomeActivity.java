@@ -9,22 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
 import com.pmaj.pm_mobile.model.Family;
-import com.pmaj.pm_mobile.tools.Helper;
-import com.pmaj.pm_mobile.tools.MyAdapter;
+import com.pmaj.pm_mobile.tools.FamilyAdapter;
 import com.pmaj.pm_mobile.tools.NetworkCom;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import io.socket.emitter.Emitter;
@@ -32,7 +27,7 @@ import io.socket.emitter.Emitter;
 //TODO SEPARE METHODE NAVBAR ET HOME PAGE
 public class HomeActivity extends AppCompatActivity {
     private Button family_button;
-    private Button code_button;
+    private Button codeButton;
     private Button add_family;
     private Button log_out;
     private ImageView icon_profil;
@@ -56,6 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         log_out = (Button) findViewById(R.id.log_out);
         icon_profil = (ImageView) findViewById(R.id.icon_profil);
         family_list = (RecyclerView) findViewById(R.id.family_list);
+        //codeButton = (Button) findViewById(R.id.codeButton);
 
         family_list.setHasFixedSize(true);
 
@@ -122,7 +118,7 @@ public class HomeActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                RecyclerView.Adapter myAdapter = new MyAdapter(familyList, HomeActivity.this);
+                RecyclerView.Adapter myAdapter = new FamilyAdapter(familyList, HomeActivity.this);
                 family_list.setAdapter(myAdapter);
             }
         });
