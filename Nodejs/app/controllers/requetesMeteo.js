@@ -14,7 +14,7 @@ module.exports = this;
 *   This function is responsible for sending request to JEE server for the connection of a user. It's also responsible of sending the reply. 
 */
 this.get_meteo = function (json, cb) {
-    LOG.debug("In connection with weather webservice");
+    LOG.debug("[METEO] In connection with weather webservice");
     var json_string = JSON.stringify(json);
     LOG.debug("Parameters " + json_string);
     var return_json= {};

@@ -212,33 +212,6 @@ this.listen = function (server) {
             });
         });
 
-        /*
-        *  Return 
-        */
-        socket.on('request_family_members', function (json_object) {
-            LOG.log("[SOCKET] Request family members");
-            var meteoRequestJson = {};
-            checkToken(json_object['token'], socket, function (err) {
-                if (!err) {
-                    DB.getMemberOfFamily(json_object['code'], function (err, family_members) {
-                        LOG.debug("iciiiiiii");
-                        for (var member in family_members) {
-                            LOG.debug("In for " + JSON.stringify(family_members[member]));
-                            DB.getProfile(family_members[member]['email'], function (profile) {
-                                var name = JSON.stringify(profile['name']);
-                                LOG.debug(profile['coord']);
-                                LOG.debug(name);
-                                meteoRequestJson[name] = profile['coord'];
-                                console.log(JSON.stringify(meteoRequestJson));
-                            });
-                        }
-                    });
-                }
-            });
-        });
-
-
-
         /***************************************************************************** CHAT *****************************************************************************/
 
         /*
@@ -285,7 +258,7 @@ this.listen = function (server) {
         });
 
 /***************************************************************************** METEO *****************************************************************************/
-        
+     /*   
         socket.on('get_meteo', function (json_object) {
             LOG.log("[SOCKET] Get_meteo for family ");
             var family_code = json_object['code'];
@@ -308,7 +281,7 @@ this.listen = function (server) {
                 }
             });
         });
-
+        */
 
         /*
         *  param : null
@@ -316,12 +289,51 @@ this.listen = function (server) {
         *  Disconnect a client from the socket_map
         *
         */
+
+
+        /*
+        *  Return 
+        */
+        socket.on('request_family_meteo', function (json_object) {
+            LOG.log("[SOCKET] Request family members");
+            var meteoRequestJson = {};
+            var lock_increment = 0;
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.getMemberOfFamily(json_object['code'], function (err, family_members) {
+                        for (var member in family_members) {
+                            LOG.debug(member);
+                            LOG.debug("In for " + JSON.stringify(family_members[member]));
+                            DB.getProfile(family_members[member]['email'], function (profile) {
+                                var name = profile['name'];
+                                LOG.debug(profile['coord']);
+                                LOG.debug(name);
+                                meteoRequestJson[name] = profile['coord'];
+                                console.log(JSON.stringify(meteoRequestJson));
+                                LOG.debug("member");
+                                lock_increment++;  // Increment lock_increment
+                                LOG.debug(family_members.length);
+                                if (lock_increment === family_members.length) {
+                                    LOG.debug("In if ");
+                                    METEO.get_meteo(meteoRequestJson, function (err, msgs) {
+                                        LOG.debug(" [METEO] IN");
+                                        if (!err) {
+                                            LOG.debug("Resultat Final : " + JSON.stringify(msgs));
+                                        }
+                                    });
+                                }
+                            });
+                        }                        
+                    });
+                }
+            });
+        });
+
         socket.on('disconnect', function () {
             LOG.log("[SOCKET] Client " + socket.id + " disconnect event");
             delete socket_map[socket.id];
         });
     });
-
 };
 
 /**
@@ -361,5 +373,6 @@ function createToken(email, cb) {
         cb(reply);
     });
 }
+
 
 
