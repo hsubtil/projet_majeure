@@ -110,6 +110,12 @@
                 , 'profile': { 'name': "Pia", 'city': "SuperCulins" }
             });
         }
+        function getMeteo(){
+            socket.emit('get_meteo',{
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , 'code': "a177a1f8-255d-40a1-a757-30ba22766b52"
+            });
+        }
     </script>
     
 
@@ -136,6 +142,10 @@
             <td>Profile : </td>
             <td><input type="button" value="Request Profile" onclick="javascript:requestProfile()" /></td>
             <td><input type="button" value="Update Profile" onclick="javascript:updateProfile()" /></td>
+        </tr>
+        <tr>
+            <td>Météo : </td>
+            <td><input type="button" value="Get Météo" onclick="javascript:getMeteo()" /></td>
         </tr>
     </table>
 

@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 var CONFIG = require("../../config.json");
 process.env.CONFIG = JSON.stringify(CONFIG);
 var LOG = require("../utils/log");
@@ -6,6 +6,7 @@ var LOG = require("../utils/log");
 var REQUEST = require("./requetes");
 var DB = require("./dbController.js");
 var FAMILY = require("../models/familyModel.js");
+var METEO = require("./requetesMeteo.js");
 
 
 var path = require("path");
@@ -258,6 +259,32 @@ this.listen = function (server) {
                 }
             });
         });
+
+/***************************************************************************** METEO *****************************************************************************/
+        
+        socket.on('get_meteo', function (json_object) {
+            LOG.log("[SOCKET] Get_meteo for family ");
+            var family_code = json_object['code'];
+            LOG.log("[SOCKET] Get_meteo for family " + JSON.stringify(family_code))
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    //TO DO:get localisation of each member of a family (input family_code, output: list localisation)
+                    var coords ={"nom1" : {"lat": 45.45, "lon": 34.34}
+                                ,"nom2": {"lat": 46.46, "lon": 4.4}
+                                ,"nom3" : {"lat": 3.46, "lon": 4.4}
+                            };
+                    LOG.log("[SOCKET] " + JSON.stringify(coords));
+                    //JSON.parse(coords);
+                    METEO.get_meteo(coords, function (err, msgs) {
+                        if (!err) {
+                            LOG.debug("Resultat Final : "+ JSON.stringify(msgs));
+                            //socket.emit('load_messages_reply', msgs);
+                        }
+                    });
+                }
+            });
+        });
+
 
         /*
         *  param : null
