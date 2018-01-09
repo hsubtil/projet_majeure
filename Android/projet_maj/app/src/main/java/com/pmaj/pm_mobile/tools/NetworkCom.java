@@ -90,6 +90,30 @@ public class NetworkCom {
         mSocket.emit("request_family",json);
     }
 
+    public void emitGetMessages(String token,String code){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("code",code);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("load_messages",json);
+    }
+
+    public void emitSendMessage(String token,JSONObject msg){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("msg",msg);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("new_message",json);
+    }
+
 
     public void destroySocket() {
         mSocket.disconnect();
