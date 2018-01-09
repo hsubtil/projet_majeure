@@ -27,15 +27,18 @@ this.logConsole = function(code, msg) {
 
 this.debug = function (msg) {
   var d = dateTime({local: false});
-    this.logConsole('debug', '[DEBUG] ['+d.toString()+']' + msg);
+  this.logConsole('debug', '[' + d.toString() + '] '+ '[DEBUG] ' + msg);
 }
 
 this.log = function (msg) {
-    this.logConsole('log', msg);
+    var d = dateTime({ local: false });
+    this.logConsole('log', '[' + d.toString() + '] '+ msg);
 }
 this.error = function (msg) {
-    this.logConsole('error', msg);
+    var d = dateTime({ local: false });
+    this.logConsole('error', '[' + d.toString() + '] ' + msg);
 }
 this.warning = function (msg) {
-    this.logConsole('warn', msg);
+    var d = dateTime({ local: false });
+    this.logConsole('warn', '[' + d.toString() + '] ' + msg);
 }

@@ -46,6 +46,9 @@
     <Compile Include="app\models\familyModel.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="app\models\google\googleAuth.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="app\models\userModel.js" />
     <Compile Include="app\routes\default_route.js" />
     <Compile Include="app\utils\log.js">
@@ -63,6 +66,7 @@
     <Folder Include="app\controllers\" />
     <Folder Include="app\controllers\google\" />
     <Folder Include="app\models\" />
+    <Folder Include="app\models\google\" />
     <Folder Include="app\routes\" />
     <Folder Include="app\utils\" />
     <Folder Include="public\" />

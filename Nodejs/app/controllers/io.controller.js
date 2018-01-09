@@ -22,12 +22,12 @@ this.listen = function (server) {
     LOG.debug("In io.controller.js");
     var io = require('socket.io').listen(server);
     // Create new db object
-    
+
     io.sockets.on('connection', function (socket) {
         LOG.log("[SOCKET] New client " + socket.id);
         socket_map[socket.id] = socket;
 
-/***************************************************************************** USERS *****************************************************************************/
+        /***************************************************************************** USERS *****************************************************************************/
 
         /*
         *  param : JSON {'mail':"",'password':""}
@@ -35,7 +35,7 @@ this.listen = function (server) {
         *  When Front server send an auth event, ask to JEE server if auth is valid or not. 
         */
         socket.on('auth_attempt', function (json_object) {
-            LOG.log("[SOCKET] Connection event" + JSON.stringify(json_object['email']) );
+            LOG.log("[SOCKET] Connection event" + JSON.stringify(json_object['email']));
             REQUEST.connection(socket, json_object, function (err) {
                 if (!err) {
                     createToken(json_object['email'], function (token) {
@@ -68,7 +68,7 @@ this.listen = function (server) {
                 else {
                     socket.emit('registration_failed', error);
                 }
-            });  
+            });
         });
 
         /*
@@ -92,26 +92,26 @@ this.listen = function (server) {
             });
         });
 
-         /*
-        *  param : JSON { 'token': 'email': "nabil.fekir@ol.com", 'profile':{'name': ....} }
-        *  Update in MongoDB a user profile. Not all fields are requierd for the profile. 
-        *
-        */
+        /*
+       *  param : JSON { 'token': 'email': "nabil.fekir@ol.com", 'profile':{'name': ....} }
+       *  Update in MongoDB a user profile. Not all fields are requierd for the profile. 
+       *
+       */
         socket.on('update_user_profil', function (json_object) {
             LOG.log("[SOCKET] Update user profil " + json_object['email']);
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     DB.updateUser(json_object['email'], json_object['profile'], function (err) {
                         LOG.debug("Profile updated");
-                    })
+                    });
                 }
                 else {
                     socket.emit('error', err);
                 }
             });
-        })
+        });
 
-/***************************************************************************** FAMILIES *****************************************************************************/
+        /***************************************************************************** FAMILIES *****************************************************************************/
         /*
         *  param : JSON {'mail':''}
         *  return : JSON { 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }]}
@@ -120,11 +120,11 @@ this.listen = function (server) {
         */
         socket.on('request_family', function (json_object) {
             LOG.log("[SOCKET] Request family info");
-            checkToken(json_object['token'],socket, function (err) {
+            checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     DB.getFamilies(json_object['email'], function (res) {
                         socket.emit('request_family_reply', res);
-                    })
+                    });
                 }
             });
         });
@@ -176,7 +176,7 @@ this.listen = function (server) {
             Create a new family and add it to the user families. 
         */
         socket.on('new_family', function (json_object) {
-            LOG.log("[SOCKET] New family ")
+            LOG.log("[SOCKET] New family ");
             var user = json_object['email'];
             var family = new FAMILY();
             family.name = json_object['family'];
@@ -192,7 +192,7 @@ this.listen = function (server) {
                                 }
                             });
                         }
-                    });                  
+                    });
                 }
             });
         });
@@ -205,7 +205,32 @@ this.listen = function (server) {
                 if (!err) {
                     DB.getFamilyWithCode(json_object['code'], function (err, res) {
                         if (!err) {
-                            DB.addFamilyToUser(json_object['email'],res);
+                            DB.addFamilyToUser(json_object['email'], json_object['code'], res);
+                        }
+                    });
+                }
+            });
+        });
+
+        /*
+        *  Return 
+        */
+        socket.on('request_family_members', function (json_object) {
+            LOG.log("[SOCKET] Request family members");
+            var meteoRequestJson = {};
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.getMemberOfFamily(json_object['code'], function (err, family_members) {
+                        LOG.debug("iciiiiiii");
+                        for (var member in family_members) {
+                            LOG.debug("In for " + JSON.stringify(family_members[member]));
+                            DB.getProfile(family_members[member]['email'], function (profile) {
+                                var name = JSON.stringify(profile['name']);
+                                LOG.debug(profile['coord']);
+                                LOG.debug(name);
+                                meteoRequestJson[name] = profile['coord'];
+                                console.log(JSON.stringify(meteoRequestJson));
+                            });
                         }
                     });
                 }
@@ -214,7 +239,7 @@ this.listen = function (server) {
 
 
 
-/***************************************************************************** CHAT *****************************************************************************/
+        /***************************************************************************** CHAT *****************************************************************************/
 
         /*
         *  param : json_object, JSON {token:, msg:{code:, user:, date: , content: }}
@@ -225,7 +250,7 @@ this.listen = function (server) {
         * 
         */
         socket.on('new_message', function (json_object) {
-            LOG.log("[SOCKET] New message.")
+            LOG.log("[SOCKET] New message.");
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     DB.saveMessage(json_object['msg'], function (err) {
@@ -239,7 +264,6 @@ this.listen = function (server) {
                                     families_map['families'][element]['socket'].emit('new_message_available', json_object['msg']); // Emit new message to all family members connected
                                 }
                             }
-                            // socket.broadcast.emit('new_message_available', msg); // emit only on a family 
                         }
                     });
                 }
@@ -248,7 +272,7 @@ this.listen = function (server) {
 
         socket.on('load_messages', function (json_object) {
             var family_code = json_object['code'];
-            LOG.log("[SOCKET] Load messages for family " + JSON.stringify(family_code))
+            LOG.log("[SOCKET] Load messages for family " + JSON.stringify(family_code));
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     DB.loadMessages(family_code, function (err, msgs) {
@@ -293,12 +317,12 @@ this.listen = function (server) {
         *
         */
         socket.on('disconnect', function () {
-            LOG.log("[SOCKET] Client " + socket.id+" disconnect event");
+            LOG.log("[SOCKET] Client " + socket.id + " disconnect event");
             delete socket_map[socket.id];
         });
     });
 
-}
+};
 
 /**
  * 
@@ -315,11 +339,12 @@ function checkToken(token, socket, cb) {
             cb(err);
         } else {
             LOG.debug("[AUTH] Token is valid");
+            socket.emit("invalid_token");  // @TODO : add to doc
             if (cb) {
                 cb(null);
             }
         }
-
+        // @TODO: add error_code if token is false 
     });
 }
 
@@ -327,12 +352,13 @@ function checkToken(token, socket, cb) {
  *
  * @param {String} email
  * @param {String} socket
+ *  @param {function} cb
  */
 function createToken(email, cb) {
     DB.getProfile(email, function (res) {
-        var token = { "token": jwt.sign(res, CONFIG.tokenkey) };   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
-        LOG.debug(JSON.stringify(token));
-        cb(token);
+        var reply = { "token": jwt.sign(res, CONFIG.tokenkey), "name":res['name'] };   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
+        LOG.debug(JSON.stringify(reply));
+        cb(reply);
     });
 }
 
