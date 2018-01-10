@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,7 +32,6 @@ import java.util.List;
 
 import io.socket.emitter.Emitter;
 
-//TODO AFFICHAGE EN TEMPS REELLE DES MESSAGES
 //TODO SCROLL BOTTOM POUR AVOIR LES MESSAGES LES PLUS RECENTS
 //TODO AFFICHAGE DE LA BAR D'ENVOIE DES MESSAGES CONSTAMMENT.
 public class ChatActivity extends AppCompatActivity {
@@ -44,7 +44,6 @@ public class ChatActivity extends AppCompatActivity {
     private String code;
     private List<Message> list = new ArrayList<Message>();
 
-    private NetworkCom socket;
     private SharedPreferences mPrefs;
 
     @Override
@@ -58,11 +57,10 @@ public class ChatActivity extends AppCompatActivity {
         mPrefs = getSharedPreferences("authToken", 0);
 
         //Socket
-        socket = new NetworkCom();
-        socket.getmSocket().on("load_messages_reply", onMessagesSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("load_messages_reply", onMessagesSuccess);
 
-        socket.getmSocket().on("new_message_available", onMessageSentSuccess);
-        socket.getmSocket().on("error", onMessagesFail);
+        LoginActivity.getSocketInstance().getmSocket().on("new_message_available", onMessageSentSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("error", onMessagesFail);
 
         /*
         * Link variables to object on page
@@ -80,13 +78,13 @@ public class ChatActivity extends AppCompatActivity {
 
 
         //Linking Layout Manager to Recycler View
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
         messages.setLayoutManager(mLayoutManager);
         messages.setHasFixedSize(true);
 
         //Retrieve all messages
-        socket.emitGetMessages(mPrefs.getString("authToken", ""), code);
-
+        LoginActivity.getSocketInstance().emitGetMessages(mPrefs.getString("token",""), code);
+        messages.scrollTo(0, messages.getBottom());
 
         // Listener when we click on send Button to send a new message
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +94,7 @@ public class ChatActivity extends AppCompatActivity {
                 Date date = Calendar.getInstance().getTime();
                 String stringDate = date.toString();
                 String name = mPrefs.getString("name", "");
+
 
                 JSONObject jsonMsg = new JSONObject();
 
@@ -108,7 +107,7 @@ public class ChatActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 new_message.setText("");
-                socket.emitSendMessage(mPrefs.getString("authToken", ""), jsonMsg);
+                LoginActivity.getSocketInstance().emitSendMessage(mPrefs.getString("token",""), jsonMsg);
 
             }
         });
@@ -120,7 +119,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 // Refresh items
-                socket.emitGetMessages(mPrefs.getString("authToken", ""), getIntent().getStringExtra("family_code"));
+                LoginActivity.getSocketInstance().emitGetMessages(mPrefs.getString("token",""), getIntent().getStringExtra("family_code"));
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -167,6 +166,7 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             displayMessages();
+            messages.scrollTo(0, messages.getBottom());
             return;
         }
     };

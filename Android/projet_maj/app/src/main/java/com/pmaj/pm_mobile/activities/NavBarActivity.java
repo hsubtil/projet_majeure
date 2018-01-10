@@ -19,7 +19,6 @@ import io.socket.emitter.Emitter;
 public class NavBarActivity extends AppCompatActivity {
 
 
-    private NetworkCom socket;
     private SharedPreferences mPrefs;
 
     @Override

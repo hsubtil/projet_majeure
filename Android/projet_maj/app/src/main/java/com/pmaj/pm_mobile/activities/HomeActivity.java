@@ -32,7 +32,6 @@ public class HomeActivity extends AppCompatActivity {
     private Button log_out;
     private ImageView icon_profil;
     private RecyclerView family_list;
-    private NetworkCom socket;
     private SharedPreferences mPrefs;
 
 
@@ -43,10 +42,9 @@ public class HomeActivity extends AppCompatActivity {
         mPrefs = getSharedPreferences("authToken", 0);
 
         //Socket
-        socket = new NetworkCom();
-        socket.getmSocket().on("request_profile_reply", onProfilSuccess);
-        socket.getmSocket().on("request_family_reply", onFamiliesSuccess);
-        socket.getmSocket().on("error", onProfilFail);
+        LoginActivity.getSocketInstance().getmSocket().on("request_profile_reply", onProfilSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("request_family_reply", onFamiliesSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("error", onProfilFail);
 
         log_out = (Button) findViewById(R.id.log_out);
         icon_profil = (ImageView) findViewById(R.id.icon_profil);
@@ -62,8 +60,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor mEditor = mPrefs.edit();
-                mEditor.putLong("lastLogin", 0);
-                mEditor.putString("authToken",null);
+                mEditor.putLong("lastLogin", 0).apply();
+                mEditor.putString("token",null).apply();
                 mEditor.commit();
 
                 //Redicrection to Login page
@@ -77,11 +75,11 @@ public class HomeActivity extends AppCompatActivity {
         icon_profil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                socket.emitGetProfile(mPrefs.getString("authToken", ""), getIntent().getStringExtra("email"));
+                LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), getIntent().getStringExtra("email"));
             }
         });
 
-        socket.emitGetFamilies(mPrefs.getString("authToken", ""), getIntent().getStringExtra("email"));
+        LoginActivity.getSocketInstance().emitGetFamilies(mPrefs.getString("token",""), getIntent().getStringExtra("email"));
 
     }
 

@@ -26,7 +26,7 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        URI uri = URI.create("http://192.168.1.100:1337/");
+        URI uri = URI.create("http://192.168.1.101:1337/");
         this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
@@ -113,6 +113,20 @@ public class NetworkCom {
         }
         mSocket.emit("new_message",json);
     }
+
+    public void emitSelectFamily(String token,String code){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("code",code);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("select_family",json);
+    }
+
+
 
 
     public void destroySocket() {

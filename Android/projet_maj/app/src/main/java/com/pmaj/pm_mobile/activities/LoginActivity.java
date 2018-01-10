@@ -27,7 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button signUp;
     private Button connect;
     private ProgressBar progressBar;
-    private NetworkCom socket;
+    private static NetworkCom socket;
+
     private SharedPreferences mPrefs;
 
 
@@ -43,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         mPrefs = getSharedPreferences("authToken", 0);
-        mPrefs = getSharedPreferences("name",0);
 
         //Socket
         socket = new NetworkCom();
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         socket.getmSocket().on("auth_failed", onAuthFail);
 
 
-        //TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
+        /*//TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
         //Redicrection to Home page
         SharedPreferences.Editor TempEditor = mPrefs.edit();
         // Shared preference declaration
@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
         intentLogged.putExtra("email","test.fekir@ol.com");
-        startActivity(intentLogged);
+        startActivity(intentLogged);*/
 
         checkConnectionToken();
 
@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                 mEditor.putString("authLogin", email.getText().toString());     // Add Login
                 mEditor.commit();
                 socket.emitConnect(email.getText().toString(), password.getText().toString());
-                Toast.makeText(LoginActivity.this, "Login Attempt", Toast.LENGTH_LONG).show();
+                //Toast.makeText(LoginActivity.this, "Login Attempt", Toast.LENGTH_LONG).show();
 
                 progressBar.setVisibility(View.INVISIBLE);
             }
@@ -96,18 +96,19 @@ public class LoginActivity extends AppCompatActivity {
             JSONObject obk = (JSONObject) args[0];
 
             String token = "";
-            String name ="";
+            String userName ="";
             try {
                 token = obk.getString("token");
-                name = obk.getString("name");
+                userName = obk.getString("name");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             SharedPreferences.Editor mEditor = mPrefs.edit();
             // Shared preference declaration
-            mEditor.putString("authToken", token).apply();
-            mEditor.putString("name",name).apply();
+            mEditor.putString("token", token).apply();
+            mEditor.putString("name",userName).apply();
+            mEditor.commit();
 
             //Redicrection to Home page
             Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
@@ -132,15 +133,18 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(LoginActivity.this, "Hello again !", Toast.LENGTH_LONG).show();
            //Redirection vers Page Home
             Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
-           startActivity(intentLogged);
+            startActivity(intentLogged);
         } else {
             Toast.makeText(LoginActivity.this, "Logged out", Toast.LENGTH_LONG).show();
         }
 
     }
 
+    public static NetworkCom getSocketInstance (){
+        return socket;
+    }
 
-    @Override
+     @Override
     protected void onDestroy() {
         super.onDestroy();
         socket.destroySocket();

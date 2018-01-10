@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pmaj.pm_mobile.R;
+import com.pmaj.pm_mobile.activities.LoginActivity;
 import com.pmaj.pm_mobile.model.Message;
 
 import java.util.List;
@@ -43,6 +44,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     // Provide a suitable constructor (depends on the kind of dataset)
     public MessagesAdapter(List<Message> dataset, Context ActivityContext) {
 
+        mPrefs = ActivityContext.getSharedPreferences("authToken", 0);
         this.dataset = dataset;
         this.ActivityContext = ActivityContext;
     }
@@ -60,11 +62,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        mPrefs = ActivityContext.getSharedPreferences("name", 0);
+        //mPrefs = ActivityContext.getSharedPreferences("name", 0);
 
         holder.sender.setText(dataset.get(position).getSender());
         holder.messageText.setText(dataset.get(position).getMessageText());
 
+        //String m = mPrefs.getString("name","");
         String m = mPrefs.getString("name","");
         String p = dataset.get(position).getSender();
         if(m.equals(p)){

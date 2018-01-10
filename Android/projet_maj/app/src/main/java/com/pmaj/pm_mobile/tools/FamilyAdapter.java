@@ -2,6 +2,7 @@ package com.pmaj.pm_mobile.tools;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +11,12 @@ import android.widget.TextView;
 
 import com.pmaj.pm_mobile.R;
 import com.pmaj.pm_mobile.activities.ChatActivity;
+import com.pmaj.pm_mobile.activities.LoginActivity;
 import com.pmaj.pm_mobile.model.Family;
 
 import java.util.List;
 
+import io.socket.emitter.Emitter;
 
 
 public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder> {
@@ -21,6 +24,8 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
     private List<Family> dataset;
     private Context ActivityContext;
 
+    private SharedPreferences mPrefs;
+    private ViewHolder Mholder;
     // Provide a reference to the views for each data item
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView family;
@@ -38,6 +43,12 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
 
         this.dataset = dataset;
         this.ActivityContext = ActivityContext;
+
+        mPrefs = ActivityContext.getSharedPreferences("authToken", 0);
+
+        //Socket
+        LoginActivity.getSocketInstance().getmSocket().on("selected_family_ko", onSelectFamilyFail);
+        LoginActivity.getSocketInstance().getmSocket().on("selected_family_ok",onSelectFamilySuccess);
     }
 
     // Create new views (invoked by the layout manager)
@@ -59,10 +70,8 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
         holder.family.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent intent = new Intent(ActivityContext, ChatActivity.class);
-                intent.putExtra("family_name",holder.family.getText().toString());
-                intent.putExtra("family_code",holder.code.getText().toString());
-                ActivityContext.startActivity(intent);
+                Mholder = holder;
+                LoginActivity.getSocketInstance().emitSelectFamily(mPrefs.getString("token",""),holder.code.getText().toString());
             }
         });
 
@@ -73,6 +82,24 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
     public int getItemCount() {
         return dataset.size();
     }
+
+    private Emitter.Listener onSelectFamilySuccess = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            final Intent intent = new Intent(ActivityContext, ChatActivity.class);
+            intent.putExtra("family_name",Mholder.family.getText().toString());
+            intent.putExtra("family_code",Mholder.code.getText().toString());
+            ActivityContext.startActivity(intent);
+            return;
+        }
+    };
+
+    private Emitter.Listener onSelectFamilyFail = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            return;
+        }
+    };
 
 
 
