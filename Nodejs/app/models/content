@@ -1,0 +1,4 @@
+content
+-familyID: contient JSon : id, liste d'albumIDs/name ?; dossiers d albums
+	-albumId: contient Json: id, name, liste d'imageIds/Names; images+videos ...
+		-media: contient Json; id, type, (title: inutile), src, filename

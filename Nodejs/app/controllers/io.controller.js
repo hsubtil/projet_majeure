@@ -7,6 +7,7 @@ var REQUEST = require("./requetes");
 var DB = require("./dbController.js");
 var FAMILY = require("../models/familyModel.js");
 var METEO = require("./requetesMeteo.js");
+var CONTENT = require("./requetesContent.js");
 
 
 var path = require("path");
@@ -328,6 +329,116 @@ this.listen = function (server) {
                 }
             });
         });
+/***************************************************************************** CONTENT *****************************************************************************/
+        
+        socket.on('request_album_list', function (json_object) {
+            var family_code = json_object['code'];
+            LOG.log("[SOCKET] Load albums (list) for family " + JSON.stringify(family_code));
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    CONTENT.get_album_list(family_code, function (err, msgs) {
+                        LOG.debug("IN cb : ");
+                        if (!err) {
+                            LOG.debug("Resultat Final : " + JSON.stringify(msgs));
+                            socket.emit('load_messages_reply', msgs);
+                        }
+                        else{
+                            LOG.debug("Erreur : " + err);
+
+
+                        }
+                    });
+                    LOG.debug("Content : after cb");
+                }
+            });
+        });
+
+        socket.on('request_album_content', function (json_object) {
+            var album_code = json_object['code'];
+            LOG.log("[SOCKET] Load content (list) for album " + JSON.stringify(album_code));
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.loadMessages(album_code, function (err, msgs) {
+                        if (!err) {
+                            socket.emit('load_messages_reply', msgs);
+                        }
+                    });
+                }
+            });
+        });
+
+        socket.on('request_content_media', function (json_object) {
+            var content_code = json_object['code'];
+            LOG.log("[SOCKET] Load content for media " + JSON.stringify(content_code));
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.loadMessages(content_code, function (err, msgs) {
+                        if (!err) {
+                            socket.emit('load_messages_reply', msgs);
+                        }
+                    });
+                }
+            });
+        });
+
+        socket.on('add_album', function (json_object) {
+            var family_code = json_object['code'];
+            LOG.log("[SOCKET] Load messages for family " + JSON.stringify(family_code));
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.loadMessages(family_code, function (err, msgs) {
+                        if (!err) {
+                            socket.emit('load_messages_reply', msgs);
+                        }
+                    });
+                }
+            });
+        });
+
+        socket.on('add_content', function (json_object) {
+            var family_code = json_object['code'];
+            LOG.log("[SOCKET] Load messages for family " + JSON.stringify(family_code));
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.loadMessages(family_code, function (err, msgs) {
+                        if (!err) {
+                            socket.emit('load_messages_reply', msgs);
+                        }
+                    });
+                }
+            });
+        });
+
+        socket.on('delete_album', function (json_object) {
+            var family_code = json_object['code'];
+            LOG.log("[SOCKET] Load messages for family " + JSON.stringify(family_code));
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.loadMessages(family_code, function (err, msgs) {
+                        if (!err) {
+                            socket.emit('load_messages_reply', msgs);
+                        }
+                    });
+                }
+            });
+        });
+
+        socket.on('delete_content', function (json_object) {
+            var family_code = json_object['code'];
+            LOG.log("[SOCKET] Load messages for family " + JSON.stringify(family_code));
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.loadMessages(family_code, function (err, msgs) {
+                        if (!err) {
+                            socket.emit('load_messages_reply', msgs);
+                        }
+                    });
+                }
+            });
+        });
+
+/***************************************************************************** OTHER *****************************************************************************/
+
 
         socket.on('disconnect', function () {
             LOG.log("[SOCKET] Client " + socket.id + " disconnect event");
