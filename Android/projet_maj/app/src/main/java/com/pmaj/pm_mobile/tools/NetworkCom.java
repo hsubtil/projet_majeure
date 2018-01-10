@@ -63,7 +63,7 @@ public class NetworkCom {
         catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("signUp_attempt",json);
+        mSocket.emit("sign_up_attempt",json);
     }
 
     public void emitGetProfile(String token,String email){
