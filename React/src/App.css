@@ -31,6 +31,10 @@ body {
   font-size: large;
 }
 
+.toggle {
+  background-color: #F8F8F8;
+  border: none;
+}
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

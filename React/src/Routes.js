@@ -6,6 +6,7 @@ import NF from "./components/404";
 import Login from "./containers/Login";
 import Signup from "./containers/Signup";
 import MainPage from "./containers/MainPage";
+import Profil from "./containers/Profil";
 
   export default ({ childProps }) =>
   <Switch>
@@ -13,5 +14,6 @@ import MainPage from "./containers/MainPage";
     <AppliedRoute path="/login" exact component={Login} props={childProps} />
     <AppliedRoute path="/signup" exact component={Signup} props={childProps} />
     <AppliedRoute path="/mainpage" exact component={MainPage} props={childProps} />
+    <AppliedRoute path="/profil" exact component={Profil} props={childProps} />
     <Route component={NF} />
   </Switch>;

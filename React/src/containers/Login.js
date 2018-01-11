@@ -41,7 +41,9 @@ export default class Login extends Component {
         console.log("authentificated");
         this.props.userHasAuthenticated(true);
         localStorage.setItem("token", jjson.datas.token);
+        localStorage.setItem("email", json.email);
         alert("authentificated !");
+        this.props.history.push("/MainPage");
 
       }
       else{

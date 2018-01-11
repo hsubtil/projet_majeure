@@ -78,8 +78,49 @@ class Comm {
 
     })
    }
-   
 
+   emitConnect_gen(json, request, CB){
+      console.log("emitConnect_gen");
+      console.log(request);
+      console.log(json);
+      this.socket.emit(request,json);
+      this.socket.on('request_profile_reply', function (data) {
+        console.log("request_profile_reply");
+
+        var json = { result : true, datas : data}
+        CB(json);
+      });
+
+      this.socket.on('error', function (data) {
+        console.log("error");
+
+        var json = JSON.stringify({ result : false, datas : data})
+        CB(json);
+      });
+    }
+
+    emitConnect_gen2(json, request){
+        console.log("emitConnect_gen2");
+        return new Promise((resolve, reject) => 
+        {
+        console.log("emitConnect_gen2 dans le Promise");
+        this.socket.emit(request,json);
+        this.socket.on('error', function (data) {
+          console.log("error");
+
+          var json = { result : false, datas : data};
+          resolve(json);
+        });
+        this.socket.on('update_user_profil_success', function(data) {
+          console.log("update_user_profil_success");
+
+          var json = { result : true, datas : data};
+          resolve(json);          
+        });
+
+
+    })
+   }
 }
 
 module.exports = Comm;
