@@ -5,7 +5,8 @@ process.env.CONFIG = JSON.stringify(CONFIG);
 var http = require('http');
 var express = require('express');
 var path = require('path');
-var bodyParser = require('body-parser'); //test
+var bodyParser = require('body-parser'); 
+const passport = require('passport');
 
 // init server
 var app = express();
@@ -14,9 +15,12 @@ var server = http.createServer(app);
 var defaultRoute = require("./app/routes/default_route.js");
 var IOController = require("./app/controllers/io.controller.js");
 var LOG = require("./app/utils/log");
-
+// @TODO : afficher le niveau de debug du logs
 app.use(bodyParser.json()); // support pour les ficher json 
 app.use(bodyParser.urlencoded({ extended: true })); 
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(function (req, res, next) {
     res.set("Access-Control-Allow-Origin", CONFIG.reactserver);

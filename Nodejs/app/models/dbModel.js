@@ -88,13 +88,13 @@ Db.getUserByMail = function (db_object, user_mail, cb) {
         if (result[0] === undefined) {
             LOG.error("[DB] User not found : " + user_mail);
             if (cb)
-                cb("Error, user not found.");
+                cb("Error, user not found.", {});
         }
         else {
             var user = result[0];
             LOG.log("[DB] User found " + JSON.stringify(user));
             if (cb) {
-                cb(user);
+                cb(null, user);
             }
 
         }
@@ -173,13 +173,13 @@ Db.getUserFamilies = function (db_object, user_mail, cb) {
         if (result[0] === undefined) {
             LOG.error("[DB] User not found : " + user_mail);
             if (cb)
-                cb("Error, user not found.");
+                cb("Error, user not found.", {});
         }
         else {
             var families = result[0];
             LOG.log("[DB] User families " + JSON.stringify(families));
             if (cb) {
-                cb(families);
+                cb(null,families);
             }
 
         }
@@ -325,7 +325,6 @@ Db.addUserToFamily = function (db_object, mail, family_code, cb) {
 };
 
 Db.getMemeberOfFamilyByCode = function (db_object, family_code, cb) {
-    // TO DO
     LOG.log("[DB] Get family members for family : " + JSON.stringify(family_code));
     db_object.database.collection(db_object.family_list).find({ code: family_code }).toArray(function (error, result) {
         if (error) throw error;
@@ -410,3 +409,21 @@ Db.disconnect = function (db_object, cb) {
     });
 }
 
+/***************************************************************************** LOCALISATION *****************************************************************************/
+// Not used
+Db.setLocalisationToUser = function (db_object, mail, localisation, cb) {
+    LOG.log("[DB] Saving new location " + JSON.stringify(localisation) + " for user " + JSON.stringify(mail));
+
+    Db.getUserByMail(db_object, mail, function (user) {
+        var newvalue = { "$addToSet": { "members": newuser } };
+        LOG.debug("[DB] Add to family " + JSON.stringify(family_code) + "User " + JSON.stringify(user));
+        db_object.database.collection(db_object.family_list).update(family, newvalue, function (err, res) {
+            if (err) {
+                LOG.error("[DB] Error in updating family")
+                LOG.error(err);
+            } else {
+                LOG.log("[DB] Document updated");
+            }
+        });
+    });        
+};

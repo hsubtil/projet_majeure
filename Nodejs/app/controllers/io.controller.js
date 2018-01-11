@@ -2,13 +2,15 @@
 var CONFIG = require("../../config.json");
 process.env.CONFIG = JSON.stringify(CONFIG);
 var LOG = require("../utils/log");
-// JEE Client
-var REQUEST = require("./requetes");
-var DB = require("./dbController.js");
+var REQUEST = require("./requetes"); // JEE Client
+var DB = require("./dbController.js"); // DB Controller 
 var FAMILY = require("../models/familyModel.js");
-var METEO = require("./requetesMeteo.js");
+var METEO = require("./requetesMeteo.js"); // Meteo webservice 
+var GOOGLE = require("./google/google.controller.js");
 
+const passport = require('passport');
 
+// Modules imports
 var path = require("path");
 var http = require('http');
 var jwt = require('jsonwebtoken');
@@ -30,7 +32,7 @@ this.listen = function (server) {
         /***************************************************************************** USERS *****************************************************************************/
 
         /*
-        *  param : JSON {'mail':"",'password':""}
+        *  param : JSON {'mail':"",'password':"",'profile':{'coord':{'lat':,'lon':}}} // @TODO Add to doc
         *  return : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
         *  When Front server send an auth event, ask to JEE server if auth is valid or not. 
         */
@@ -38,11 +40,22 @@ this.listen = function (server) {
             LOG.log("[SOCKET] Connection event" + JSON.stringify(json_object['email']));
             REQUEST.connection(socket, json_object, function (err) {
                 if (!err) {
-                    createToken(json_object['email'], function (token) {
-                        if (token) {
-                            socket.emit('auth_success', token);
-                        }
-                    });
+                    // Protection if profile is not provided 
+                    if (!json_object['profile']) {
+                        createToken(json_object['email'], function (token) {
+                            if (token) {
+                                socket.emit('auth_success', token);
+                            }
+                        });
+                    } else {
+                        DB.updateUser(json_object['email'], json_object['profile'], function (err) {
+                            createToken(json_object['email'], function (token) {
+                                if (token) {
+                                    socket.emit('auth_success', token);
+                                }
+                            });
+                        });
+                    }
                     // Emit connection for chat
                 }
             });
@@ -82,12 +95,16 @@ this.listen = function (server) {
             LOG.debug(json_object);
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
-                    DB.getProfile(json_object['email'], function (res) {
-                        socket.emit('request_profile_reply', res);
+                    DB.getProfile(json_object['email'], function (err, res) {
+                        if (!err)
+                            socket.emit('request_profile_reply', res);
+                        else
+                            socket.emit('node_error', err);
                     });
                 }
                 else {
-                    socket.emit('error', err);
+                    LOG.log("[SOCKET] Request user profil error.");
+                    socket.emit('node_error', err);
                 }
             });
         });
@@ -122,8 +139,14 @@ this.listen = function (server) {
             LOG.log("[SOCKET] Request family info");
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
-                    DB.getFamilies(json_object['email'], function (res) {
-                        socket.emit('request_family_reply', res);
+                    DB.getFamilies(json_object['email'], function (err, res) {
+                        if (!err) {
+                            socket.emit('request_family_reply', res);
+                        }
+                        else {
+                            LOG.log("[SOCKET] Request family error.");
+                            //socket.emit('error_family', err);
+                        }
                     });
                 }
             });
@@ -141,7 +164,9 @@ this.listen = function (server) {
                     families_map['families'].push({ 'code': json_object['code'], 'socket': socket });
                     console.log(families_map['families']);
                     LOG.log(families_map);
-                    //socket.emit('selected_family_reply', families_map);
+                    socket.emit('selected_family_ok');   // @TODO : Add to doc
+                } else {
+                    socket.emit('selected_family_ko');   // @TODO : Add to doc
                 }
             });
         });
@@ -228,12 +253,13 @@ this.listen = function (server) {
                 if (!err) {
                     DB.saveMessage(json_object['msg'], function (err) {
                         if (!err) {
+                            LOG.debug("VALUE FAMILIES MAP");
                             console.log(families_map['families']);
                             for (var element in families_map['families']) {
                                 LOG.debug(json_object['msg']['code']);
+                                LOG.debug(families_map['families'][element]);
                                 if (families_map['families'][element]['code'] === json_object['msg']['code']) {
                                     LOG.log("[SOCKET] Emit new message available event");
-                                    console.log(families_map['families'][element]['socket']);
                                     families_map['families'][element]['socket'].emit('new_message_available', json_object['msg']); // Emit new message to all family members connected
                                 }
                             }
@@ -256,9 +282,23 @@ this.listen = function (server) {
                 }
             });
         });
+/***************************************************************************** GOOGLE *****************************************************************************/
+        socket.on('test_google', function () {
+            LOG.log("[SOCKET] In google Api test event.");
+            GOOGLE.getCalendarList(function (err,res) {
+                LOG.debug("[SOCKET] Test Api is ok");
+            }); 
+            //passport.authenticate('google', { scope: ['profile'] });
+
+        });
+
+        socket.on('google_reply', function () {
+            LOG.log("[SOCKET] In google reply");
+
+        });
 
 /***************************************************************************** METEO *****************************************************************************/
-     /*   
+     /*   TO REMOVE
         socket.on('get_meteo', function (json_object) {
             LOG.log("[SOCKET] Get_meteo for family ");
             var family_code = json_object['code'];
@@ -282,14 +322,6 @@ this.listen = function (server) {
             });
         });
         */
-
-        /*
-        *  param : null
-        *  return : null
-        *  Disconnect a client from the socket_map
-        *
-        */
-
 
         /*
         *  Return 
@@ -343,6 +375,7 @@ this.listen = function (server) {
  * @param {Function} cb
  */
 function checkToken(token, socket, cb) {
+    LOG.debug(token);
     jwt.verify(token, CONFIG.tokenkey, function (err, decoded) {
         if (err) {
             LOG.error("[AUTH] Token is false !");
@@ -367,7 +400,7 @@ function checkToken(token, socket, cb) {
  *  @param {function} cb
  */
 function createToken(email, cb) {
-    DB.getProfile(email, function (res) {
+    DB.getProfile(email, function (err,res) {
         var reply = { "token": jwt.sign(res, CONFIG.tokenkey), "name":res['name'] };   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
         LOG.debug(JSON.stringify(reply));
         cb(reply);

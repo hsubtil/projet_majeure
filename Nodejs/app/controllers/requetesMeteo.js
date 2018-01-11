@@ -16,7 +16,7 @@ module.exports = this;
 this.get_meteo = function (json, cb) {
     LOG.debug("[METEO] In connection with weather webservice");
     var json_string = JSON.stringify(json);
-    LOG.debug("Parameters " + json_string);
+    LOG.debug("[METEO] Parameters " + json_string);
     var return_json= {};
     var wait = 0;
 
@@ -24,7 +24,7 @@ this.get_meteo = function (json, cb) {
     var val = json[key];
     var lon = val['lon'];
     var lat = val['lat'];
-    LOG.debug("Coord " + lon + ", " + lat);
+    LOG.debug("[METEO] Coord " + lon + ", " + lat);
 
     var param = 'lat=' + lat + '&lon=' + lon + '&APPID=d2379ef141dbadce9f31523a60ca1518';
 
@@ -40,7 +40,7 @@ this.get_meteo = function (json, cb) {
     
 
     wait ++;
-    LOG.debug("Avant request " + wait);
+    LOG.debug("[METEO] Avant request " + wait);
     var req = http.request(options, function (res) {
         var key2 = key;
         

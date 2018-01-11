@@ -22,9 +22,14 @@ this.getProfile = function (email, cb) {
     DB.connect(db, function (error) {
         LOG.debug("IN REQUEST PROFILE");
         LOG.debug(email);
-        DB.getUserByMail(db, email, function (res) {
-            if (cb)
-                cb(res);
+        DB.getUserByMail(db, email, function (err,res) {
+            if (cb) {
+                if (!err)
+                    cb(null, res);
+                else
+                    cb(err, res);
+            }
+                
             DB.disconnect(db);
         });
     });
@@ -43,10 +48,13 @@ this.updateUser = function (mail, new_info, cb) {
 /***************************************************************************** FAMILIES *****************************************************************************/
 this.getFamilies = function (email, cb) {
     DB.connect(db, function (error) {
-        DB.getUserFamilies(db, email, function (res) {
+        DB.getUserFamilies(db, email, function (err, res) {
             if (cb) {
                 //cb({ 'family': [{ 'name': "Monge", 'id': "36496", 'code': "codemonge" }, { 'name': "Fekir", 'id': "18496", 'code': "nabilon" }] });
-                cb(res);
+                if (!err)
+                    cb(null, res);
+                else
+                    cb(err, res);
             }
             DB.disconnect(db);
         });
@@ -146,3 +154,18 @@ this.loadMessages = function (code, cb) {
         DB.disconnect(db);
     });
 };
+
+/***************************************************************************** LOCALISATION *****************************************************************************/
+
+this.setLocalisation = function (email, localisation, cb) {
+    DB.connect(db, function (err) {
+        if (!err) {
+            DB.setLocalisationToUser(db, email, localisation, function (error, res) {
+                if (cb) {
+                    cb(error, res);
+                }
+            });
+        }
+        DB.disconnect(db);
+    });
+}

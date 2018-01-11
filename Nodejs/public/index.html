@@ -111,6 +111,9 @@
                 , 'profile': { 'name': "Pia", 'city': "SuperCulins" }
             });
         }
+        function testGoogle() {
+            socket.emit('test_google');
+        }
         function getMeteo(){
             socket.emit('request_family_meteo', {
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
@@ -144,6 +147,10 @@
             <td>Profile : </td>
             <td><input type="button" value="Request Profile" onclick="javascript:requestProfile()" /></td>
             <td><input type="button" value="Update Profile" onclick="javascript:updateProfile()" /></td>
+        </tr>
+        <tr>
+            <td>Google : </td>
+            <td><input type="button" value="Test Api" onclick="javascript:testGoogle()" /></td>
         </tr>
         <tr>
             <td>Météo : </td>
