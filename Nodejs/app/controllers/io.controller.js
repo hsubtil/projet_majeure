@@ -8,6 +8,7 @@ var FAMILY = require("../models/familyModel.js");
 var METEO = require("./requetesMeteo.js"); // Meteo webservice 
 var GOOGLE = require("./google/quickstart.js");
 
+
 // const passport = require('passport');
 
 // Modules imports
@@ -301,7 +302,10 @@ this.listen = function (server) {
                 }
                 // Authorize a client with the loaded credentials, then call the
                 // Google Calendar API.
-                GOOGLE.authorize(JSON.parse(content), GOOGLE.listUserEvents);
+                GOOGLE.authorize(JSON.parse(content), function (oAuth) {
+                    GOOGLE.listUserEvents(oAuth);
+                });
+                //GOOGLE.authorize(JSON.parse(content), GOOGLE.addEvents);
             });
             /*GOOGLE.listEvents(function (res) {
                 LOG.debug("[SOCKET] Test Api is ok");

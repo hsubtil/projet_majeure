@@ -100,6 +100,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
         // Google Calendar API.
         quickstart.authorize(JSON.parse(content), function (oAuth) {
             LOG.warning(JSON.stringify(oAuth));
+            // @TODO save oAuth do creatToken here
             quickstart.listUserEvents(oAuth, function () {
 
             });

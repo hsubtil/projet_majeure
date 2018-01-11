@@ -3,12 +3,13 @@ var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 var LOG = require("../../utils/log");
+var gcal = require('google-calendar');
 
 // https://developers.google.com/google-apps/calendar/quickstart/nodejs
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/calendar-nodejs-quickstart.json
-var SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
+var SCOPES = ['https://www.googleapis.com/auth/calendar'];
 console.log(process.env.HOME);
 console.log(process.env.HOMEPATH);
 console.log(process.env.USERPROFILE);
@@ -114,7 +115,14 @@ function storeToken(token) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-this.listUserEvents=function(auth, cb) {
+this.listUserEvents = function (auth, cb) {
+   /* LOG.warning(auth['credentials']['access_token']);
+    var google_calendar = new gcal.GoogleCalendar(auth['credentials']['access_token']);
+    google_calendar.calendarList.list(function (err, calendarList) {
+        LOG.error(JSON.stringify(err));
+        console.log(calendarList);
+    });*/
+    
     var calendar = google.calendar('v3');
     calendar.events.list({
         auth: auth,
@@ -138,11 +146,56 @@ this.listUserEvents=function(auth, cb) {
                 var start = event.start.dateTime || event.start.date;
                 console.log('%s - %s', start, event.summary);
             }
+            console.log(JSON.stringify(calendar));
+           // cb(calendar);
         }
     });
 }
 
-this.addEvents= function (auth, calendar) {
+this.addEvents = function (auth) {
+    var calendar = google.calendar('v3');   
+    LOG.log("[GOOGLE] Add event");
+    var event = {
+        'summary': 'Test API mylittleplaner',
+        'location': 'CPE Lyon',
+        'description': 'A chance to hear more about Google\'s developer products.',
+        'start': {
+            'dateTime': '2018-01-15T09:00:00-10:00',
+            'timeZone': 'America/Los_Angeles',
+        },
+        'end': {
+            'dateTime': '2018-01-15T17:00:00-12:00',
+            'timeZone': 'America/Los_Angeles',
+        },
+        'recurrence': [
+            'RRULE:FREQ=DAILY;COUNT=2'
+        ],
+        'attendees': [
+            { 'email': 'hs.subtil@gmail.com' },
+            { 'email': 'mylittleplaner@gmail.com' },
+        ],
+        'reminders': {
+            'useDefault': false,
+            'overrides': [
+                { 'method': 'email', 'minutes': 24 * 60 },
+                { 'method': 'popup', 'minutes': 10 },
+            ],
+        },
+    };
+
+    calendar.events.insert({
+        auth: auth,
+        calendarId: 'primary',
+        resource: event,
+    }, function (err, event) {
+        if (err) {
+            console.log('There was an error contacting the Calendar service: ' + err);
+            return;
+        }
+        console.log('Event created: %s', event.htmlLink);
+    });
+
+    /*
     calendar.events.insert({
         auth: auth,
         calendarId: 'primary',
@@ -150,11 +203,11 @@ this.addEvents= function (auth, calendar) {
             'summary': 'Sample Event',
             'description': 'Sample description',
             'start': {
-                'dateTime': '2017-01-01T00:00:00',
+                'dateTime': '2018-02-02T15:00:00',
                 'timeZone': 'GMT',
             },
             'end': {
-                'dateTime': '2017-01-01T01:00:00',
+                'dateTime': '2018-02-02T16:00:00',
                 'timeZone': 'GMT',
             },
         },
@@ -164,5 +217,5 @@ this.addEvents= function (auth, calendar) {
             return;
         }
         console.log(res);
-    });
+    });*/
 }
