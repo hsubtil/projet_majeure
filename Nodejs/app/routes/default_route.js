@@ -12,6 +12,7 @@ var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
 
 var LOG = require("../utils/log");
+var quickstart = require("../controllers/google/quickstart.js");
 module.exports = router;
 
 var config = {
@@ -31,6 +32,7 @@ LOG.debug(JSON.stringify(confi_json));
 
 passport.use(new GoogleStrategy(confi_json,
     function (accessToken, refreshToken, profile, done) {
+
         if (profile) {
             user = profile;
             return done(null, user);
@@ -89,7 +91,25 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
     var session = req.session;
     var code = req.query.code; // the query param code
     console.log(code);
-    oauth2Client.getToken(code, function (err, tokens) {
+    fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+        if (err) {
+            console.log('Error loading client secret file: ' + err);
+            return;
+        }
+        // Authorize a client with the loaded credentials, then call the
+        // Google Calendar API.
+        quickstart.authorize(JSON.parse(content), function (oAuth) {
+            LOG.warning(JSON.stringify(oAuth));
+            quickstart.listUserEvents(oAuth, function () {
+
+            });
+            res.redirect('/');
+        });
+    });
+    
+    //Call create token
+
+    /** oauth2Client.getToken(code, function (err, tokens) {
         // Now tokens contains an access_token and an optional refresh_token. Save them.
 
         if (!err) {
@@ -98,7 +118,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
             //saving the token to current session
             session["tokens"] = tokens;
             res.send(`
-            &lt;h3&gt;Login successful!!&lt;/h3&gt;
+            &lt;h3&gt;Login successful!!&lt;/h3&gt;z
             &lt;a href="/details"&gt;Go to details page&lt;/a&gt;
         `);
         }
@@ -106,7 +126,7 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
             LOG.debug("IN ELSE");
             console.log(err);
         }
-    });
+    });**/
         // Successful authentication, redirect home.
    //     res.redirect('/');
     });

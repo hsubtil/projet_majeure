@@ -40,7 +40,7 @@
     <Compile Include="app\models\google\passport.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="app\models\google\quickstart.js">
+    <Compile Include="app\controllers\google\quickstart.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="app\controllers\io.controller.js">
@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="server.js" />
     <Content Include="app\models\google\client_id.json" />
+    <Content Include="client_secret.json" />
     <Content Include="config.json" />
     <Content Include="public\index.html" />
     <Content Include="package.json" />

@@ -2,12 +2,16 @@
 var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
+var LOG = require("../../utils/log");
 
 // https://developers.google.com/google-apps/calendar/quickstart/nodejs
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/calendar-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
+console.log(process.env.HOME);
+console.log(process.env.HOMEPATH);
+console.log(process.env.USERPROFILE);
 var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'calendar-nodejs-quickstart.json';
@@ -15,15 +19,17 @@ var TOKEN_PATH = TOKEN_DIR + 'calendar-nodejs-quickstart.json';
 module.exports = this; 
 
 // Load client secrets from a local file.
-fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-    if (err) {
-        console.log('Error loading client secret file: ' + err);
-        return;
-    }
-    // Authorize a client with the loaded credentials, then call the
-    // Google Calendar API.
-    authorize(JSON.parse(content), listEvents);
-});
+this.listEvents = function (cb) {
+    fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+        if (err) {
+            console.log('Error loading client secret file: ' + err);
+            return;
+        }
+        // Authorize a client with the loaded credentials, then call the
+        // Google Calendar API.
+        authorize(JSON.parse(content), listUserEvents);
+    });
+}
 
 
 /**
@@ -33,7 +39,7 @@ fs.readFile('client_secret.json', function processClientSecrets(err, content) {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback) {
+this.authorize=function(credentials, callback) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
@@ -67,7 +73,8 @@ function getNewToken(oauth2Client, callback) {
         scope: SCOPES
     });
     console.log('Authorize this app by visiting this url: ', authUrl);
-    var rl = readline.createInterface({
+    // @TODO: REMOVE CMD LINE AND ADD GOOGLE AUHT default_route.js
+   var rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
@@ -99,7 +106,7 @@ function storeToken(token) {
         }
     }
     fs.writeFile(TOKEN_PATH, JSON.stringify(token));
-    console.log('Token stored to ' + TOKEN_PATH);
+    LOG.warning('Token stored to ' + TOKEN_PATH);
 }
 
 /**
@@ -107,7 +114,7 @@ function storeToken(token) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function listEvents(auth) {
+this.listUserEvents=function(auth, cb) {
     var calendar = google.calendar('v3');
     calendar.events.list({
         auth: auth,
@@ -118,12 +125,12 @@ function listEvents(auth) {
         orderBy: 'startTime'
     }, function (err, response) {
         if (err) {
-            console.log('The API returned an error: ' + err);
+            LOG.error('The API returned an error: ' + err);
             return;
         }
         var events = response.items;
         if (events.length == 0) {
-            console.log('No upcoming events found.');
+            LOG.log('No upcoming events found.');
         } else {
             console.log('Upcoming 10 events:');
             for (var i = 0; i < events.length; i++) {
@@ -132,5 +139,30 @@ function listEvents(auth) {
                 console.log('%s - %s', start, event.summary);
             }
         }
+    });
+}
+
+this.addEvents= function (auth, calendar) {
+    calendar.events.insert({
+        auth: auth,
+        calendarId: 'primary',
+        resource: {
+            'summary': 'Sample Event',
+            'description': 'Sample description',
+            'start': {
+                'dateTime': '2017-01-01T00:00:00',
+                'timeZone': 'GMT',
+            },
+            'end': {
+                'dateTime': '2017-01-01T01:00:00',
+                'timeZone': 'GMT',
+            },
+        },
+    }, function (err, res) {
+        if (err) {
+            console.log('Error: ' + err);
+            return;
+        }
+        console.log(res);
     });
 }

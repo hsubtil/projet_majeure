@@ -1,0 +1,4 @@
+Changer pour : un calendrier associé a hs.subtil@gmail.com par famille et géré ca sur ma boite mail.
+Changer socket.io pour webservice
+
+access token : 4/8AM0ojMeZnAxiWaaEg5PITafz0xh6PBEdYPUPSyGUaY

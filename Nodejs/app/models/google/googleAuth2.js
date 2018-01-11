@@ -1,4 +1,5 @@
-﻿var google = require('googleapis');
+﻿/*
+var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
 
 var oauth2Client = new OAuth2(
@@ -34,4 +35,4 @@ oauth2Client.getToken(code, function (err, tokens) {
     if (!err) {
         oauth2Client.setCredentials(tokens);
     }
-});
+});*/

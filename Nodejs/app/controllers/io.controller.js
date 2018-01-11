@@ -6,14 +6,15 @@ var REQUEST = require("./requetes"); // JEE Client
 var DB = require("./dbController.js"); // DB Controller 
 var FAMILY = require("../models/familyModel.js");
 var METEO = require("./requetesMeteo.js"); // Meteo webservice 
-var GOOGLE = require("./google/google.controller.js");
+var GOOGLE = require("./google/quickstart.js");
 
-const passport = require('passport');
+// const passport = require('passport');
 
 // Modules imports
 var path = require("path");
 var http = require('http');
 var jwt = require('jsonwebtoken');
+var fs = require('fs');
 
 module.exports = this;
 var io;
@@ -115,17 +116,25 @@ this.listen = function (server) {
        *
        */
         socket.on('update_user_profil', function (json_object) {
-            LOG.log("[SOCKET] Update user profil " + json_object['email']);
-            checkToken(json_object['token'], socket, function (err) {
-                if (!err) {
-                    DB.updateUser(json_object['email'], json_object['profile'], function (err) {
-                        LOG.debug("Profile updated");
-                    });
-                }
-                else {
-                    socket.emit('error', err);
-                }
-            });
+            LOG.warning("[SOCKET] Update user profil " + json_object['email']);
+            if (json_object != undefined) {
+                checkToken(json_object['token'], socket, function (err) {
+                    if (!err) {
+                        DB.updateUser(json_object['email'], json_object['profile'], function (err) {
+                            LOG.debug("Profile updated");
+                            socket.emit('update_user_profil_success', err); //@TODO Add to doc
+                        });
+                    }
+                    else {
+                        LOG.error("[SOCKET] Update user profil error.");
+                        socket.emit('error', err);
+                    }
+                });
+            } else {
+                LOG.error("[SOCKET] Update user profil undefined.");
+                socket.emit('error', "undefined JSON");
+            }
+
         });
 
         /***************************************************************************** FAMILIES *****************************************************************************/
@@ -285,9 +294,18 @@ this.listen = function (server) {
 /***************************************************************************** GOOGLE *****************************************************************************/
         socket.on('test_google', function () {
             LOG.log("[SOCKET] In google Api test event.");
-            GOOGLE.getCalendarList(function (err,res) {
+            fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+                if (err) {
+                    console.log('Error loading client secret file: ' + err);
+                    return;
+                }
+                // Authorize a client with the loaded credentials, then call the
+                // Google Calendar API.
+                GOOGLE.authorize(JSON.parse(content), GOOGLE.listUserEvents);
+            });
+            /*GOOGLE.listEvents(function (res) {
                 LOG.debug("[SOCKET] Test Api is ok");
-            }); 
+            }); */
             //passport.authenticate('google', { scope: ['profile'] });
 
         });
