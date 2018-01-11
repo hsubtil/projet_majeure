@@ -19,7 +19,7 @@ module.exports = Db;
  *
  */
 function Db() {
-    this.db_name = 'monpetitplanning'
+    this.db_name = 'monpetitplanning';
     this.dbURI = "mongodb://localhost:27017/monpetitplanning";
     this.users_collection = "users";
     this.families_collection = "families";
@@ -48,6 +48,8 @@ Db.connect = function (db_object, cb) {
     });
 }
 
+/***************************************************************************** USERS *****************************************************************************/
+
 /*
 *   param :
 *       db_object : object of type Db()
@@ -64,13 +66,13 @@ Db.getAllUsers = function (db_object, cb) {
         }
         LOG.log(results);
         results.forEach(function (result) {
-            LOG.debug(result)
+            LOG.debug(result);
             LOG.log("Name : " + result.name + "\n" + "Email : " + result.email);
             if (cb)
                 cb(JSON.stringify(result[0]));
         });
     });
-}
+};
 
 /*
 *   param :
@@ -98,7 +100,7 @@ Db.getUserByMail = function (db_object, user_mail, cb) {
         }
 
     });
-}
+};
 
 /*
 *   param :
@@ -122,7 +124,7 @@ Db.updateUserByMail = function (db_object, user_mail, new_info, cb) {
             LOG.log("[DB] User id " + JSON.stringify(user));
             db_object.database.collection(db_object.users_collection).update(user, newvalues, function (err, res) {
                 if (err) {
-                    LOG.error("[DB] Error in updating user")
+                    LOG.error("[DB] Error in updating user");
                     LOG.error(err);
                 } else {
                     LOG.log("[DB] Document updated");
@@ -134,7 +136,7 @@ Db.updateUserByMail = function (db_object, user_mail, new_info, cb) {
 
         }
     });
-}
+};
 /*
 *   param :
 *       db_object : object of type Db()
@@ -157,7 +159,9 @@ Db.register = function (db_object, new_user_json, cb) {
         if (cb)
             cb(null);
     });
-}
+};
+
+/***************************************************************************** FAMILIES *****************************************************************************/
 
 /*
 *
@@ -181,7 +185,7 @@ Db.getUserFamilies = function (db_object, user_mail, cb) {
         }
 
     });
-}
+};
 
 Db.getFamily = function (db_object, family_name, cb) {
     LOG.log("[DB] Get family from family list: " + JSON.stringify(family_name));
@@ -191,18 +195,37 @@ Db.getFamily = function (db_object, family_name, cb) {
         if (result[0] === undefined) {
             LOG.error("[DB] Family not found : " + family_name);
             if (cb)
-                cb("Family, user not found.",null);
+                cb("Family, user not found.", null);
         }
         else {
             var family = result[0];
             LOG.log("[DB] Get family " + JSON.stringify(family));
             if (cb) {
-                cb(null,family);
+                cb(null, family);
             }
 
         }
     });
-}
+};
+
+Db.getAllFamilies = function (db_object, family_code, cb) {
+    LOG.log("[DB] Get family from family list: " + JSON.stringify(family_code));
+    db_object.database.collection(db_object.families_collection).find({}).toArray(function (error, result) {
+        if (error) throw error;
+        if (result[0] === undefined) {
+            LOG.error("[DB] Cannot get families.");
+            if (cb)
+                cb("Cannot get families", null);
+        }
+        else {
+            LOG.log("[DB] Get families " + JSON.stringify(result));
+            if (cb) {
+                cb(null, family);
+            }
+
+        }
+    });
+};
 
 Db.getFamilyWithCode = function (db_object, family_code, cb) {
     LOG.log("[DB] Get family from family list with code: " + JSON.stringify(family_code));
@@ -210,7 +233,7 @@ Db.getFamilyWithCode = function (db_object, family_code, cb) {
     db_object.database.collection(db_object.family_list).find({ code: family_code }).toArray(function (error, result) {
         if (error) throw error;
         if (result[0] === undefined) {
-            LOG.error("[DB] Family not found : " + family_name);
+            LOG.error("[DB] Family not found : " + family_code);
             if (cb)
                 cb("Family, user not found.", null);
         }
@@ -269,7 +292,63 @@ Db.addFamilyToUser = function (db_object, mail, family_info, cb) {
         }
     });
 
-}
+};
+
+Db.addUserToFamily = function (db_object, mail, family_code, cb) {
+    LOG.log("[DB] Adding new user to family : " + JSON.stringify(family_code));
+    var newvalue;
+    db_object.database.collection(db_object.family_list).find({ code: family_code }).toArray(function (error, result) {
+        if (result[0] === undefined) {
+            LOG.error("[DB] Family not found : " + family_code);
+            if (cb)
+                cb("Error, user not found.");
+        }
+        else {
+            var family = result[0];
+
+            Db.getUserByMail(db_object, mail, function (user) {
+                var newuser = {"id":user['_id'],"email":user['email']}
+                var newvalue = { "$addToSet": { "members": newuser } };
+                LOG.debug("[DB] Add to family " + JSON.stringify(family_code) + "User " + JSON.stringify(user));
+                db_object.database.collection(db_object.family_list).update(family, newvalue, function (err, res) {
+                    if (err) {
+                        LOG.error("[DB] Error in updating family")
+                        LOG.error(err);
+                    } else {
+                        LOG.log("[DB] Document updated");
+                    }
+                });
+            });        
+        }
+    });
+
+};
+
+Db.getMemeberOfFamilyByCode = function (db_object, family_code, cb) {
+    // TO DO
+    LOG.log("[DB] Get family members for family : " + JSON.stringify(family_code));
+    db_object.database.collection(db_object.family_list).find({ code: family_code }).toArray(function (error, result) {
+        if (error) throw error;
+        if (result[0] === undefined) {
+            LOG.error("[DB] Family not found : " + family_name);
+            if (cb)
+                cb("Family, user not found.", null);
+        }
+        else {
+            var family = result[0];
+            LOG.log("[DB] Get family members" + JSON.stringify(family));
+            LOG.debug(JSON.stringify(family['members']));
+            LOG.debug(family['members'])
+            if (cb) {
+                cb(null, family['members']);
+            }
+
+        }
+    });
+};
+
+/***************************************************************************** CHAT *****************************************************************************/
+
 /*
 *  param : msg, JSON {code:, user:, date: , content: }
 */

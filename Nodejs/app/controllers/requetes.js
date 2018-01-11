@@ -54,7 +54,7 @@ this.connection = function (socket, json, cb) {
                     LOG.log("[HTTP] <- Auth is false form JEE Auth attempt " + reply);
                     socket.emit('auth_failed', reply);
                     if (cb)
-                        cb("auth_failed","Auth is not valid.");
+                        cb("auth_failed", "Auth is not valid.");
                 }
                 else {
                     LOG.log("[HTTP] <- Auth is true form JEE Auth attempt " + reply);
@@ -80,7 +80,7 @@ this.connection = function (socket, json, cb) {
     req.write(json_string);
     req.setTimeout(10000);
     req.end();
-}
+};
 
 /*
 *   param :
@@ -97,7 +97,7 @@ this.register = function (socket, json, cb) {
     var options = {
         host: CONFIG.jeeserver,
         port: CONFIG.jeeport,
-        path: '/FrontAuthWatcherWebService/rest/WatcherAddUser', 
+        path: '/FrontAuthWatcherWebService/rest/WatcherAddUser',
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=utf-8',
@@ -107,7 +107,7 @@ this.register = function (socket, json, cb) {
 
     var req = http.request(options, function (res) {
         LOG.log("[HTTP] -> Send to JEE Registration attempt " + json_string);
-                LOG.log("[HTTP] -> Request to JEE server with options " + JSON.stringify(options));
+        LOG.log("[HTTP] -> Request to JEE server with options " + JSON.stringify(options));
         var msg = '';
         res.setEncoding('utf8');
 
@@ -127,7 +127,7 @@ this.register = function (socket, json, cb) {
                 LOG.debug(msg);
                 var reply = JSON.parse(msg);
                 // var reply = JSON.parse(msg + "'sessionID':" + socket.id + "");
-                if (reply === false) {   
+                if (reply === false) {
                     LOG.log("[HTTP] <- Registration is false form JEE Registration attempt " + reply);
                     if (cb)
                         cb("register_failed");
@@ -159,6 +159,6 @@ this.register = function (socket, json, cb) {
     req.setTimeout(10000);
     req.end();
 
-}
+};
 
 

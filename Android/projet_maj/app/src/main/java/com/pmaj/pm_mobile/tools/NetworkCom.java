@@ -26,7 +26,7 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        URI uri = URI.create("http://192.168.1.100:1337/");
+        URI uri = URI.create("http://192.168.1.101:1337/");
         this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
@@ -63,7 +63,7 @@ public class NetworkCom {
         catch (JSONException e) {
             e.printStackTrace();
         }
-        mSocket.emit("signUp_attempt",json);
+        mSocket.emit("sign_up_attempt",json);
     }
 
     public void emitGetProfile(String token,String email){
@@ -89,6 +89,44 @@ public class NetworkCom {
         }
         mSocket.emit("request_family",json);
     }
+
+    public void emitGetMessages(String token,String code){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("code",code);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("load_messages",json);
+    }
+
+    public void emitSendMessage(String token,JSONObject msg){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("msg",msg);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("new_message",json);
+    }
+
+    public void emitSelectFamily(String token,String code){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("code",code);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("select_family",json);
+    }
+
+
 
 
     public void destroySocket() {

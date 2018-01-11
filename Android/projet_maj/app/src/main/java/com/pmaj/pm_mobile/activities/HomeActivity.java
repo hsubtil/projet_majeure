@@ -9,22 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
 import com.pmaj.pm_mobile.model.Family;
-import com.pmaj.pm_mobile.tools.Helper;
-import com.pmaj.pm_mobile.tools.MyAdapter;
+import com.pmaj.pm_mobile.tools.FamilyAdapter;
 import com.pmaj.pm_mobile.tools.NetworkCom;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import io.socket.emitter.Emitter;
@@ -32,12 +27,11 @@ import io.socket.emitter.Emitter;
 //TODO SEPARE METHODE NAVBAR ET HOME PAGE
 public class HomeActivity extends AppCompatActivity {
     private Button family_button;
-    private Button code_button;
+    private Button codeButton;
     private Button add_family;
     private Button log_out;
     private ImageView icon_profil;
     private RecyclerView family_list;
-    private NetworkCom socket;
     private SharedPreferences mPrefs;
 
 
@@ -48,26 +42,26 @@ public class HomeActivity extends AppCompatActivity {
         mPrefs = getSharedPreferences("authToken", 0);
 
         //Socket
-        socket = new NetworkCom();
-        socket.getmSocket().on("request_profile_reply", onProfilSuccess);
-        socket.getmSocket().on("request_family_reply", onFamiliesSuccess);
-        socket.getmSocket().on("error", onProfilFail);
+        LoginActivity.getSocketInstance().getmSocket().on("request_profile_reply", onProfilSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("request_family_reply", onFamiliesSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("error", onProfilFail);
 
         log_out = (Button) findViewById(R.id.log_out);
         icon_profil = (ImageView) findViewById(R.id.icon_profil);
         family_list = (RecyclerView) findViewById(R.id.family_list);
+        //codeButton = (Button) findViewById(R.id.codeButton);
 
+        family_list.setHasFixedSize(true);
 
-
-
-        socket.emitGetFamilies(mPrefs.getString("authToken", ""), getIntent().getStringExtra("email"));
-
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        family_list.setLayoutManager(mLayoutManager);
 
         log_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor mEditor = mPrefs.edit();
-                mEditor.putLong("lastLogin", 0);
+                mEditor.putLong("lastLogin", 0).apply();
+                mEditor.putString("token",null).apply();
                 mEditor.commit();
 
                 //Redicrection to Login page
@@ -81,9 +75,12 @@ public class HomeActivity extends AppCompatActivity {
         icon_profil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                socket.emitGetProfile(mPrefs.getString("authToken", ""), getIntent().getStringExtra("email"));
+                LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), getIntent().getStringExtra("email"));
             }
         });
+
+        LoginActivity.getSocketInstance().emitGetFamilies(mPrefs.getString("token",""), getIntent().getStringExtra("email"));
+
     }
 
     private Emitter.Listener onFamiliesSuccess = new Emitter.Listener() {
@@ -115,15 +112,14 @@ public class HomeActivity extends AppCompatActivity {
     };
 
 
-    private void displayFamilies(List<Family> familyList) {
-        family_list.setHasFixedSize(true);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        family_list.setLayoutManager(mLayoutManager);
-
-        RecyclerView.Adapter myAdapter = new MyAdapter(familyList, HomeActivity.this);
-        family_list.setAdapter(myAdapter);
-
+    private void displayFamilies(final List<Family> familyList) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                RecyclerView.Adapter myAdapter = new FamilyAdapter(familyList, HomeActivity.this);
+                family_list.setAdapter(myAdapter);
+            }
+        });
     }
 
 

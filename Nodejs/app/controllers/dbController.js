@@ -9,38 +9,39 @@ module.exports = this;
 
 /***************************************************************************** USERS *****************************************************************************/
 
-this.register = function (json_object){
+this.register = function (json_object) {
     DB.connect(db, function (error) {
         if (!error) {
             DB.register(db, json_object);
             DB.disconnect(db);
         }
     });
-}
+};
 
-this.getProfile = function (email,cb) {
+this.getProfile = function (email, cb) {
     DB.connect(db, function (error) {
         LOG.debug("IN REQUEST PROFILE");
         LOG.debug(email);
         DB.getUserByMail(db, email, function (res) {
-            if(cb)
+            if (cb)
                 cb(res);
             DB.disconnect(db);
         });
     });
-}
+};
 
 this.updateUser = function (mail, new_info, cb) {
-    DB.connect(db, function (error){
+    DB.connect(db, function (error) {
         DB.updateUserByMail(db, mail, new_info, function (res) {
             if (cb)
                 cb(res);
             DB.disconnect(db);
         });
     });
-}
+};
+
 /***************************************************************************** FAMILIES *****************************************************************************/
-this.getFamilies = function (email,cb) {
+this.getFamilies = function (email, cb) {
     DB.connect(db, function (error) {
         DB.getUserFamilies(db, email, function (res) {
             if (cb) {
@@ -51,19 +52,19 @@ this.getFamilies = function (email,cb) {
         });
     });
 
-}
+};
 
 this.getFamily = function (name, cb) {
     DB.connect(db, function (error) {
-        DB.getFamily(db, name, function (err,res) {
+        DB.getFamily(db, name, function (err, res) {
             if (cb) {
-                cb(err,res);
+                cb(err, res);
             }
             DB.disconnect(db);
         });
     });
 
-}
+};
 
 this.getFamilyWithCode = function (code, cb) {
     DB.connect(db, function (error) {
@@ -74,7 +75,7 @@ this.getFamilyWithCode = function (code, cb) {
             }
         });
     });
-}
+};
 
 this.addFamily = function (family_object, cb) {
     DB.connect(db, function (error) {
@@ -86,19 +87,34 @@ this.addFamily = function (family_object, cb) {
             DB.disconnect(db);
         });
     });
-}
+};
 
-this.addFamilyToUser = function (email, family, cb) {
+this.addFamilyToUser = function (email, family_code, family, cb) {
     DB.connect(db, function (error) {
         DB.addFamilyToUser(db, email, family, function (res) {
+            DB.addUserToFamily(db, email, family_code, function (reply) {
+                if (cb) {
+                    cb(reply);
+                }
+                DB.disconnect(db);
+            });
+        });
+    });
+};
+
+/*
+* Get all the family members.
+*/
+this.getMemberOfFamily = function (family_code, cb) {
+    DB.connect(db, function (error) {
+        DB.getMemeberOfFamilyByCode(db, family_code, function (err, res) {
             if (cb) {
-                cb(res);
+                cb(err,res);
             }
             DB.disconnect(db);
         });
     });
-}
-
+};
 // TO DO : 
 // Update families
 // Create families
@@ -116,17 +132,17 @@ this.saveMessage = function (msg, cb) {
         }
         DB.disconnect(db);
     });
-}
+};
 
 this.loadMessages = function (code, cb) {
     DB.connect(db, function (err) {
         if (!err) {
-            DB.loadMessages(db, code, function (error,res) {
+            DB.loadMessages(db, code, function (error, res) {
                 if (cb) {
-                    cb(error,res);
+                    cb(error, res);
                 }
             });
         }
         DB.disconnect(db);
     });
-}
+};

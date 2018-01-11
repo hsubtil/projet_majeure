@@ -70,8 +70,9 @@ public class SignUpActivity extends AppCompatActivity {
 
         //Socket
         socket = new NetworkCom();
-        socket.getmSocket().on("signUp_success", onSignUpSuccess);
-        socket.getmSocket().on("signUp_fail", onSignUpFail);
+        socket.getmSocket().on("registration_success", onSignUpSuccess);
+        socket.getmSocket().on("registration_failed", onSignUpFail);
+        socket.getmSocket().on("node_error", onNodeError);
 
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,23 +161,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         @Override
         public void call(Object... args) {
-            JSONObject obk = (JSONObject) args[0];
-
-            String token = "";
-            try {
-                token = obk.getString("token");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            SharedPreferences.Editor mEditor = mPrefs.edit();
-            // Shared preference declaration
-            mEditor.putString("sessionToken", token).apply();
-            String authToken = Helper.createAuthToken(email.getText().toString(), password.getText().toString());
-            mEditor.putString("authToken", authToken).apply(); // Create / update TOKEN
-
-            //Redirection to Home page
-            Intent intentLogged = new Intent(SignUpActivity.this, HomeActivity.class);
+            //Redirection to Login page
+            Intent intentLogged = new Intent(SignUpActivity.this, LoginActivity.class);
             startActivity(intentLogged);
 
             return;
@@ -184,6 +170,14 @@ public class SignUpActivity extends AppCompatActivity {
     };
 
     private Emitter.Listener onSignUpFail = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+
+            return;
+        }
+    };
+
+    private Emitter.Listener onNodeError = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
 

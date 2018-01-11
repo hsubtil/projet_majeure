@@ -1,33 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/famille"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_below="@+id/famille_list"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/family"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/codeButton"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CODE"/>
-           <!-- <TextView
+            android:layout_below="@+id/famille_list"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/family"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <!-- <Button
+                 android:id="@+id/codeButton"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="CODE"/>-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50sp"
+                android:text="Family Code : " />
+
+            <TextView
                 android:id="@+id/code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50sp"/>-->
+                android:layout_marginBottom="50sp" />
         </LinearLayout>
 
     </LinearLayout>

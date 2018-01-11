@@ -1,4 +1,6 @@
 ﻿"use strict";
+const dateTime = require('date-time');
+
 module.exports = this;
 
 // RED -> "\x1b[31m"
@@ -7,7 +9,7 @@ module.exports = this;
 // FgWhite = "\x1b[37m"
 var colorCode = { 'warn': '\x1b[35m', 'error': "\x1b[31m", 'log': "\x1b[37m", 'debug': "\x1b[32m" };
 var affichageLevel = ['error', 'warn', 'log', 'debug'];
-var currentLevel = 'debug';
+var currentLevel = 'log';
 
 /**
  * Does console.log and formats the data a nice way
@@ -24,15 +26,19 @@ this.logConsole = function(code, msg) {
 }
 
 this.debug = function (msg) {
-    this.logConsole('debug', '[DEBUG] ' + msg);
+  var d = dateTime({local: false});
+  this.logConsole('debug', '[' + d.toString() + '] '+ '[DEBUG] ' + msg);
 }
 
 this.log = function (msg) {
-    this.logConsole('log', msg);
+    var d = dateTime({ local: false });
+    this.logConsole('log', '[' + d.toString() + '] '+ msg);
 }
 this.error = function (msg) {
-    this.logConsole('error', msg);
+    var d = dateTime({ local: false });
+    this.logConsole('error', '[' + d.toString() + '] ' + msg);
 }
 this.warning = function (msg) {
-    this.logConsole('warn', msg);
+    var d = dateTime({ local: false });
+    this.logConsole('warn', '[' + d.toString() + '] ' + msg);
 }
