@@ -15,7 +15,8 @@ var server = http.createServer(app);
 var defaultRoute = require("./app/routes/default_route.js");
 var IOController = require("./app/controllers/io.controller.js");
 var LOG = require("./app/utils/log");
-// @TODO : afficher le niveau de debug du logs
+
+LOG.warning("App running with log level = " + LOG.getLevel());
 app.use(bodyParser.json()); // support pour les ficher json 
 app.use(bodyParser.urlencoded({ extended: true })); 
 

@@ -34,12 +34,6 @@
     <Compile Include="app\controllers\google\google.controller.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="app\models\google\googleAuth2.js">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="app\models\google\passport.js">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="app\controllers\google\quickstart.js">
       <SubType>Code</SubType>
     </Compile>
@@ -56,16 +50,13 @@
     <Compile Include="app\models\familyModel.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="app\models\google\googleAuth.js">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="app\models\google\googleAuth.js" />
     <Compile Include="app\models\userModel.js" />
     <Compile Include="app\routes\default_route.js" />
     <Compile Include="app\utils\log.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="server.js" />
-    <Content Include="app\models\google\client_id.json" />
     <Content Include="client_secret.json" />
     <Content Include="config.json" />
     <Content Include="public\index.html" />

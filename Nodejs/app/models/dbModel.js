@@ -208,6 +208,27 @@ Db.getFamily = function (db_object, family_name, cb) {
     });
 };
 
+Db.getFamilyByCode = function (db_object, family_code, cb) {
+    LOG.log("[DB] Get family with code from family list: " + JSON.stringify(family_code));
+    var newvalues;
+    db_object.database.collection(db_object.family_list).find({ code: family_code }).toArray(function (error, result) {
+        if (error) throw error;
+        if (result[0] === undefined) {
+            LOG.error("[DB] Family not found : " + family_code);
+            if (cb)
+                cb("Family, user not found.", null);
+        }
+        else {
+            var family = result[0];
+            LOG.log("[DB] Get family " + JSON.stringify(family));
+            if (cb) {
+                cb(null, family);
+            }
+
+        }
+    });
+};
+
 Db.getAllFamilies = function (db_object, family_code, cb) {
     LOG.log("[DB] Get family from family list: " + JSON.stringify(family_code));
     db_object.database.collection(db_object.families_collection).find({}).toArray(function (error, result) {
@@ -306,18 +327,21 @@ Db.addUserToFamily = function (db_object, mail, family_code, cb) {
         else {
             var family = result[0];
 
-            Db.getUserByMail(db_object, mail, function (user) {
-                var newuser = {"id":user['_id'],"email":user['email']}
-                var newvalue = { "$addToSet": { "members": newuser } };
-                LOG.debug("[DB] Add to family " + JSON.stringify(family_code) + "User " + JSON.stringify(user));
-                db_object.database.collection(db_object.family_list).update(family, newvalue, function (err, res) {
-                    if (err) {
-                        LOG.error("[DB] Error in updating family")
-                        LOG.error(err);
-                    } else {
-                        LOG.log("[DB] Document updated");
-                    }
-                });
+            Db.getUserByMail(db_object, mail, function (err,user) {
+                if (!err) {
+                    console.log(user);
+                    var newuser = { "id": user['_id'], "email": user['email'] }
+                    var newvalue = { "$addToSet": { "members": newuser } };
+                    LOG.debug("[DB] Add to family " + JSON.stringify(family_code) + "User " + JSON.stringify(user));
+                    db_object.database.collection(db_object.family_list).update(family, newvalue, function (err, res) {
+                        if (err) {
+                            LOG.error("[DB] Error in updating family")
+                            LOG.error(err);
+                        } else {
+                            LOG.log("[DB] Document updated");
+                        }
+                    });
+                }
             });        
         }
     });

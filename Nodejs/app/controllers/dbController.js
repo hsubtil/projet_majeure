@@ -74,6 +74,18 @@ this.getFamily = function (name, cb) {
 
 };
 
+this.getFamilyByCode = function (code, cb) {
+    DB.connect(db, function (error) {
+        DB.getFamilyByCode(db, code, function (err, res) {
+            if (cb) {
+                cb(err, res);
+            }
+            DB.disconnect(db);
+        });
+    });
+
+};
+
 this.getFamilyWithCode = function (code, cb) {
     DB.connect(db, function (error) {
         DB.getFamilyWithCode(db, code, function (err, res) {

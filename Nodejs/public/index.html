@@ -85,7 +85,7 @@
             socket.emit('new_family', {
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
                 , 'email': "hugo.subtil@ol.com"
-                , 'family': "Lacazette"
+                , 'family': "TestCalendar"
             });
         }
         function addFamilyToUser() {
@@ -112,7 +112,16 @@
             });
         }
         function testGoogle() {
-            socket.emit('test_google');
+            socket.emit('google_set_event',{
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , "code": "a3812cd3-35b0-42c3-8e65-08f343277357"
+            });
+        }
+        function getEventGoogle() {
+            socket.emit('google_list_events', {
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                , "code":"a3812cd3-35b0-42c3-8e65-08f343277357"
+            });
         }
         function getMeteo(){
             socket.emit('request_family_meteo', {
@@ -150,7 +159,8 @@
         </tr>
         <tr>
             <td>Google : </td>
-            <td><input type="button" value="Test Api" onclick="javascript:testGoogle()" /></td>
+            <td><input type="button" value="Set event" onclick="javascript:testGoogle()" /></td>
+            <td><input type="button" value="Get Calendar events" onclick="javascript:getEventGoogle()" /></td>
         </tr>
         <tr>
             <td>Météo : </td>

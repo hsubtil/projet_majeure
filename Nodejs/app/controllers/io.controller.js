@@ -34,7 +34,7 @@ this.listen = function (server) {
         /***************************************************************************** USERS *****************************************************************************/
 
         /*
-        *  param : JSON {'mail':"",'password':"",'profile':{'coord':{'lat':,'lon':}}} // @TODO Add to doc
+        *  param : JSON {'mail':"",'password':"",'profile':{'coord':{'lat':,'lon':}}} 
         *  return : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
         *  When Front server send an auth event, ask to JEE server if auth is valid or not. 
         */
@@ -123,7 +123,7 @@ this.listen = function (server) {
                     if (!err) {
                         DB.updateUser(json_object['email'], json_object['profile'], function (err) {
                             LOG.debug("Profile updated");
-                            socket.emit('update_user_profil_success', err); //@TODO Add to doc
+                            socket.emit('update_user_profil_success', err); 
                         });
                     }
                     else {
@@ -174,9 +174,9 @@ this.listen = function (server) {
                     families_map['families'].push({ 'code': json_object['code'], 'socket': socket });
                     console.log(families_map['families']);
                     LOG.log(families_map);
-                    socket.emit('selected_family_ok');   // @TODO : Add to doc
+                    socket.emit('selected_family_ok');
                 } else {
-                    socket.emit('selected_family_ko');   // @TODO : Add to doc
+                    socket.emit('selected_family_ko');   
                 }
             });
         });
@@ -215,20 +215,21 @@ this.listen = function (server) {
             var user = json_object['email'];
             var family = new FAMILY();
             family.name = json_object['family'];
-            family.generateCode();
-            checkToken(json_object['token'], socket, function (err) {
-                if (!err) {
-                    DB.addFamily(family, function (err) {
-                        if (!err) {
-                            DB.getFamily(family.name, function (err, reply) {
-                                if (!err) {
-                                    LOG.log("[SOCKET] New family for user " + JSON.stringify(user));
-                                    DB.addFamilyToUser(user, reply);
-                                }
-                            });
-                        }
-                    });
-                }
+            FAMILY.init(family, function (res) {
+                checkToken(json_object['token'], socket, function (err) {
+                    if (!err) {
+                        DB.addFamily(family, function (err) {
+                            if (!err) {
+                                DB.getFamily(family.name, function (err, reply) {
+                                    if (!err) {
+                                        LOG.log("[SOCKET] New family for user " + JSON.stringify(user));
+                                        DB.addFamilyToUser(user, reply['code'], reply);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
             });
         });
 
@@ -293,32 +294,111 @@ this.listen = function (server) {
             });
         });
 /***************************************************************************** GOOGLE *****************************************************************************/
-        socket.on('test_google', function () {
-            LOG.log("[SOCKET] In google Api test event.");
-            fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-                if (err) {
-                    console.log('Error loading client secret file: ' + err);
-                    return;
-                }
-                // Authorize a client with the loaded credentials, then call the
-                // Google Calendar API.
-                GOOGLE.authorize(JSON.parse(content), function (oAuth) {
-                    GOOGLE.listUserEvents(oAuth);
+        socket.on('test_google', function (json_object) {
+            checkToken(json_object['token'], socket, function (err) {
+                
+                LOG.log("[SOCKET] In google Api test event.");
+                fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+                    if (err) {
+                        console.log('Error loading client secret file: ' + err);
+                        return;
+                    }
+                    GOOGLE.authorize(JSON.parse(content), function (oAuth) {
+                        LOG.debug(json_object['code']);
+                        GOOGLE.addCalendar(oAuth, json_object['code'], function (res) {
+                            //
+                        });
+                    });
                 });
-                //GOOGLE.authorize(JSON.parse(content), GOOGLE.addEvents);
             });
-            /*GOOGLE.listEvents(function (res) {
-                LOG.debug("[SOCKET] Test Api is ok");
-            }); */
-            //passport.authenticate('google', { scope: ['profile'] });
-
         });
 
-        socket.on('google_reply', function () {
-            LOG.log("[SOCKET] In google reply");
-
+        /**
+        *       param : json_object, JSON {token:, event : {
+                                                            'summary': 'Test API mylittleplaner',
+                                                            'location': 'CPE Lyon',
+                                                            'description': 'A chance to hear more about Google\'s developer products.',
+                                                            'start': {
+                                                                'dateTime': '2018-01-15T09:10:00',
+                                                                'timeZone': 'America/Los_Angeles',
+                                                            },
+                                                            'end': {
+                                                                'dateTime': '2018-01-15T17:12:00',
+                                                                'timeZone': 'America/Los_Angeles',
+                                                            },
+                                                            'attendees': [
+                                                                { 'email': 'hs.subtil@gmail.com' },
+                                                                { 'email': 'mylittleplaner@gmail.com' },
+                                                            ]
+                                                            }
+        *       return : 
+        */
+      /*  socket.on('google_set_event', function (json_object) {
+            LOG.log("[SOCKET] In google set event");
+            checkToken(json_object['token'], socket, function (err) {
+                fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+                    if (err) {
+                        console.log('Error loading client secret file: ' + err);
+                        return;
+                    }
+                    // Authorize a client with the loaded credentials, then call the
+                    // Google Calendar API.
+                    GOOGLE.authorize(JSON.parse(content), function (oAuth) {
+                        GOOGLE.addEvents(oAuth, json_object['code']);
+                    });
+                });
+            });
+        });*/
+        socket.on('google_set_event', function (json_object) {
+            var event = {
+                                                            'summary': 'Test API mylittleplaner',
+                'location': 'CPE Lyon',
+                'description': 'A chance to hear more about Google\'s developer products.',
+                'start': {
+                                                                'dateTime': '2018-01-15T09:10:00',
+                    'timeZone': 'America/Los_Angeles',
+                                                            },
+                'end': {
+                                                                'dateTime': '2018-01-15T17:12:00',
+                    'timeZone': 'America/Los_Angeles',
+                                                            },
+                'attendees': [
+                    { 'email': 'hs.subtil@gmail.com' },
+                    { 'email': 'mylittleplaner@gmail.com' },
+                ]
+                                                            };
+            LOG.log("[SOCKET] In google set event");
+            checkToken(json_object['token'], socket, function (err) {
+                DB.getFamilyByCode(json_object['code'], function (err, family) {
+                    if (!err) {
+                        GOOGLE.addEvents(family['calendarId'], event, function (err, res) {
+                            if (!err)
+                                socket.emit('google_list_events_reply');
+                            else
+                                socket.emit('google_list_events_err');
+                        });
+                    }
+                });
+            });
         });
-
+        /*
+        *
+        */
+        socket.on('google_list_events', function (json_object) {
+            LOG.log("[SOCKET] In google list event");
+            checkToken(json_object['token'], socket, function (err) {
+                DB.getFamilyByCode(json_object['code'], function (err, family) {
+                    if (!err) {
+                        GOOGLE.listUserEvents(family['calendarId'], function (err, res) {
+                            if (!err)
+                                socket.emit('google_list_events_reply');
+                            else
+                                socket.emit('google_list_events_err');
+                        });
+                    }
+                });
+            });
+        });
 /***************************************************************************** METEO *****************************************************************************/
      /*   TO REMOVE
         socket.on('get_meteo', function (json_object) {
@@ -346,7 +426,8 @@ this.listen = function (server) {
         */
 
         /*
-        *  Return 
+        *  Return
+        *  @TODO: Meteo is not working.
         */
         socket.on('request_family_meteo', function (json_object) {
             LOG.log("[SOCKET] Request family members");
@@ -357,8 +438,9 @@ this.listen = function (server) {
                     DB.getMemberOfFamily(json_object['code'], function (err, family_members) {
                         for (var member in family_members) {
                             LOG.debug(member);
-                            LOG.debug("In for " + JSON.stringify(family_members[member]));
+                            LOG.debug(" TESTTTTTTTTTTTTTTt" + JSON.stringify(family_members[member]));
                             DB.getProfile(family_members[member]['email'], function (profile) {
+                                LOG.debug(profile);
                                 var name = profile['name'];
                                 LOG.debug(profile['coord']);
                                 LOG.debug(name);
@@ -370,9 +452,12 @@ this.listen = function (server) {
                                 if (lock_increment === family_members.length) {
                                     LOG.debug("In if ");
                                     METEO.get_meteo(meteoRequestJson, function (err, msgs) {
-                                        LOG.debug(" [METEO] IN");
+                                        LOG.debug("[METEO] IN");
                                         if (!err) {
                                             LOG.debug("Resultat Final : " + JSON.stringify(msgs));
+                                            socket.emit("request_family_meteo_reply", msgs);
+                                        } else {
+                                            socket.emit("request_family_meteo_err", err);
                                         }
                                     });
                                 }
@@ -406,12 +491,11 @@ function checkToken(token, socket, cb) {
             cb(err);
         } else {
             LOG.debug("[AUTH] Token is valid");
-            socket.emit("invalid_token");  // @TODO : add to doc
+            socket.emit("invalid_token");  
             if (cb) {
                 cb(null);
             }
         }
-        // @TODO: add error_code if token is false 
     });
 }
 

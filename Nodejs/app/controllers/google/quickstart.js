@@ -3,7 +3,6 @@ var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 var LOG = require("../../utils/log");
-var gcal = require('google-calendar');
 
 // https://developers.google.com/google-apps/calendar/quickstart/nodejs
 
@@ -40,7 +39,7 @@ this.listEvents = function (cb) {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-this.authorize=function(credentials, callback) {
+function authorize(credentials, callback) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
@@ -58,7 +57,7 @@ this.authorize=function(credentials, callback) {
             callback(oauth2Client);
         }
     });
-}
+};
 
 /**
  * Get and store new token after prompting for user authorization, and then
@@ -115,107 +114,109 @@ function storeToken(token) {
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-this.listUserEvents = function (auth, cb) {
+this.listUserEvents = function (calendar_id, cb) {
    /* LOG.warning(auth['credentials']['access_token']);
     var google_calendar = new gcal.GoogleCalendar(auth['credentials']['access_token']);
     google_calendar.calendarList.list(function (err, calendarList) {
         LOG.error(JSON.stringify(err));
         console.log(calendarList);
     });*/
-    
-    var calendar = google.calendar('v3');
-    calendar.events.list({
-        auth: auth,
-        calendarId: 'primary',
-        timeMin: (new Date()).toISOString(),
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime'
-    }, function (err, response) {
+    LOG.log("[GOOGLE WS] Retrieve events from calendar :" + calendar_id);
+
+    fs.readFile('client_secret.json', function processClientSecrets(err, content) {
         if (err) {
-            LOG.error('The API returned an error: ' + err);
-            return;
+            console.log('Error loading client secret file: ' + err);
+            cb(err,null);
         }
-        var events = response.items;
-        if (events.length == 0) {
-            LOG.log('No upcoming events found.');
-        } else {
-            console.log('Upcoming 10 events:');
-            for (var i = 0; i < events.length; i++) {
-                var event = events[i];
-                var start = event.start.dateTime || event.start.date;
-                console.log('%s - %s', start, event.summary);
-            }
-            console.log(JSON.stringify(calendar));
-           // cb(calendar);
-        }
+        // Authorize a client with the loaded credentials, then call the
+        // Google Calendar API.
+        authorize(JSON.parse(content), function (oAuth) {
+            var calendar = google.calendar('v3');
+            calendar.events.list({
+                auth: oAuth,
+                calendarId: calendar_id,
+                timeMin: (new Date()).toISOString(),
+                maxResults: 10,
+                singleEvents: true,
+                orderBy: 'startTime'
+            }, function (err, response) {
+                if (err) {
+                    LOG.error('The API returned an error: ' + err);
+                    cb(err,null);
+                }
+                var events = response.items;
+                if (events.length == 0) {
+                    LOG.log('No upcoming events found.');
+                } else {
+                    console.log('Upcoming 10 events:');
+                    for (var i = 0; i < events.length; i++) {
+                        var event = events[i];
+                        var start = event.start.dateTime || event.start.date;
+                        console.log('%s - %s', start, event.summary);
+                    }
+                    console.log(JSON.stringify(calendar));
+                    cb(null,events);
+                }
+            });
+        });
     });
+
+
 }
 
-this.addEvents = function (auth) {
+this.addEvents = function (calendar_id, event_json, cb) {
     var calendar = google.calendar('v3');   
-    LOG.log("[GOOGLE] Add event");
-    var event = {
-        'summary': 'Test API mylittleplaner',
-        'location': 'CPE Lyon',
-        'description': 'A chance to hear more about Google\'s developer products.',
-        'start': {
-            'dateTime': '2018-01-15T09:00:00-10:00',
-            'timeZone': 'America/Los_Angeles',
-        },
-        'end': {
-            'dateTime': '2018-01-15T17:00:00-12:00',
-            'timeZone': 'America/Los_Angeles',
-        },
-        'recurrence': [
-            'RRULE:FREQ=DAILY;COUNT=2'
-        ],
-        'attendees': [
-            { 'email': 'hs.subtil@gmail.com' },
-            { 'email': 'mylittleplaner@gmail.com' },
-        ],
-        'reminders': {
-            'useDefault': false,
-            'overrides': [
-                { 'method': 'email', 'minutes': 24 * 60 },
-                { 'method': 'popup', 'minutes': 10 },
-            ],
-        },
-    };
-
-    calendar.events.insert({
-        auth: auth,
-        calendarId: 'primary',
-        resource: event,
-    }, function (err, event) {
+    LOG.log("[GOOGLE] Add event ");
+    var calendar = google.calendar('v3');
+    LOG.log("[GOOGLE] Create calendar");
+    fs.readFile('client_secret.json', function processClientSecrets(err, content) {
         if (err) {
-            console.log('There was an error contacting the Calendar service: ' + err);
-            return;
+            console.log('Error loading client secret file: ' + err);
+            cb(err, null);
         }
-        console.log('Event created: %s', event.htmlLink);
+        authorize(JSON.parse(content), function (oAuth) {
+            calendar.events.insert({
+                auth: oAuth,
+                calendarId: calendar_id,
+                resource: event_json,
+            }, function (err, event_json) {
+                if (err) {
+                    LOG.error('There was an error contacting the Calendar service: ' + err);
+                    cb(err,null);
+                }
+                LOG.log("[GOOGLE] Event created")
+                console.log('html link: %s', event_json.htmlLink);
+             });
+        });
     });
-
-    /*
-    calendar.events.insert({
-        auth: auth,
-        calendarId: 'primary',
-        resource: {
-            'summary': 'Sample Event',
-            'description': 'Sample description',
-            'start': {
-                'dateTime': '2018-02-02T15:00:00',
-                'timeZone': 'GMT',
-            },
-            'end': {
-                'dateTime': '2018-02-02T16:00:00',
-                'timeZone': 'GMT',
-            },
-        },
-    }, function (err, res) {
-        if (err) {
-            console.log('Error: ' + err);
-            return;
-        }
-        console.log(res);
-    });*/
 }
+/*
+*  resp = JSON {id,etag,summary}
+*/
+this.addCalendar = function (calendar_name, cb) {
+    // @TODO
+    var calendar = google.calendar('v3');
+    LOG.log("[GOOGLE] Create calendar");
+    fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+        if (err) {
+            console.log('Error loading client secret file: ' + err);
+            cb(err,null);
+        }
+        authorize(JSON.parse(content), function (oAuth) {
+            calendar.calendars.insert({
+                auth: oAuth,
+                resource: { summary: calendar_name }
+            }, function (err, resp) {
+                if (err) {
+                    LOG.error('There was an error contacting the Calendar service: ' + err);
+                    cb(err,null);
+                }
+                LOG.log("[GOOGLE] Calendar created")
+                console.log(resp);
+                if (cb)
+                    cb(null,resp);
+            });
+        });
+     });
+};
+

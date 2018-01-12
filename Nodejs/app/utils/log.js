@@ -16,6 +16,10 @@ var currentLevel = 'debug';
  * Param : - affichageLevel['error', 'warn', 'log', 'debug']
  *         - msg
 */
+this.getLevel = function () {
+    return currentLevel;
+}
+
 this.logConsole = function(code, msg) {
     var logToWrite;
     //console.log(affichageLevel.indexOf(currentLevel));
