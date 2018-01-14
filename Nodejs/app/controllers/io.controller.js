@@ -294,6 +294,7 @@ this.listen = function (server) {
             });
         });
 /***************************************************************************** GOOGLE *****************************************************************************/
+        // Check C:\Users\Hugo\.credentials
         socket.on('test_google', function (json_object) {
             checkToken(json_object['token'], socket, function (err) {
                 
@@ -333,24 +334,8 @@ this.listen = function (server) {
                                                             }
         *       return : 
         */
-      /*  socket.on('google_set_event', function (json_object) {
-            LOG.log("[SOCKET] In google set event");
-            checkToken(json_object['token'], socket, function (err) {
-                fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-                    if (err) {
-                        console.log('Error loading client secret file: ' + err);
-                        return;
-                    }
-                    // Authorize a client with the loaded credentials, then call the
-                    // Google Calendar API.
-                    GOOGLE.authorize(JSON.parse(content), function (oAuth) {
-                        GOOGLE.addEvents(oAuth, json_object['code']);
-                    });
-                });
-            });
-        });*/
         socket.on('google_set_event', function (json_object) {
-            var event = {
+         /*   var event = {
                                                             'summary': 'Test API mylittleplaner',
                 'location': 'CPE Lyon',
                 'description': 'A chance to hear more about Google\'s developer products.',
@@ -366,12 +351,12 @@ this.listen = function (server) {
                     { 'email': 'hs.subtil@gmail.com' },
                     { 'email': 'mylittleplaner@gmail.com' },
                 ]
-                                                            };
+                                                            };*/
             LOG.log("[SOCKET] In google set event");
             checkToken(json_object['token'], socket, function (err) {
                 DB.getFamilyByCode(json_object['code'], function (err, family) {
                     if (!err) {
-                        GOOGLE.addEvents(family['calendarId'], event, function (err, res) {
+                        GOOGLE.addEvents(family['calendarId'], json_object['event'], function (err, res) {
                             if (!err)
                                 socket.emit('google_list_events_reply');
                             else
@@ -438,23 +423,18 @@ this.listen = function (server) {
                     DB.getMemberOfFamily(json_object['code'], function (err, family_members) {
                         for (var member in family_members) {
                             LOG.debug(member);
-                            LOG.debug(" TESTTTTTTTTTTTTTTt" + JSON.stringify(family_members[member]));
-                            DB.getProfile(family_members[member]['email'], function (profile) {
+                            LOG.debug(JSON.stringify(family_members[member]));
+                            DB.getProfile(family_members[member]['email'], function (err, profile) {
                                 LOG.debug(profile);
                                 var name = profile['name'];
                                 LOG.debug(profile['coord']);
-                                LOG.debug(name);
                                 meteoRequestJson[name] = profile['coord'];
-                                console.log(JSON.stringify(meteoRequestJson));
-                                LOG.debug("member");
                                 lock_increment++;  // Increment lock_increment
-                                LOG.debug(family_members.length);
                                 if (lock_increment === family_members.length) {
-                                    LOG.debug("In if ");
                                     METEO.get_meteo(meteoRequestJson, function (err, msgs) {
                                         LOG.debug("[METEO] IN");
                                         if (!err) {
-                                            LOG.debug("Resultat Final : " + JSON.stringify(msgs));
+                                            LOG.log("Resultat Final : " + JSON.stringify(msgs));
                                             socket.emit("request_family_meteo_reply", msgs);
                                         } else {
                                             socket.emit("request_family_meteo_err", err);
