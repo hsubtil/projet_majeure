@@ -13,15 +13,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/navbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <include layout="@layout/activity_navbar" />
-
-            </LinearLayout>
-
 
             <RelativeLayout
                 android:id="@+id/profil_infos"

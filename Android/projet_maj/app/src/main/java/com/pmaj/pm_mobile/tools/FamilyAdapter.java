@@ -64,6 +64,7 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+
         holder.family.setText(dataset.get(position).getName());
         holder.code.setText(dataset.get(position).getCode());
 
@@ -87,6 +88,7 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
         @Override
         public void call(Object... args) {
             final Intent intent = new Intent(ActivityContext, ChatActivity.class);
+            //TODO CHANGER TOUT LES PUT EXTRA EN PREFERENCE
             intent.putExtra("family_name",Mholder.family.getText().toString());
             intent.putExtra("family_code",Mholder.code.getText().toString());
             ActivityContext.startActivity(intent);

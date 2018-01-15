@@ -2,13 +2,17 @@ package com.pmaj.pm_mobile.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
 import com.pmaj.pm_mobile.model.Family;
@@ -31,6 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button add_family;
     private Button log_out;
     private ImageView icon_profil;
+    private ImageView icon_menu;
     private RecyclerView family_list;
     private SharedPreferences mPrefs;
 
@@ -49,6 +54,7 @@ public class HomeActivity extends AppCompatActivity {
         log_out = (Button) findViewById(R.id.log_out);
         icon_profil = (ImageView) findViewById(R.id.icon_profil);
         family_list = (RecyclerView) findViewById(R.id.family_list);
+        icon_menu = (ImageView) findViewById(R.id.icon_menu);
         //codeButton = (Button) findViewById(R.id.codeButton);
 
         family_list.setHasFixedSize(true);
@@ -56,30 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         family_list.setLayoutManager(mLayoutManager);
 
-        log_out.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences.Editor mEditor = mPrefs.edit();
-                mEditor.putLong("lastLogin", 0).apply();
-                mEditor.putString("token",null).apply();
-                mEditor.commit();
-
-                //Redicrection to Login page
-                Intent intentLogged = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(intentLogged);
-
-
-            }
-        });
-
-        icon_profil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), getIntent().getStringExtra("email"));
-            }
-        });
-
-        LoginActivity.getSocketInstance().emitGetFamilies(mPrefs.getString("token",""), getIntent().getStringExtra("email"));
+        LoginActivity.getSocketInstance().emitGetFamilies(mPrefs.getString("token",""), mPrefs.getString("email",""));
 
     }
 
@@ -169,6 +152,43 @@ public class HomeActivity extends AppCompatActivity {
             return;
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);//Menu Resource, Menu
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.my_famillies:
+                return true;
+            case R.id.my_family_calendar:
+                Toast.makeText(getApplicationContext(),"My Family Calendar Selected",Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.my_family_map:
+                Toast.makeText(getApplicationContext(),"My Family Map Selected",Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.icon_profil:
+                LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), mPrefs.getString("email",""));
+                return true;
+            case R.id.log_out :
+                SharedPreferences.Editor mEditor = mPrefs.edit();
+                mEditor.putLong("lastLogin", 0).apply();
+                mEditor.putString("token",null).apply();
+                mEditor.putString("name",null).apply();
+                mEditor.putString("email",null).apply();
+                mEditor.commit();
+
+                //Redicrection to Login page
+                Intent intentLoggedOut = new Intent(HomeActivity.this, LoginActivity.class);
+                startActivity(intentLoggedOut);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
 }

@@ -108,11 +108,11 @@ public class LoginActivity extends AppCompatActivity {
             // Shared preference declaration
             mEditor.putString("token", token).apply();
             mEditor.putString("name",userName).apply();
+            mEditor.putString("email",email.getText().toString()).apply();
             mEditor.commit();
 
             //Redicrection to Home page
             Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
-            intentLogged.putExtra("email",email.getText().toString());
             startActivity(intentLogged);
 
             return;
@@ -128,14 +128,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkConnectionToken() {
         Long lastLogin = mPrefs.getLong("lastLogin", 36);
-        long acutallogin = new Date().getTime();
-        if (lastLogin != 0 && (acutallogin - lastLogin) < 3000) {
+        //long acutallogin = new Date().getTime();
+        if (lastLogin != 0) {
             Toast.makeText(LoginActivity.this, "Hello again !", Toast.LENGTH_LONG).show();
            //Redirection vers Page Home
-            Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
+            Intent intentLogged = new Intent(LoginActivity.this, FingerPrintActivity.class);
             startActivity(intentLogged);
-        } else {
-            Toast.makeText(LoginActivity.this, "Logged out", Toast.LENGTH_LONG).show();
         }
 
     }
