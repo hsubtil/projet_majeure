@@ -71,14 +71,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         String m = mPrefs.getString("name","");
         String p = dataset.get(position).getSender();
         if(m.equals(p)){
-            holder.message.setBackgroundColor(Color.parseColor("#b9e7c4"));
+            holder.message.setBackgroundResource(R.drawable.message_bubble_user);
             holder.sender.setGravity(Gravity.RIGHT);
             holder.messageText.setGravity(Gravity.RIGHT);
 
         }
         else
         {
-            holder.message.setBackgroundColor(Color.parseColor("#f9f1c7"));
+            holder.message.setBackgroundResource(R.drawable.message_bubble_members);
             holder.sender.setGravity(Gravity.LEFT);
             holder.messageText.setGravity(Gravity.LEFT);
         }

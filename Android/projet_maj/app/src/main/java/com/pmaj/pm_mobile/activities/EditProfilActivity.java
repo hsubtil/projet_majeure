@@ -6,19 +6,56 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
 
 public class EditProfilActivity extends AppCompatActivity {
     private SharedPreferences mPrefs;
+    private TextView calendar;
+    private TextView families;
+    private TextView map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profil);
         mPrefs = getSharedPreferences("authToken", 0);
+
+        calendar = (TextView) findViewById(R.id.calendar);
+        families = (TextView) findViewById(R.id.families);
+        map = (TextView) findViewById(R.id.map);
+
+        calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Redicrection to Calendar page
+                Intent intentLogged = new Intent(EditProfilActivity.this, CalendarActivity.class);
+                startActivity(intentLogged);
+            }
+        });
+
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Redicrection to Map page
+                Intent intentLogged = new Intent(EditProfilActivity.this, MapActivity.class);
+                startActivity(intentLogged);
+            }
+        });
+
+        families.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //Redicrection to Home page
+                Intent intentLogged = new Intent(EditProfilActivity.this, HomeActivity.class);
+                startActivity(intentLogged);
+            }
+        });
 
         //JSON { 'email': "", 'name': "", 'surname': "", 'address': "", 'cp': "", 'city':"", 'country': "", 'birthday': "" }
 
@@ -33,17 +70,6 @@ public class EditProfilActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.my_famillies:
-                //Redicrection to Login page
-                Intent intentHome = new Intent(EditProfilActivity.this, HomeActivity.class);
-                startActivity(intentHome);
-                return true;
-            case R.id.my_family_calendar:
-                Toast.makeText(getApplicationContext(),"My Family Calendar Selected",Toast.LENGTH_LONG).show();
-                return true;
-            case R.id.my_family_map:
-                Toast.makeText(getApplicationContext(),"My Family Map Selected",Toast.LENGTH_LONG).show();
-                return true;
             case R.id.icon_profil:
                 LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), mPrefs.getString("email",""));
                 return true;

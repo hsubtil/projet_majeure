@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-        <item  android:id="@+id/my_famillies"
-            android:title="My Families"/>
-        <item  android:id="@+id/my_family_calendar"
-            android:title="My Calendar"/>
-        <item  android:id="@+id/my_family_map"
-            android:title="My Family Map"/>
         <item android:id="@+id/icon_profil"
                 android:title="Profil"/>
         <item android:id="@+id/log_out"

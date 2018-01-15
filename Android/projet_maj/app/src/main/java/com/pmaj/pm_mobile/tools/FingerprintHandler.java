@@ -40,12 +40,12 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     }
 
     @Override
-    //onAuthenticationError is called when a fatal error has occurred. It provides the error code and error message as its parameters//
+    //onAuthenticationError is called when a fatal error has occurred. It provides the error code and error icon_message as its parameters//
 
     public void onAuthenticationError(int errMsgId, CharSequence errString) {
 
         //I’m going to display the results of fingerprint authentication as a series of toasts.
-        //Here, I’m creating the message that’ll be displayed if an error occurs//
+        //Here, I’m creating the icon_message that’ll be displayed if an error occurs//
 
         Toast.makeText(context, "Authentication error\n" + errString, Toast.LENGTH_LONG).show();
     }

@@ -14,12 +14,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/famille_list"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/family"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/button"
+                android:textColor="@color/buttonTextColor"/>
             <!-- <Button
                  android:id="@+id/codeButton"
                  android:layout_width="wrap_content"
@@ -29,13 +31,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="50sp"
-                android:text="Family Code : " />
+                android:text="Family Code : "
+                android:textStyle="italic"/>
 
             <TextView
                 android:id="@+id/code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50sp" />
+                android:layout_marginBottom="50sp"
+                android:textStyle="bold"/>
         </LinearLayout>
 
     </LinearLayout>

@@ -54,7 +54,7 @@ public class FingerPrintActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finger_print);
 
-        loginPageBtn = (Button) findViewById(R.id.loginPageBtn);
+        //loginPageBtn = (Button) findViewById(R.id.loginPageBtn);
 
         loginPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +88,7 @@ public class FingerPrintActivity extends AppCompatActivity {
 
             //Check that the user has registered at least one fingerprint//
             if (!fingerprintManager.hasEnrolledFingerprints()) {
-                // If the user hasn’t configured any fingerprints, then display the following message//
+                // If the user hasn’t configured any fingerprints, then display the following icon_message//
                 textView.setText("No fingerprint configured. Please register at least one fingerprint in your device's Settings");
             }
 

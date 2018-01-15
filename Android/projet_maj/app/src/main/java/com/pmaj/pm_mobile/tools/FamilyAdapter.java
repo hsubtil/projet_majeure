@@ -87,10 +87,14 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
     private Emitter.Listener onSelectFamilySuccess = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+
+            //TODO TESTER SI CHANGEMENT EN PREFS MARCHE
+            mPrefs.edit().putString("family_name", Mholder.family.getText().toString());
+            mPrefs.edit().putString("family_code", Mholder.code.getText().toString());
+
+            //intent.putExtra("family_name",Mholder.family.getText().toString());
+            //intent.putExtra("family_code",Mholder.code.getText().toString());
             final Intent intent = new Intent(ActivityContext, ChatActivity.class);
-            //TODO CHANGER TOUT LES PUT EXTRA EN PREFERENCE
-            intent.putExtra("family_name",Mholder.family.getText().toString());
-            intent.putExtra("family_code",Mholder.code.getText().toString());
             ActivityContext.startActivity(intent);
             return;
         }

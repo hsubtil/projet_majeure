@@ -39,6 +39,7 @@ import io.socket.emitter.Emitter;
 //TODO AFFICHAGE DE LA BAR D'ENVOIE DES MESSAGES CONSTAMMENT.
 public class ChatActivity extends AppCompatActivity {
     private TextView familyName;
+
     private RecyclerView messages;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ScrollView scroll_messages;
@@ -48,12 +49,47 @@ public class ChatActivity extends AppCompatActivity {
     private List<Message> list = new ArrayList<Message>();
 
     private SharedPreferences mPrefs;
+    private TextView calendar;
+    private TextView families;
+    private TextView map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        code = getIntent().getStringExtra("family_code");
+        code = mPrefs.getString("family_code","");
+
+        calendar = (TextView) findViewById(R.id.calendar);
+        families = (TextView) findViewById(R.id.families);
+        map = (TextView) findViewById(R.id.map);
+
+        calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Redicrection to Calendar page
+                Intent intentLogged = new Intent(ChatActivity.this, CalendarActivity.class);
+                startActivity(intentLogged);
+            }
+        });
+
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Redicrection to Map page
+                Intent intentLogged = new Intent(ChatActivity.this, MapActivity.class);
+                startActivity(intentLogged);
+            }
+        });
+
+        families.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //Redicrection to Home page
+                Intent intentLogged = new Intent(ChatActivity.this, HomeActivity.class);
+                startActivity(intentLogged);
+            }
+        });
         /**
          * Connection to serveur
          * */
@@ -77,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         // Retrieve Family Name selected
-        familyName.setText(getIntent().getStringExtra("family_name"));
+        familyName.setText(mPrefs.getString("family_name",""));
 
 
         //Linking Layout Manager to Recycler View
@@ -89,7 +125,7 @@ public class ChatActivity extends AppCompatActivity {
         LoginActivity.getSocketInstance().emitGetMessages(mPrefs.getString("token",""), code);
         messages.scrollTo(0, messages.getBottom());
 
-        // Listener when we click on send Button to send a new message
+        // Listener when we click on send Button to send a new icon_message
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,17 +239,6 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.my_famillies:
-                //Redicrection to Login page
-                Intent intentHome = new Intent(ChatActivity.this, HomeActivity.class);
-                startActivity(intentHome);
-                return true;
-            case R.id.my_family_calendar:
-                Toast.makeText(getApplicationContext(),"My Family Calendar Selected",Toast.LENGTH_LONG).show();
-                return true;
-            case R.id.my_family_map:
-                Toast.makeText(getApplicationContext(),"My Family Map Selected",Toast.LENGTH_LONG).show();
-                return true;
             case R.id.icon_profil:
                 LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), mPrefs.getString("email",""));
                 return true;

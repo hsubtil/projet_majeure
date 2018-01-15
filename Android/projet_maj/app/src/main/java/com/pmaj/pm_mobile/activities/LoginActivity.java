@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         socket.getmSocket().on("auth_failed", onAuthFail);
 
 
-        /*//TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
+       //TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
         //Redicrection to Home page
         SharedPreferences.Editor TempEditor = mPrefs.edit();
         // Shared preference declaration
@@ -60,7 +60,9 @@ public class LoginActivity extends AppCompatActivity {
 
         Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
         intentLogged.putExtra("email","test.fekir@ol.com");
-        startActivity(intentLogged);*/
+        mPrefs.edit().putLong("lastLogin", new Date().getTime());                 // Add a time to check timeout
+
+        startActivity(intentLogged);
 
         checkConnectionToken();
 

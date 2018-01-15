@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
@@ -22,6 +23,7 @@ import com.pmaj.pm_mobile.tools.NetworkCom;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +32,11 @@ import io.socket.emitter.Emitter;
 
 //TODO SEPARE METHODE NAVBAR ET HOME PAGE
 public class HomeActivity extends AppCompatActivity {
-    private Button family_button;
     private Button codeButton;
     private Button add_family;
-    private Button log_out;
-    private ImageView icon_profil;
-    private ImageView icon_menu;
+    private TextView calendar;
+    private TextView families;
+    private TextView map;
     private RecyclerView family_list;
     private SharedPreferences mPrefs;
 
@@ -46,15 +47,33 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         mPrefs = getSharedPreferences("authToken", 0);
 
+        calendar = (TextView) findViewById(R.id.calendar);
+        families = (TextView) findViewById(R.id.families);
+        map = (TextView) findViewById(R.id.map);
+
+        calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Redicrection to Calendar page
+                Intent intentLogged = new Intent(HomeActivity.this, CalendarActivity.class);
+                startActivity(intentLogged);
+            }
+        });
+
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Redicrection to Map page
+                Intent intentLogged = new Intent(HomeActivity.this, MapActivity.class);
+                startActivity(intentLogged);
+            }
+        });
+
         //Socket
         LoginActivity.getSocketInstance().getmSocket().on("request_profile_reply", onProfilSuccess);
         LoginActivity.getSocketInstance().getmSocket().on("request_family_reply", onFamiliesSuccess);
         LoginActivity.getSocketInstance().getmSocket().on("error", onProfilFail);
-
-        log_out = (Button) findViewById(R.id.log_out);
-        icon_profil = (ImageView) findViewById(R.id.icon_profil);
         family_list = (RecyclerView) findViewById(R.id.family_list);
-        icon_menu = (ImageView) findViewById(R.id.icon_menu);
         //codeButton = (Button) findViewById(R.id.codeButton);
 
         family_list.setHasFixedSize(true);
@@ -162,14 +181,6 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.my_famillies:
-                return true;
-            case R.id.my_family_calendar:
-                Toast.makeText(getApplicationContext(),"My Family Calendar Selected",Toast.LENGTH_LONG).show();
-                return true;
-            case R.id.my_family_map:
-                Toast.makeText(getApplicationContext(),"My Family Map Selected",Toast.LENGTH_LONG).show();
-                return true;
             case R.id.icon_profil:
                 LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), mPrefs.getString("email",""));
                 return true;
