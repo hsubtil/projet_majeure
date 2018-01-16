@@ -50,7 +50,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private SharedPreferences mPrefs;
     private TextView calendar;
-    private TextView families;
+    private TextView family;
     private TextView map;
 
     @Override
@@ -62,7 +62,7 @@ public class ChatActivity extends AppCompatActivity {
         code = mPrefs.getString("family_code","");
 
         calendar = (TextView) findViewById(R.id.calendar);
-        families = (TextView) findViewById(R.id.families);
+        family = (TextView) findViewById(R.id.family);
         map = (TextView) findViewById(R.id.map);
 
 
@@ -70,6 +70,7 @@ public class ChatActivity extends AppCompatActivity {
         LoginActivity.getSocketInstance().getmSocket().on("selected_family_ko", onSelectFamilyFail);
 
         LoginActivity.getSocketInstance().emitSelectFamily(mPrefs.getString("token",""),code);
+        family.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
 
         calendar.setOnClickListener(new View.OnClickListener() {
@@ -86,15 +87,6 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Redicrection to Map page
                 Intent intentLogged = new Intent(ChatActivity.this, MapActivity.class);
-                startActivity(intentLogged);
-            }
-        });
-
-        families.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Redicrection to Home page
-                Intent intentLogged = new Intent(ChatActivity.this, HomeActivity.class);
                 startActivity(intentLogged);
             }
         });
@@ -250,16 +242,23 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.families :
+                //Redicrection to Profile page
+                Intent intent = new Intent(ChatActivity.this, HomeActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.icon_profil:
                 //Redicrection to Profile page
                 Intent intentLogged = new Intent(ChatActivity.this, ProfilActivity.class);
-                startActivity(intentLogged);                return true;
-            case R.id.log_out :
+                startActivity(intentLogged);
+                return true;
+            case R.id.log_out:
                 SharedPreferences.Editor mEditor = mPrefs.edit();
                 mEditor.putLong("lastLogin", 0).apply();
-                mEditor.putString("token",null).apply();
-                mEditor.putString("name",null).apply();
-                mEditor.putString("email",null).apply();
+                mEditor.putString("token", null).apply();
+                mEditor.putString("name", null).apply();
+                mEditor.putString("email", null).apply();
+                //mEditor.clear().apply();
                 mEditor.commit();
 
                 //Redicrection to Login page

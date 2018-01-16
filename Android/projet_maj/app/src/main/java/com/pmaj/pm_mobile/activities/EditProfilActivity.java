@@ -16,7 +16,7 @@ import com.pmaj.pm_mobile.R;
 public class EditProfilActivity extends AppCompatActivity {
     private SharedPreferences mPrefs;
     private TextView calendar;
-    private TextView families;
+    private TextView family;
     private TextView map;
 
     @Override
@@ -26,7 +26,7 @@ public class EditProfilActivity extends AppCompatActivity {
         mPrefs = getSharedPreferences("authToken", 0);
 
         calendar = (TextView) findViewById(R.id.calendar);
-        families = (TextView) findViewById(R.id.families);
+        family = (TextView) findViewById(R.id.family);
         map = (TextView) findViewById(R.id.map);
 
         calendar.setOnClickListener(new View.OnClickListener() {
@@ -47,12 +47,12 @@ public class EditProfilActivity extends AppCompatActivity {
             }
         });
 
-        families.setOnClickListener(new View.OnClickListener() {
+        family.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //Redicrection to Home page
-                Intent intentLogged = new Intent(EditProfilActivity.this, HomeActivity.class);
+                Intent intentLogged = new Intent(EditProfilActivity.this, ChatActivity.class);
                 startActivity(intentLogged);
             }
         });
@@ -70,6 +70,11 @@ public class EditProfilActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.families :
+            //Redicrection to Profile page
+            Intent intent = new Intent(EditProfilActivity.this, HomeActivity.class);
+            startActivity(intent);
+            return true;
             case R.id.icon_profil:
 
                 //Redicrection to Profile page

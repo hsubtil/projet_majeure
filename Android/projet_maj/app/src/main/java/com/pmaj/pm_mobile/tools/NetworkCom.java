@@ -152,6 +152,18 @@ public class NetworkCom {
         mSocket.emit("new_family",json);
     }
 
+    public void emitGetListEvent(String token, String code) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("code",code);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("google_list_events",json);
+    }
+
 
     public void destroySocket() {
         mSocket.disconnect();

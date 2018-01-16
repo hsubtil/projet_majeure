@@ -29,7 +29,7 @@ public class ProfilActivity extends AppCompatActivity {
     private Button edit_profil;
     private SharedPreferences mPrefs;
     private TextView calendar;
-    private TextView families;
+    private TextView family;
     private TextView map;
 
     @Override
@@ -39,7 +39,7 @@ public class ProfilActivity extends AppCompatActivity {
         mPrefs = getSharedPreferences("authToken", 0);
 
         calendar = (TextView) findViewById(R.id.calendar);
-        families = (TextView) findViewById(R.id.families);
+        family = (TextView) findViewById(R.id.family);
         map = (TextView) findViewById(R.id.map);
 
         calendar.setOnClickListener(new View.OnClickListener() {
@@ -60,11 +60,11 @@ public class ProfilActivity extends AppCompatActivity {
             }
         });
 
-        families.setOnClickListener(new View.OnClickListener() {
+        family.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Redicrection to Home page
-                Intent intentLogged = new Intent(ProfilActivity.this, HomeActivity.class);
+                Intent intentLogged = new Intent(ProfilActivity.this, ChatActivity.class);
                 startActivity(intentLogged);
             }
         });
@@ -133,6 +133,11 @@ public class ProfilActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.families :
+                //Redicrection to Profile page
+                Intent intent = new Intent(ProfilActivity.this, HomeActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.icon_profil:
                 return true;
             case R.id.log_out :

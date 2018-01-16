@@ -36,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button codeButton;
     private Button add_family;
     private TextView calendar;
-    private TextView families;
+    private TextView family;
     private TextView map;
     private RecyclerView family_list;
     List<Family> familyList = new ArrayList<Family>();
@@ -48,17 +48,11 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mPrefs = getSharedPreferences("authToken", 0);
-        //Socket
-        LoginActivity.getSocketInstance().getmSocket().on("add_family_to_user_success", onAddFamilySuccess);
-        LoginActivity.getSocketInstance().getmSocket().on("new_family_success", onAddFamilySuccess);
-        LoginActivity.getSocketInstance().getmSocket().on("request_family_reply", onFamiliesSuccess);
         /*
         * Nav Bar */
         calendar = (TextView) findViewById(R.id.calendar);
-        families = (TextView) findViewById(R.id.families);
+        family = (TextView) findViewById(R.id.family);
         map = (TextView) findViewById(R.id.map);
-
-        families.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
 
         calendar.setOnClickListener(new View.OnClickListener() {
@@ -76,6 +70,14 @@ public class HomeActivity extends AppCompatActivity {
                 //Redicrection to Map page
                 Intent intentLogged = new Intent(HomeActivity.this, MapActivity.class);
                 startActivity(intentLogged);
+            }
+        });
+
+        family.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // Intent intentLogged = new Intent(HomeActivity.this,ChatActivity.class);
+                //startActivity(intentLogged);
             }
         });
 
@@ -110,7 +112,7 @@ public class HomeActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 String SnameFamily = codeFamily.getText().toString();
-                                LoginActivity.getSocketInstance().emitCreateFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""), SnameFamily);
+                                LoginActivity.getSocketInstance().emitCreateFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""),SnameFamily);
                                 createFamilyDialog.dismiss();
                             }
                         });
@@ -134,7 +136,7 @@ public class HomeActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 String ScodeFamily = codeFamily.getText().toString();
-                                LoginActivity.getSocketInstance().emitJoinFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""), ScodeFamily);
+                                LoginActivity.getSocketInstance().emitJoinFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""),ScodeFamily);
                                 joinFamilyDialog.dismiss();
                             }
                         });
@@ -143,6 +145,10 @@ public class HomeActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
+
+        //Socket
+        LoginActivity.getSocketInstance().getmSocket().on("add_family_to_user_success", onAddFamilyToUserSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("request_family_reply", onFamiliesSuccess);
         family_list = (RecyclerView) findViewById(R.id.family_list);
 
         family_list.setHasFixedSize(true);
@@ -159,7 +165,7 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public void call(Object... args) {
             JSONObject obk = (JSONObject) args[0];
-            //JSON { ‘email’:, ‘families’:[]}
+            //JSON { ‘email’:, ‘family’:[]}
 
             try {
                 JSONArray familyArray = (JSONArray) obk.getJSONArray("families");
@@ -181,7 +187,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     };
 
-    private Emitter.Listener onAddFamilySuccess = new Emitter.Listener() {
+    private Emitter.Listener onAddFamilyToUserSuccess = new Emitter.Listener() {
 
         @Override
         public void call(Object... args) {
@@ -192,11 +198,10 @@ public class HomeActivity extends AppCompatActivity {
                 f.setName(obk.getString("name"));
                 f.setCode(obk.getString("code"));
                 familyList.add(f);
-                displayFamilies(familyList);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            displayFamilies(familyList);
 
             return;
         }
@@ -213,7 +218,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    @Override
+       @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);//Menu Resource, Menu
@@ -223,6 +228,8 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.families :
+                return true;
             case R.id.icon_profil:
                 //Redicrection to Profile page
                 Intent intentLogged = new Intent(HomeActivity.this, ProfilActivity.class);
