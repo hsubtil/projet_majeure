@@ -11,8 +11,10 @@ const passport = require('passport');
 // init server
 var app = express();
 var server = http.createServer(app);
-// init defalut route
+// init routes
 var defaultRoute = require("./app/routes/default_route.js");
+var adminRoute = require("./app/routes/admin_route.js");
+
 var IOController = require("./app/controllers/io.controller.js");
 var LOG = require("./app/utils/log");
 
@@ -37,6 +39,8 @@ server.listen(CONFIG.port, CONFIG.addr, function () {
 });
 IOController.listen(server);
 
-app.use("/", express.static(path.join(__dirname, "public"))); // Ajoute une redirection vers le dossier admin
+app.use("/", express.static(path.join(__dirname, "public"))); // Ajoute une redirection vers le dossier public
+
 app.use(defaultRoute);
+app.use(adminRoute);
 

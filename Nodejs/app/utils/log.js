@@ -20,29 +20,33 @@ this.getLevel = function () {
     return currentLevel;
 }
 
-this.logConsole = function(code, msg) {
+this.logConsole = function (code, msg, socket) {
     var logToWrite;
     //console.log(affichageLevel.indexOf(currentLevel));
     if (affichageLevel.indexOf(code) <= affichageLevel.indexOf(currentLevel)) {
         console.log(colorCode[code], msg);
+        if (socket) {
+            socket.emit("admin_log", msg);
+            console.log("EMIT ADMIN");
+        }
     }
 
 }
 
-this.debug = function (msg) {
-  var d = dateTime({local: false});
-  this.logConsole('debug', '[' + d.toString() + '] '+ '[DEBUG] ' + msg);
+this.debug = function (msg, socket) {
+    var d = dateTime({ local: false });
+    this.logConsole('debug', '[' + d.toString() + '] ' + '[DEBUG] ' + msg, socket);
 }
 
-this.log = function (msg) {
+this.log = function (msg, socket) {
     var d = dateTime({ local: false });
-    this.logConsole('log', '[' + d.toString() + '] '+ msg);
+    this.logConsole('log', '[' + d.toString() + '] ' + msg, socket);
 }
-this.error = function (msg) {
+this.error = function (msg, socket) {
     var d = dateTime({ local: false });
-    this.logConsole('error', '[' + d.toString() + '] ' + msg);
+    this.logConsole('error', '[' + d.toString() + '] ' + msg, socket);
 }
-this.warning = function (msg) {
+this.warning = function (msg, socket) {
     var d = dateTime({ local: false });
-    this.logConsole('warn', '[' + d.toString() + '] ' + msg);
+    this.logConsole('warn', '[' + d.toString() + '] ' + msg, socket);
 }

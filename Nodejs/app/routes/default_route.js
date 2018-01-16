@@ -78,6 +78,8 @@ function getAuthUrl() {
     return url;
 }
 
+/*router.get('/auth/admin',
+    passport.authenticate('google', { scope: ['profile'] })); */
 
 router.get('/auth/google',
     passport.authenticate('google', { scope: ['profile'] }));

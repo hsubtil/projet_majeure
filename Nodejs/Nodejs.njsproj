@@ -28,6 +28,15 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="admin\controllers\admin.controller.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="admin\controllers\io.controller.admin.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="admin\utils\logAdmin.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="app\controllers\dbController.js">
       <SubType>Code</SubType>
     </Compile>
@@ -52,8 +61,14 @@
     </Compile>
     <Compile Include="app\models\google\googleAuth.js" />
     <Compile Include="app\models\userModel.js" />
+    <Compile Include="app\routes\admin_route.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="app\routes\default_route.js" />
     <Compile Include="app\utils\log.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="app\utils\stats.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="server.js" />
@@ -64,6 +79,8 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="admin\controllers\" />
+    <Folder Include="admin\utils\" />
     <Folder Include="app\" />
     <Folder Include="app\controllers\" />
     <Folder Include="app\controllers\google\" />
@@ -71,6 +88,7 @@
     <Folder Include="app\models\google\" />
     <Folder Include="app\routes\" />
     <Folder Include="app\utils\" />
+    <Folder Include="admin\" />
     <Folder Include="public\" />
     <Folder Include="uploads\" />
   </ItemGroup>
