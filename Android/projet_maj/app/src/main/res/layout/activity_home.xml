@@ -11,14 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-            <include layout="@layout/activity_navbar"/>
-
+        <include layout ="@layout/activity_navbar"/>
 
         <RelativeLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50sp">
+            android:layout_below="@+id/toolbarlayout"
+            android:layout_marginTop="40sp">
 
             <TextView
                 android:id="@+id/home_title"
@@ -26,6 +26,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:gravity="center_horizontal"
+                android:textSize="23sp"
+                android:textStyle="bold"
                 android:text="HOME" />
 
             <ScrollView
@@ -54,7 +56,7 @@
                     </LinearLayout>
 
                     <RelativeLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/familyLinLayout">
 
@@ -63,8 +65,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="25dp"
-                            android:gravity="center_horizontal"
-                            android:text="+ Ajouter une famille" />
+                            android:background="@drawable/button"
+                            android:text="+ Ajouter une famille"
+                            android:textColor="@color/buttonTextColor"
+                            android:layout_marginBottom="20sp"/>
                     </RelativeLayout>
                 </LinearLayout>
             </ScrollView>

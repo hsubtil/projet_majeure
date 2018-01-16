@@ -54,16 +54,16 @@ public class FingerPrintActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finger_print);
 
-        loginPageBtn = (Button) findViewById(R.id.loginPageBtn);
+        //loginPageBtn = (Button) findViewById(R.id.loginPageBtn);
 
-        loginPageBtn.setOnClickListener(new View.OnClickListener() {
+        /*loginPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Redicrection to Home page
                 Intent intentLogged = new Intent(FingerPrintActivity.this, LoginActivity.class);
                 startActivity(intentLogged);
             }
-        });
+        });*/
         // If you’ve set your app’s minSdkVersion to anything lower than 23, then you’ll need to verify that the device is running Marshmallow
         // or higher before executing any fingerprint-related code
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -88,7 +88,7 @@ public class FingerPrintActivity extends AppCompatActivity {
 
             //Check that the user has registered at least one fingerprint//
             if (!fingerprintManager.hasEnrolledFingerprints()) {
-                // If the user hasn’t configured any fingerprints, then display the following message//
+                // If the user hasn’t configured any fingerprints, then display the following icon_message//
                 textView.setText("No fingerprint configured. Please register at least one fingerprint in your device's Settings");
             }
 

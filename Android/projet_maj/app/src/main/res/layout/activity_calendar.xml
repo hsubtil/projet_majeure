@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pmaj.pm_mobile.activities.CalendarActivity">
+    <include layout ="@layout/activity_navbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40sp">
+        <TextView
+            android:id="@+id/title_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="CALENDAR"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:textSize="23sp"/>
+        <CalendarView
+            android:id="@+id/calendar"
+            android:layout_below="@+id/title_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"/>
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

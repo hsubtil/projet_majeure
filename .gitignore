@@ -1,2 +1,4 @@
 /Nodejs/node_modules
 obj/
+/React-admin/dashboardAdmin/node_modules
+/React

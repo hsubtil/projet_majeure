@@ -6,23 +6,18 @@
     android:layout_height="match_parent"
     tools:context="com.pmaj.pm_mobile.activities.ProfilActivity">
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/navbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <include layout="@layout/activity_navbar" />
-
-        </LinearLayout>
+    <include layout="@layout/activity_navbar" />
 
 
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="40sp">
+            <ScrollView
+                android:id="@+id/scroll_profil_infos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <RelativeLayout
                 android:id="@+id/profil_infos"
                 android:layout_width="wrap_content"
@@ -35,7 +30,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="PROFIL" />
+                    android:text="PROFIL"
+                    android:textSize="23sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/name_layout"
@@ -48,7 +45,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Name :" />
+                        android:text="Name :"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/name"
@@ -68,7 +66,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Surname :" />
+                        android:text="Surname :"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/surname"
@@ -87,7 +86,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Email :" />
+                        android:text="Email :"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/email"
@@ -106,12 +106,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Address :" />
+                        android:text="Address :"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/address"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -125,7 +126,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Birthday :" />
+                        android:text="Birthday :"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/birthday"
@@ -134,10 +136,14 @@
                 </LinearLayout>
 
             </RelativeLayout>
+            </ScrollView>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/profil_infos"
+                android:layout_below="@+id/scroll_profil_infos"
+                android:layout_marginTop="20sp"
                 android:orientation="horizontal">
 
                 <Button
@@ -145,20 +151,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Edit Profil" />
+                    android:background="@drawable/button"
+                    android:text="Edit Profil"
+                    android:textColor="@color/buttonTextColor" />
 
                 <Button
                     android:id="@+id/change_pwd"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Change Password" />
+                    android:background="@drawable/button"
+                    android:text="Change Password"
+                    android:textColor="@color/buttonTextColor" />
 
             </LinearLayout>
 
 
-    </RelativeLayout>
-</ScrollView>
+        </RelativeLayout>
 
 
-    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

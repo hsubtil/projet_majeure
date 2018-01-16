@@ -26,7 +26,7 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        URI uri = URI.create("http://192.168.1.101:1337/");
+        URI uri = URI.create("http://192.168.1.102:1337/");
         this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
@@ -126,11 +126,48 @@ public class NetworkCom {
         mSocket.emit("select_family",json);
     }
 
+    public void emitJoinFamily(String token,String email,String code){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("email",email);
+            json.put("code",code);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("add_family_to_user",json);
+    }
 
+    public void emitCreateFamily(String token, String email, String name) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("email",email);
+            json.put("family",name);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("new_family",json);
+    }
+
+    public void emitGetListEvent(String token, String code) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("code",code);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("google_list_events",json);
+    }
 
 
     public void destroySocket() {
         mSocket.disconnect();
     }
+
 
 }

@@ -51,16 +51,19 @@ public class LoginActivity extends AppCompatActivity {
         socket.getmSocket().on("auth_failed", onAuthFail);
 
 
-        /*//TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
+       /*//TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
         //Redicrection to Home page
         SharedPreferences.Editor TempEditor = mPrefs.edit();
         // Shared preference declaration
-        TempEditor.putString("authToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI").apply();
+        TempEditor.putString("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI").apply();
         TempEditor.putString("name","Nabil").apply();
 
         Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
         intentLogged.putExtra("email","test.fekir@ol.com");
+        mPrefs.edit().putLong("lastLogin", new Date().getTime());                 // Add a time to check timeout
+
         startActivity(intentLogged);*/
+
 
         checkConnectionToken();
 
@@ -108,11 +111,11 @@ public class LoginActivity extends AppCompatActivity {
             // Shared preference declaration
             mEditor.putString("token", token).apply();
             mEditor.putString("name",userName).apply();
+            mEditor.putString("email",email.getText().toString()).apply();
             mEditor.commit();
 
             //Redicrection to Home page
             Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
-            intentLogged.putExtra("email",email.getText().toString());
             startActivity(intentLogged);
 
             return;
@@ -127,15 +130,13 @@ public class LoginActivity extends AppCompatActivity {
     };
 
     private void checkConnectionToken() {
-        Long lastLogin = mPrefs.getLong("lastLogin", 36);
-        long acutallogin = new Date().getTime();
-        if (lastLogin != 0 && (acutallogin - lastLogin) < 3000) {
+        Long lastLogin = mPrefs.getLong("lastLogin", 0);
+        //long acutallogin = new Date().getTime();
+        if (lastLogin != 0) {
             Toast.makeText(LoginActivity.this, "Hello again !", Toast.LENGTH_LONG).show();
            //Redirection vers Page Home
-            Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
+            Intent intentLogged = new Intent(LoginActivity.this, FingerPrintActivity.class);
             startActivity(intentLogged);
-        } else {
-            Toast.makeText(LoginActivity.this, "Logged out", Toast.LENGTH_LONG).show();
         }
 
     }

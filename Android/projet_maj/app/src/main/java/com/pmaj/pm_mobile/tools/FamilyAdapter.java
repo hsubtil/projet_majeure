@@ -25,7 +25,6 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
     private Context ActivityContext;
 
     private SharedPreferences mPrefs;
-    private ViewHolder Mholder;
     // Provide a reference to the views for each data item
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView family;
@@ -45,10 +44,12 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
         this.ActivityContext = ActivityContext;
 
         mPrefs = ActivityContext.getSharedPreferences("authToken", 0);
+        SharedPreferences.Editor mEditor = mPrefs.edit();
+        mEditor.putString("family_name", "").apply();
+        mEditor.putString("family_code", "").apply();
+        mEditor.commit();
 
-        //Socket
-        LoginActivity.getSocketInstance().getmSocket().on("selected_family_ko", onSelectFamilyFail);
-        LoginActivity.getSocketInstance().getmSocket().on("selected_family_ok",onSelectFamilySuccess);
+
     }
 
     // Create new views (invoked by the layout manager)
@@ -61,17 +62,23 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+
         holder.family.setText(dataset.get(position).getName());
         holder.code.setText(dataset.get(position).getCode());
 
         holder.family.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Mholder = holder;
-                LoginActivity.getSocketInstance().emitSelectFamily(mPrefs.getString("token",""),holder.code.getText().toString());
+                SharedPreferences.Editor mEditor = mPrefs.edit();
+
+                final Intent intent = new Intent(ActivityContext, ChatActivity.class);
+                mEditor.putString("family_name", dataset.get(position).getName()).apply();
+                mEditor.putString("family_code", dataset.get(position).getCode()).apply();
+                mEditor.commit();
+                ActivityContext.startActivity(intent);
             }
         });
 
@@ -82,25 +89,6 @@ public class FamilyAdapter extends RecyclerView.Adapter<FamilyAdapter.ViewHolder
     public int getItemCount() {
         return dataset.size();
     }
-
-    private Emitter.Listener onSelectFamilySuccess = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            final Intent intent = new Intent(ActivityContext, ChatActivity.class);
-            intent.putExtra("family_name",Mholder.family.getText().toString());
-            intent.putExtra("family_code",Mholder.code.getText().toString());
-            ActivityContext.startActivity(intent);
-            return;
-        }
-    };
-
-    private Emitter.Listener onSelectFamilyFail = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            return;
-        }
-    };
-
 
 
 
