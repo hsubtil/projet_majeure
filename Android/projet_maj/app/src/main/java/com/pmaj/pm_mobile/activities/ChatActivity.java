@@ -57,11 +57,20 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        mPrefs = this.getSharedPreferences("authToken", 0);
         code = mPrefs.getString("family_code","");
 
         calendar = (TextView) findViewById(R.id.calendar);
         families = (TextView) findViewById(R.id.families);
         map = (TextView) findViewById(R.id.map);
+
+
+        //Socket
+        LoginActivity.getSocketInstance().getmSocket().on("selected_family_ko", onSelectFamilyFail);
+
+        LoginActivity.getSocketInstance().emitSelectFamily(mPrefs.getString("token",""),code);
+
 
         calendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,20 +93,14 @@ public class ChatActivity extends AppCompatActivity {
         families.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //Redicrection to Home page
                 Intent intentLogged = new Intent(ChatActivity.this, HomeActivity.class);
                 startActivity(intentLogged);
             }
         });
-        /**
-         * Connection to serveur
-         * */
-        mPrefs = getSharedPreferences("authToken", 0);
 
         //Socket
         LoginActivity.getSocketInstance().getmSocket().on("load_messages_reply", onMessagesSuccess);
-
         LoginActivity.getSocketInstance().getmSocket().on("new_message_available", onMessageSentSuccess);
         LoginActivity.getSocketInstance().getmSocket().on("error", onMessagesFail);
 
@@ -123,7 +126,7 @@ public class ChatActivity extends AppCompatActivity {
 
         //Retrieve all messages
         LoginActivity.getSocketInstance().emitGetMessages(mPrefs.getString("token",""), code);
-        messages.scrollTo(0, messages.getBottom());
+        //messages.scrollTo(0, messages.getBottom());
 
         // Listener when we click on send Button to send a new icon_message
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -151,19 +154,27 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
         //Stop refreshing when all messages retrieved
-        mSwipeRefreshLayout.setRefreshing(false);
+        //mSwipeRefreshLayout.setRefreshing(false);
 
         // Implementation of Swipe to Refresh
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        /*mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // Refresh items
                 LoginActivity.getSocketInstance().emitGetMessages(mPrefs.getString("token",""), getIntent().getStringExtra("family_code"));
                 mSwipeRefreshLayout.setRefreshing(false);
             }
-        });
+        });*/
 
     }
+
+    private Emitter.Listener onSelectFamilyFail = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            return;
+        }
+    };
+
 
     private Emitter.Listener onMessagesSuccess = new Emitter.Listener() {
 
@@ -240,8 +251,9 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.icon_profil:
-                LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), mPrefs.getString("email",""));
-                return true;
+                //Redicrection to Profile page
+                Intent intentLogged = new Intent(ChatActivity.this, ProfilActivity.class);
+                startActivity(intentLogged);                return true;
             case R.id.log_out :
                 SharedPreferences.Editor mEditor = mPrefs.edit();
                 mEditor.putLong("lastLogin", 0).apply();

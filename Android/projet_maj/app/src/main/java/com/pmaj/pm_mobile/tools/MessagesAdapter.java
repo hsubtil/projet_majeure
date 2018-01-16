@@ -73,14 +73,20 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         if(m.equals(p)){
             holder.message.setBackgroundResource(R.drawable.message_bubble_user);
             holder.sender.setGravity(Gravity.RIGHT);
+            holder.sender.setTextColor(ActivityContext.getResources().getColor(R.color.colorPrimaryDark));
             holder.messageText.setGravity(Gravity.RIGHT);
+            holder.messageText.setTextColor(ActivityContext.getResources().getColor(R.color.colorPrimaryDark));
+
 
         }
         else
         {
             holder.message.setBackgroundResource(R.drawable.message_bubble_members);
             holder.sender.setGravity(Gravity.LEFT);
+            holder.sender.setTextColor(ActivityContext.getResources().getColor(R.color.buttonTextColor));
             holder.messageText.setGravity(Gravity.LEFT);
+            holder.messageText.setTextColor(ActivityContext.getResources().getColor(R.color.buttonTextColor));
+
         }
 
 

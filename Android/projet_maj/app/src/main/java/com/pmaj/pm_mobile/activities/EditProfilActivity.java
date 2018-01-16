@@ -71,8 +71,10 @@ public class EditProfilActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.icon_profil:
-                LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), mPrefs.getString("email",""));
-                return true;
+
+                //Redicrection to Profile page
+                Intent intentLogged = new Intent(EditProfilActivity.this, ProfilActivity.class);
+                startActivity(intentLogged);                return true;
             case R.id.log_out :
                 SharedPreferences.Editor mEditor = mPrefs.edit();
                 mEditor.putLong("lastLogin", 0).apply();

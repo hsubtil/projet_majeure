@@ -28,7 +28,6 @@
         <activity android:name=".activities.SignUpActivity" />
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.ProfilActivity" />
-        <activity android:name=".activities.NavBarActivity" />
         <activity android:name=".activities.ChatActivity" />
         <activity android:name=".activities.EditProfilActivity" />
         <activity android:name=".activities.CalendarActivity" />

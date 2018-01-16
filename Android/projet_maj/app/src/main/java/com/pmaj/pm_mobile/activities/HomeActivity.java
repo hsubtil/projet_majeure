@@ -1,5 +1,6 @@
 package com.pmaj.pm_mobile.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Image;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +32,6 @@ import java.util.List;
 
 import io.socket.emitter.Emitter;
 
-//TODO SEPARE METHODE NAVBAR ET HOME PAGE
 public class HomeActivity extends AppCompatActivity {
     private Button codeButton;
     private Button add_family;
@@ -38,6 +39,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView families;
     private TextView map;
     private RecyclerView family_list;
+    List<Family> familyList = new ArrayList<Family>();
     private SharedPreferences mPrefs;
 
 
@@ -46,10 +48,18 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mPrefs = getSharedPreferences("authToken", 0);
-
+        //Socket
+        LoginActivity.getSocketInstance().getmSocket().on("add_family_to_user_success", onAddFamilySuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("new_family_success", onAddFamilySuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("request_family_reply", onFamiliesSuccess);
+        /*
+        * Nav Bar */
         calendar = (TextView) findViewById(R.id.calendar);
         families = (TextView) findViewById(R.id.families);
         map = (TextView) findViewById(R.id.map);
+
+        families.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
 
         calendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,19 +79,78 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //Socket
-        LoginActivity.getSocketInstance().getmSocket().on("request_profile_reply", onProfilSuccess);
-        LoginActivity.getSocketInstance().getmSocket().on("request_family_reply", onFamiliesSuccess);
-        LoginActivity.getSocketInstance().getmSocket().on("error", onProfilFail);
+        add_family = (Button) findViewById(R.id.add_family);
+
+        add_family.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(HomeActivity.this);
+
+                dialog.setContentView(R.layout.pop_up_window_new_family);
+                dialog.setTitle("New family");
+
+                Button btnCreate = (Button) dialog.findViewById(R.id.btnCreate);
+                Button btnJoin = (Button) dialog.findViewById(R.id.btnJoin);
+
+                btnCreate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        dialog.dismiss();
+                        final Dialog createFamilyDialog = new Dialog(HomeActivity.this);
+
+                        createFamilyDialog.setContentView(R.layout.pop_up_window_create_family);
+                        createFamilyDialog.setTitle("Create family");
+
+                        Button btnJoinFamily = (Button) createFamilyDialog.findViewById(R.id.btnCreateFamily);
+                        final EditText codeFamily = (EditText) createFamilyDialog.findViewById(R.id.nameFamily);
+                        createFamilyDialog.show();
+
+                        btnJoinFamily.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String SnameFamily = codeFamily.getText().toString();
+                                LoginActivity.getSocketInstance().emitCreateFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""), SnameFamily);
+                                createFamilyDialog.dismiss();
+                            }
+                        });
+                    }
+                });
+                btnJoin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        dialog.dismiss();
+                        final Dialog joinFamilyDialog = new Dialog(HomeActivity.this);
+
+                        joinFamilyDialog.setContentView(R.layout.pop_up_window_join_family);
+                        joinFamilyDialog.setTitle("Join family");
+
+                        Button btnJoinFamily = (Button) joinFamilyDialog.findViewById(R.id.btnJoinFamily);
+                        final EditText codeFamily = (EditText) joinFamilyDialog.findViewById(R.id.codeFamily);
+                        joinFamilyDialog.show();
+
+                        btnJoinFamily.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String ScodeFamily = codeFamily.getText().toString();
+                                LoginActivity.getSocketInstance().emitJoinFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""), ScodeFamily);
+                                joinFamilyDialog.dismiss();
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+            }
+        });
         family_list = (RecyclerView) findViewById(R.id.family_list);
-        //codeButton = (Button) findViewById(R.id.codeButton);
 
         family_list.setHasFixedSize(true);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         family_list.setLayoutManager(mLayoutManager);
 
-        LoginActivity.getSocketInstance().emitGetFamilies(mPrefs.getString("token",""), mPrefs.getString("email",""));
+        LoginActivity.getSocketInstance().emitGetFamilies(mPrefs.getString("token", ""), mPrefs.getString("email", ""));
 
     }
 
@@ -95,16 +164,36 @@ public class HomeActivity extends AppCompatActivity {
             try {
                 JSONArray familyArray = (JSONArray) obk.getJSONArray("families");
 
-                List<Family> list = new ArrayList<Family>();
-                for (int i=0; i<familyArray.length(); i++) {
+                for (int i = 0; i < familyArray.length(); i++) {
                     JSONObject familyObj = (JSONObject) familyArray.getJSONObject(i);
                     Family f = new Family();
                     f.setName(familyObj.getString("name"));
                     f.setCode(familyObj.getString("code"));
-                    list.add(f);
+                    familyList.add(f);
                 }
 
-                displayFamilies(list);
+                displayFamilies(familyList);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return;
+        }
+    };
+
+    private Emitter.Listener onAddFamilySuccess = new Emitter.Listener() {
+
+        @Override
+        public void call(Object... args) {
+            JSONObject obk = (JSONObject) args[0];
+
+            try {
+                Family f = new Family();
+                f.setName(obk.getString("name"));
+                f.setCode(obk.getString("code"));
+                familyList.add(f);
+                displayFamilies(familyList);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -124,72 +213,28 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-
-    private Emitter.Listener onProfilSuccess = new Emitter.Listener() {
-
-        @Override
-        public void call(Object... args) {
-            JSONObject obk = (JSONObject) args[0];
-
-            //JSON { 'email': "", 'name': "", 'surname': "", 'address': "", 'cp': "", 'city': "", 'country': "", 'birthday': "" }
-
-            String email = "";
-            String name = "";
-            String surname = "";
-            String address = "";
-            String cp = "";
-            String city = "";
-            String country = "";
-            String birthday = "";
-            try {
-                email = obk.getString("email");
-                name = obk.getString("name");
-                surname = obk.getString("surname");
-                address = obk.getString("address") + " " + obk.getString("cp") + " " + obk.getString("city") + " " + obk.getString("country");
-                birthday = obk.getString("birthday");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            //Redicrection to Profile page
-            Intent intentLogged = new Intent(HomeActivity.this, ProfilActivity.class);
-            intentLogged.putExtra("name", name);
-            intentLogged.putExtra("email", email);
-            intentLogged.putExtra("surname", surname);
-            intentLogged.putExtra("address", address);
-            intentLogged.putExtra("birthday", birthday);
-
-            startActivity(intentLogged);
-
-            return;
-        }
-    };
-
-    private Emitter.Listener onProfilFail = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            return;
-        }
-    };
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);//Menu Resource, Menu
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.icon_profil:
-                LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), mPrefs.getString("email",""));
+                //Redicrection to Profile page
+                Intent intentLogged = new Intent(HomeActivity.this, ProfilActivity.class);
+                startActivity(intentLogged);
                 return true;
-            case R.id.log_out :
+            case R.id.log_out:
                 SharedPreferences.Editor mEditor = mPrefs.edit();
                 mEditor.putLong("lastLogin", 0).apply();
-                mEditor.putString("token",null).apply();
-                mEditor.putString("name",null).apply();
-                mEditor.putString("email",null).apply();
+                mEditor.putString("token", null).apply();
+                mEditor.putString("name", null).apply();
+                mEditor.putString("email", null).apply();
+                //mEditor.clear().apply();
                 mEditor.commit();
 
                 //Redicrection to Login page

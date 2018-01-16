@@ -56,14 +56,14 @@ public class FingerPrintActivity extends AppCompatActivity {
 
         //loginPageBtn = (Button) findViewById(R.id.loginPageBtn);
 
-        loginPageBtn.setOnClickListener(new View.OnClickListener() {
+        /*loginPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Redicrection to Home page
                 Intent intentLogged = new Intent(FingerPrintActivity.this, LoginActivity.class);
                 startActivity(intentLogged);
             }
-        });
+        });*/
         // If you’ve set your app’s minSdkVersion to anything lower than 23, then you’ll need to verify that the device is running Marshmallow
         // or higher before executing any fingerprint-related code
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

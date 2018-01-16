@@ -22,15 +22,7 @@ public class CalendarActivity extends AppCompatActivity {
         families = (TextView) findViewById(R.id.families);
         map = (TextView) findViewById(R.id.map);
 
-        calendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Redicrection to Calendar page
-                Intent intentLogged = new Intent(CalendarActivity.this, CalendarActivity.class);
-                startActivity(intentLogged);
-            }
-        });
-
+        calendar.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
         map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -14,7 +14,11 @@ import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
+
+import io.socket.emitter.Emitter;
 
 public class ProfilActivity extends AppCompatActivity {
     private TextView email;
@@ -74,11 +78,16 @@ public class ProfilActivity extends AppCompatActivity {
         birthday = (TextView) findViewById(R.id.birthday);
         edit_profil = (Button) findViewById(R.id.edit_profil);
 
-        email.setText(getIntent().getStringExtra("email"));
+        LoginActivity.getSocketInstance().getmSocket().on("request_profile_reply", onProfilSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("error", onProfilFail);
+
+        LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token", ""), mPrefs.getString("email", ""));
+
+        /*email.setText(getIntent().getStringExtra("email"));
         name.setText(getIntent().getStringExtra("name"));
         surname.setText(getIntent().getStringExtra("surname"));
         address.setText(getIntent().getStringExtra("address"));
-        birthday.setText(getIntent().getStringExtra("birthday"));
+        birthday.setText(getIntent().getStringExtra("birthday"));*/
 
         edit_profil.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +97,35 @@ public class ProfilActivity extends AppCompatActivity {
             }
         });
     }
+
+    private Emitter.Listener onProfilSuccess = new Emitter.Listener() {
+
+        @Override
+        public void call(Object... args) {
+            JSONObject obk = (JSONObject) args[0];
+
+            //JSON { 'email': "", 'name': "", 'surname': "", 'address': "", 'cp': "", 'city': "", 'country': "", 'birthday': "" }
+
+            try {
+                email.setText(obk.getString("email"));
+                name.setText(obk.getString("name"));
+                surname.setText(obk.getString("surname"));
+                address.setText(obk.getString("address") + " " + obk.getString("cp") + " " + obk.getString("city") + " " + obk.getString("country"));
+                birthday.setText(obk.getString("birthday"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return;
+        }
+    };
+
+    private Emitter.Listener onProfilFail = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            return;
+        }
+    };
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -98,7 +136,6 @@ public class ProfilActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.icon_profil:
-                LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token",""), mPrefs.getString("email",""));
                 return true;
             case R.id.log_out :
                 SharedPreferences.Editor mEditor = mPrefs.edit();
