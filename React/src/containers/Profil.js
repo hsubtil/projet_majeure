@@ -78,6 +78,7 @@ export default class Profil extends Component {
     }catch(e){
       alert(e);
     }
+    window.location.reload();
   }
 
   handleChange = event => {
@@ -90,7 +91,7 @@ export default class Profil extends Component {
     //console.log(this.state);
   }
 
-  componentDidMount(){
+  componentWillMount(){
     console.log("componentDidMount");
     if(localStorage.getItem("token") === null)
       {

@@ -70,7 +70,7 @@ handleLogout = event => {
               buttonInstance
             :
             <Navbar.Brand>
-              <Link to="/">Projet Majeur</Link>
+              <Link to="/">KeepCo</Link>
             </Navbar.Brand>
             }
             <Navbar.Toggle />

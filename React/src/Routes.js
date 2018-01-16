@@ -7,6 +7,7 @@ import Login from "./containers/Login";
 import Signup from "./containers/Signup";
 import MainPage from "./containers/MainPage";
 import Profil from "./containers/Profil";
+import SelectedGroup from "./containers/SelectedGroup";
 
   export default ({ childProps }) =>
   <Switch>
@@ -15,5 +16,6 @@ import Profil from "./containers/Profil";
     <AppliedRoute path="/signup" exact component={Signup} props={childProps} />
     <AppliedRoute path="/mainpage" exact component={MainPage} props={childProps} />
     <AppliedRoute path="/profil" exact component={Profil} props={childProps} />
+    <AppliedRoute path="/selectedgroup" exact component={SelectedGroup} props={childProps} />
     <Route component={NF} />
   </Switch>;

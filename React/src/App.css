@@ -1,6 +1,10 @@
 body {
   background-color: white;
 }
+.container-fluid{
+    background-color: #639fb6;
+}
+
 
 .App {
   margin-top: 15px;
@@ -9,6 +13,8 @@ body {
 
 .App .navbar-brand {
   font-weight: bold;
+  background-color: #639fb6;
+    color: white;
 }
 
 .App-logo {
@@ -32,7 +38,7 @@ body {
 }
 
 .toggle {
-  background-color: #F8F8F8;
+  background-color: #639fb6;
   border: none;
 }
 @keyframes App-logo-spin {

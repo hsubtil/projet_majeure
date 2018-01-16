@@ -1,5 +1,5 @@
 var io = require('socket.io-client');
-var request_url = "http://192.168.1.100:1337";
+var request_url = "http://192.168.1.102:1337";
 
 class Comm {
    constructor() {
@@ -97,13 +97,20 @@ class Comm {
         var json = JSON.stringify({ result : false, datas : data})
         CB(json);
       });
+
+      this.socket.on('request_family_reply', function (data) {
+        console.log("request_family_reply");
+
+        var json = { result : true, datas : data}
+        CB(json);
+      });
     }
 
     emitConnect_gen2(json, request){
         console.log("emitConnect_gen2");
         return new Promise((resolve, reject) => 
         {
-        console.log("emitConnect_gen2 dans le Promise");
+  
         this.socket.emit(request,json);
         this.socket.on('error', function (data) {
           console.log("error");
@@ -117,7 +124,18 @@ class Comm {
           var json = { result : true, datas : data};
           resolve(json);          
         });
+        this.socket.on('new_family_success', function(data) {
+          console.log("new_family_success");
 
+          var json = { result : true, datas : data};
+          resolve(json);          
+        });
+        this.socket.on('add_family_to_user_success', function(data) {
+          console.log("add_family_to_user_success");
+
+          var json = { result : true, datas : data};
+          resolve(json);          
+        });
 
     })
    }
