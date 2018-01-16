@@ -5,24 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.pmaj.pm_mobile.activities.ProfilActivity">
-    <include layout ="@layout/activity_navbar"/>
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="40sp">
-
-        <LinearLayout
-            android:id="@+id/navbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-        </LinearLayout>
+    <include layout="@layout/activity_navbar" />
 
 
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="40sp">
+            <ScrollView
+                android:id="@+id/scroll_profil_infos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <RelativeLayout
                 android:id="@+id/profil_infos"
                 android:layout_width="wrap_content"
@@ -35,9 +30,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
+                    android:text="PROFIL"
                     android:textSize="23sp"
-                    android:textStyle="bold"
-                    android:text="PROFIL" />
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/name_layout"
@@ -51,7 +46,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Name :"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/name"
@@ -117,7 +112,7 @@
                     <TextView
                         android:id="@+id/address"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -141,10 +136,13 @@
                 </LinearLayout>
 
             </RelativeLayout>
+            </ScrollView>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/profil_infos"
+                android:layout_below="@+id/scroll_profil_infos"
                 android:layout_marginTop="20sp"
                 android:orientation="horizontal">
 
@@ -154,8 +152,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/button"
-                    android:textColor="@color/buttonTextColor"
-                    android:text="Edit Profil" />
+                    android:text="Edit Profil"
+                    android:textColor="@color/buttonTextColor" />
 
                 <Button
                     android:id="@+id/change_pwd"
@@ -163,14 +161,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@drawable/button"
-                    android:textColor="@color/buttonTextColor"
-                    android:text="Change Password" />
+                    android:text="Change Password"
+                    android:textColor="@color/buttonTextColor" />
 
             </LinearLayout>
 
 
-    </RelativeLayout>
-</ScrollView>
+        </RelativeLayout>
 
 
-    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

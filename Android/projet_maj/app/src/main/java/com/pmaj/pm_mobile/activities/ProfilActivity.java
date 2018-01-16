@@ -36,6 +36,7 @@ public class ProfilActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profil);
+        mPrefs = getSharedPreferences("authToken", 0);
 
         calendar = (TextView) findViewById(R.id.calendar);
         families = (TextView) findViewById(R.id.families);
@@ -62,13 +63,11 @@ public class ProfilActivity extends AppCompatActivity {
         families.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //Redicrection to Home page
                 Intent intentLogged = new Intent(ProfilActivity.this, HomeActivity.class);
                 startActivity(intentLogged);
             }
         });
-        mPrefs = getSharedPreferences("authToken", 0);
 
 
         email = (TextView) findViewById(R.id.email);
@@ -83,12 +82,6 @@ public class ProfilActivity extends AppCompatActivity {
 
         LoginActivity.getSocketInstance().emitGetProfile(mPrefs.getString("token", ""), mPrefs.getString("email", ""));
 
-        /*email.setText(getIntent().getStringExtra("email"));
-        name.setText(getIntent().getStringExtra("name"));
-        surname.setText(getIntent().getStringExtra("surname"));
-        address.setText(getIntent().getStringExtra("address"));
-        birthday.setText(getIntent().getStringExtra("birthday"));*/
-
         edit_profil.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,19 +95,24 @@ public class ProfilActivity extends AppCompatActivity {
 
         @Override
         public void call(Object... args) {
-            JSONObject obk = (JSONObject) args[0];
+            final JSONObject obk = (JSONObject) args[0];
 
             //JSON { 'email': "", 'name': "", 'surname': "", 'address': "", 'cp': "", 'city': "", 'country': "", 'birthday': "" }
-
-            try {
-                email.setText(obk.getString("email"));
-                name.setText(obk.getString("name"));
-                surname.setText(obk.getString("surname"));
-                address.setText(obk.getString("address") + " " + obk.getString("cp") + " " + obk.getString("city") + " " + obk.getString("country"));
-                birthday.setText(obk.getString("birthday"));
-            } catch (JSONException e) {
-                e.printStackTrace();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    email.setText(obk.getString("email"));
+                    name.setText(obk.getString("name"));
+                    surname.setText(obk.getString("surname"));
+                    address.setText(obk.getString("address") + " " + obk.getString("cp") + " " + obk.getString("city") + " " + obk.getString("country"));
+                    birthday.setText(obk.getString("birthday"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
+        });
+
 
             return;
         }
