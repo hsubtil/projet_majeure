@@ -8,16 +8,12 @@ var request_url = "http://192.168.1.100:1337";
 class Calendar extends React.Component {
     constructor(props) {
         super(props);
-		this.socket = "";
+
+        console.log(props);
+
+		this.socket = props.socket;
 		this.events = [];
 
-		var socket = socketIOClient.connect(request_url); //process.env.SOCKET_URL
-        this.socket = socket;
-        this.socket.uuid = "6969";
-        console.log("SOCKETCONNECTION");
-        console.log("this");
-        console.log(this);
-        
         var self = this;
 
         BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));

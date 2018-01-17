@@ -10,7 +10,8 @@ export default class SelectedGroup extends Component {
 
     this.state = {
       'name': localStorage.getItem("selectedgroup_name"),
-      'code': localStorage.getItem("selectedgroup_code")
+      'code': localStorage.getItem("selectedgroup_code"),
+      'socket': props.socket
     }
   }
 
@@ -45,8 +46,8 @@ export default class SelectedGroup extends Component {
         <br/>
         <br/>
 
-        <Chatroom />
-        <Calendar />
+        <Chatroom socket={this.state.socket}/>
+        <Calendar socket={this.state.socket}/>
 
       </div>
 
