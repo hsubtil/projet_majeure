@@ -10,7 +10,9 @@ export default class Login extends Component {
 
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      lat:"",
+      lon:""
     };
 
   this.comm = props.socket;
@@ -21,23 +23,44 @@ export default class Login extends Component {
     return this.state.email.length > 0 && this.state.password.length > 0;
   }
 
+  maPosition(position) {
+    this.setState({lat:position.coords.latitude, lon:position.coords.longitude});
+  }
+
+
   handleChange = event => {
     this.setState({
       [event.target.id]: event.target.value
     });
   }
 
+
+
+
   handleSubmit = async event => {
     event.preventDefault();
     try {
-      var json = this.state;
+
+      if(navigator.geolocation){
+         navigator.geolocation.getCurrentPosition(this.maPosition);
+      }
+
+      var coord = {coord:{lat:this.state.lat, lon:this.state.lon}};
+      var json = {email: this.state.email, password: this.state.password, profile:coord};
+      //var json = this.state;
       var jjson = await this.comm.emitConnect(json);
       jjson = JSON.parse(jjson);
       if(jjson.result === true){
         console.log("authentificated");
         this.props.userHasAuthenticated(true);
+
+
+
+        localStorage.setItem("user",jjson.datas.name);
         localStorage.setItem("token", jjson.datas.token);
         localStorage.setItem("email", json.email);
+
+
         alert("authentificated !");
         this.props.history.push("/MainPage");
 
