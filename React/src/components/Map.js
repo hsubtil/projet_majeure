@@ -22,12 +22,23 @@ export default class Map extends Component {
 
   render() {
 
-    return (
+    const style = ({
+          position: 'absolute',
+          top: 100,
+          bottom: 100,
+          width: '20%',
+          height: '20%'
+        });
 
+    return (
       <div>
-        <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
-        <h2> MAP </h2>
-        <div ref={el => this.mapContainer = el} />
+        <div>
+          <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
+        </div>
+        <div>
+          <h2> MAP </h2>
+          <div style={style} ref={el => this.mapContainer = el} />
+        </div>
       </div>
     )
   }

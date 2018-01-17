@@ -108,6 +108,20 @@ class Comm {
         var json = { result : true, datas : data}
         CB(json);
       });
+
+      this.socket.on('select_family_success', function (data) {
+        console.log("select_family_success");
+
+        var json = { result : true, datas : data}
+        CB(json);
+      });
+
+      this.socket.on('select_family_error', function (data) {
+        console.log("select_family_error");
+
+        var json = { result : false, datas : data}
+        CB(json);
+      });
     }
 
     emitConnect_gen2(json, request){

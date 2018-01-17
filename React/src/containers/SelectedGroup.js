@@ -16,6 +16,29 @@ export default class SelectedGroup extends Component {
     }
   }
 
+  componentWillMount(){
+      try{
+        var json_t = {token: localStorage.token, code: this.state.code};
+        var self = this.state;
+        this.state.socket.emitConnect_gen(json_t, "select_family", function(json){
+        console.log(json.result);
+        if(json.result === true){
+          console.log("select_family success");
+          var json_group = json.datas;
+                  
+        }
+        else{
+          console.log("select_family unsuccess");
+        }
+
+        }.bind(this));
+
+
+      }catch(e){
+        alert(e);
+      }
+  }
+
 
   render() {
 
@@ -30,7 +53,7 @@ export default class SelectedGroup extends Component {
         <br/>
         <br/>
 
-        <Chatroom socket={this.state.socket}/>
+        <Chatroom socket={this.state.socket} code={this.state.code}/>
         <Calendar socket={this.state.socket}/>
 
       </div>
