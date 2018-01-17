@@ -54,7 +54,7 @@ export default class SelectedGroup extends Component {
         <br/>
 
         <Chatroom socket={this.state.socket} code={this.state.code}/>
-        <Calendar socket={this.state.socket}/>
+        <Calendar socket={this.state.socket} code={this.state.code}/>
 
       </div>
 

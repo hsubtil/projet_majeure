@@ -14,6 +14,10 @@ class Calendar extends React.Component {
 
 		this.socket = props.socket.socket;
 		this.events = [];
+		//this.code = "a9e5-55e4-1c2f-463b";
+		this.code = props.code;
+		console.log("code");
+		console.log(this.code);
 
         var self = this;
 
@@ -82,17 +86,17 @@ class Calendar extends React.Component {
 
         this.setEvent = this.setEvent.bind(this); 
         this.getListEvents = this.getListEvents.bind(this); 
-        this.getListEvents();
-       // this.setEvent("Alpes", "Ski", "fondue au programme",  new Date(2018, 0, 1), new Date(2018, 0, 3)); 
+        this.getListEvents(this.code);
+       // this.setEvent(code, "Alpes", "Ski", "fondue au programme",  new Date(2018, 0, 1), new Date(2018, 0, 3)); 
     }
 
-    setEvent(location, summary, description, start_dateTime, end_DateTime) {
+    setEvent(code, location, summary, description, start_dateTime, end_DateTime) {
         console.log("setEvent");
  		console.log("location: " + location + ", summary: " + summary + ", description: " + description 
  			+ ", start_dateTime: " + start_dateTime + ", end_DateTime: " + end_DateTime );
         this.socket.emit('google_set_event', {
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
-                , 'code': "a9e5-55e4-1c2f-463b"
+                , 'code': code
                 , 'event' : {
 								 'summary': summary,
 								 'location': location,
@@ -110,12 +114,12 @@ class Calendar extends React.Component {
         this.getListEvents();
     }
 
-    getListEvents() {
+    getListEvents(code) {
         console.log("getListEvents");
  
         this.socket.emit('google_list_events', {
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
-                , 'code': "a9e5-55e4-1c2f-463b"
+                , 'code': code
             }) 
     }
 

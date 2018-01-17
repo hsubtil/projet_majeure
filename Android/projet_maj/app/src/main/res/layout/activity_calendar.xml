@@ -20,11 +20,37 @@
             android:textStyle="bold"
             android:layout_marginTop="20dp"
             android:textSize="23sp"/>
-        <CalendarView
-            android:id="@+id/calendar"
+        <TextView
+            android:id="@+id/monthYear"
             android:layout_below="@+id/title_calendar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:layout_marginTop="20sp"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimaryDark"
+            />
+        <com.github.sundeepk.compactcalendarview.CompactCalendarView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_below="@+id/monthYear"
+            android:id="@+id/compactcalendar_view"
+            android:layout_width="fill_parent"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:layout_height="250dp"
+            app:compactCalendarTargetHeight="250dp"
+            app:compactCalendarTextSize="12sp"
+            app:compactCalendarBackgroundColor="@color/colorPrimaryDark"
+            app:compactCalendarTextColor="@color/buttonTextColor"
+            app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorAccent"
+            app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
+            app:compactCalendarMultiEventIndicatorColor="#fff"
+            />
+        <!--<CalendarView
+            android:id="@+id/calendarView"
+            android:layout_below="@+id/title_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"/>-->
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

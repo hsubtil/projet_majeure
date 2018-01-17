@@ -67,7 +67,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         //Socket
-        LoginActivity.getSocketInstance().getmSocket().on("selected_family_ko", onSelectFamilyFail);
+        LoginActivity.getSocketInstance().getmSocket().on("select_family_err", onSelectFamilyFail);
 
         LoginActivity.getSocketInstance().emitSelectFamily(mPrefs.getString("token",""),code);
         family.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
