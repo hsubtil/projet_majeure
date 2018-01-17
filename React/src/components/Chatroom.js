@@ -13,9 +13,14 @@ class Chatroom extends React.Component {
         super(props);
 
         this.socket = props.socket.socket;
+        this.user = "Nabil";
+        //this.code = "a177a1f8-255d-40a1-a757-30ba22766b52";
+        this.code = props.code;
 
         this.state = {
-            chats: []
+            chats: [],
+            user: this.user,
+            code: this.code
         };
 
         var self = this;
@@ -65,7 +70,7 @@ class Chatroom extends React.Component {
         });    
 
         this.submitMessage = this.submitMessage.bind(this);
-        this.loadMessages();
+        this.loadMessages(this.state.code);
     }
 
     componentDidMount() {
@@ -80,19 +85,16 @@ class Chatroom extends React.Component {
         ReactDOM.findDOMNode(this.refs.chats).scrollTop = ReactDOM.findDOMNode(this.refs.chats).scrollHeight;
     }
 
-    loadMessages() {
+    loadMessages(code) {
         console.log("loadMessages");
  
         this.socket.emit('load_messages', {
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
-                , 'code': "a177a1f8-255d-40a1-a757-30ba22766b52"
+                , 'code': code
             }) 
     }
 
-    sendMessage(content){
-        var code = "a177a1f8-255d-40a1-a757-30ba22766b52";
-        var user = "Nabil";
-        var date =""; 
+    sendMessage(content, code, user, date ){
          console.log("sendMessage, code: " + code + ",user: "+ user + ",date: " + date + ",content: " + content);
 
          this.socket.emit('new_message', {
@@ -105,7 +107,7 @@ class Chatroom extends React.Component {
         e.preventDefault();
         console.log("submitMessage");
         console.log(ReactDOM.findDOMNode(this.refs.msg).value);
-        this.sendMessage(ReactDOM.findDOMNode(this.refs.msg).value);
+        this.sendMessage(ReactDOM.findDOMNode(this.refs.msg).value, this.state.code, this.state.user, "");
         ReactDOM.findDOMNode(this.refs.msg).value = "";
     }
 
