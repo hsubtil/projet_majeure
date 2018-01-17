@@ -1,5 +1,6 @@
 ﻿"use strict";
 const dateTime = require('date-time');
+const STATS = require('./stats');
 
 module.exports = this;
 
@@ -41,10 +42,12 @@ this.debug = function (msg, socket) {
 this.log = function (msg, socket) {
     var d = dateTime({ local: false });
     this.logConsole('log', '[' + d.toString() + '] ' + msg, socket);
+    STATS.addLogEntry();
 }
 this.error = function (msg, socket) {
     var d = dateTime({ local: false });
     this.logConsole('error', '[' + d.toString() + '] ' + msg, socket);
+    STATS.addErrorToStats();
 }
 this.warning = function (msg, socket) {
     var d = dateTime({ local: false });

@@ -47,6 +47,19 @@ Db.connect = function (db_object, cb) {
             cb(null);
     });
 }
+/**/
+Db.getStats = function (db_object, cb) {
+    LOG.log("[DB] Get stats from db : ");
+    db_object.database.command({ dbStats: 1, scale: 1 }, function (err, result) {
+        if (err) {
+            LOG.error("[DB] Get stats");
+            cb(err, null);
+        }
+        else {
+            cb(null,result);
+        }
+    });
+}
 
 /***************************************************************************** USERS *****************************************************************************/
 
@@ -116,7 +129,7 @@ Db.updateUserByMail = function (db_object, user_mail, new_info, cb) {
         if (result[0] === undefined) {
             LOG.error("[DB] User not found for update : " + user_mail);
             if (cb)
-                cb("Error, user not found.");
+                cb("Error, user not found.",null);
         }
         else {
             var user = result[0];
@@ -126,13 +139,12 @@ Db.updateUserByMail = function (db_object, user_mail, new_info, cb) {
                 if (err) {
                     LOG.error("[DB] Error in updating user");
                     LOG.error(err);
+                    cb(err, null);
                 } else {
                     LOG.log("[DB] Document updated");
+                    cb(null, user);
                 }
             });
-            if (cb) {
-                cb(user);
-            }
 
         }
     });

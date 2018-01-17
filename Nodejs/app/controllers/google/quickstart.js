@@ -9,9 +9,6 @@ var LOG = require("../../utils/log");
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/calendar-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/calendar'];
-console.log(process.env.HOME);
-console.log(process.env.HOMEPATH);
-console.log(process.env.USERPROFILE);
 var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'calendar-nodejs-quickstart.json';
@@ -144,18 +141,22 @@ this.listUserEvents = function (calendar_id, cb) {
                     LOG.error('The API returned an error: ' + err);
                     cb(err,null);
                 }
-                var events = response.items;
-                if (events.length == 0) {
-                    LOG.log('No upcoming events found.');
-                } else {
-                    console.log('Upcoming 10 events:');
-                    for (var i = 0; i < events.length; i++) {
-                        var event = events[i];
-                        var start = event.start.dateTime || event.start.date;
-                        console.log('%s - %s', start, event.summary);
+                if (response) {
+                    var events = response.items;
+                    if (events.length == 0) {
+                        LOG.log('No upcoming events found.');
+                    } else {
+                        console.log('Upcoming 10 events:');
+                        for (var i = 0; i < events.length; i++) {
+                            var event = events[i];
+                            var start = event.start.dateTime || event.start.date;
+                            console.log('%s - %s', start, event.summary);
+                        }
+                        console.log(JSON.stringify(calendar));
+                        cb(null, events);
                     }
-                    console.log(JSON.stringify(calendar));
-                    cb(null,events);
+                } else {
+                    LOG.error("[GOOGLE] Invalide request for getting calendar.");
                 }
             });
         });

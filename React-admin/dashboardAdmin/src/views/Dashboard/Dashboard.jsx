@@ -24,18 +24,22 @@ class Dashboard extends Component {
         super(props);
         this.state = {
         fetchInfo: {
+            upTime:'',
             errorNb: '',
+            logEntry:'',
             dbCapacity: '',
+            dbObjects:'',
             socketConnected: ''
           },
-        dataBar:{
-            labels: ['Chat', 'Family', 'Profile', 'GoogleCalendar', 'Auth', 'Meteo'],
+        fetchServicesInfo:{
+            labels: ['Chateee', 'Family', 'Profile', 'GoogleCalendar', 'Auth', 'Meteo'],
             series: [
               [542, 443, 320, 365, 553, 453]
             ]
           }
         }
         this.fetchInfo = this.fetchInfo.bind(this);
+        this.fetchServicesInfo = this.fetchServicesInfo.bind(this);
       }
     
       fetchInfo() {
@@ -46,6 +50,20 @@ class Dashboard extends Component {
                 fetchInfo: response.data
             });
             console.log("fetchInfo", this.state.fetchInfo);
+          })
+          .catch( (error) => {
+            console.log(error);
+          });  
+      }
+
+      fetchServicesInfo() {
+        axios.get('http://localhost:1337/admin/services')
+          .then( (response) => {
+            console.log("response services", response);
+            this.setState({
+                fetchServicesInfo: response.data
+            });
+            console.log("fetchServicesInfo", this.state.fetchServicesInfo);
           })
           .catch( (error) => {
             console.log(error);
@@ -72,6 +90,7 @@ class Dashboard extends Component {
 
     componentWillMount(){
         this.fetchInfo();
+        this.fetchServicesInfo();
     }
 
 
@@ -82,13 +101,15 @@ class Dashboard extends Component {
                     <Row>
                         <Col lg={3} sm={6}>
                             <StatsCard
-                                bigIcon={<i className="pe-7s-server text-warning"></i>}
-                                statsText="DB Capacity"
-                                statsValue={this.state.fetchInfo.dbCapacity}
+                                bigIcon={<i className="pe-7s-timer text-success"></i>}
+                                statsText="Uptime"
+                                statsValue={this.state.fetchInfo.upTime}
                                 statsIcon={<i className="fa fa-refresh"></i>}
                                 statsIconText="Updated now"
                             />
                         </Col>
+                    </Row>
+                    <Row>
                         <Col lg={3} sm={6}>
                             <StatsCard
                                 bigIcon={<i className="pe-7s-usb text-success"></i>}
@@ -110,9 +131,39 @@ class Dashboard extends Component {
                         </Col>
                         <Col lg={3} sm={6}>
                             <StatsCard
+                                bigIcon={<i className="pe-7s-tools text-success"></i>}
+                                statsText="Log entry"
+                                statsValue={this.state.fetchInfo.logEntry}
+                                statsIcon={<i className="fa fa-refresh"></i>}
+                                //statsIcon={<i className="fa fa-clock-o"></i>}
+                                statsIconText="Updated now"
+                            />
+                        </Col>
+                        <Col lg={3} sm={6}>
+                            <StatsCard
                                 bigIcon={<i className="fa fa-twitter text-info"></i>}
                                 statsText="Followers"
                                 statsValue="+0"
+                                statsIcon={<i className="fa fa-refresh"></i>}
+                                statsIconText="Updated now"
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col lg={3} sm={6}>
+                            <StatsCard
+                                bigIcon={<i className="pe-7s-server text-warning"></i>}
+                                statsText="DB Capacity"
+                                statsValue={this.state.fetchInfo.dbCapacity}
+                                statsIcon={<i className="fa fa-refresh"></i>}
+                                statsIconText="Updated now"
+                            />
+                        </Col>
+                        <Col lg={3} sm={6}>
+                            <StatsCard
+                                bigIcon={<i className="pe-7s-server text-warning"></i>}
+                                statsText="DB objects"
+                                statsValue={this.state.fetchInfo.dbObjects}
                                 statsIcon={<i className="fa fa-refresh"></i>}
                                 statsIconText="Updated now"
                             />
@@ -175,7 +226,7 @@ class Dashboard extends Component {
                                 content={
                                     <div className="ct-chart">
                                         <ChartistGraph
-                                            data={this.state.dataBar}
+                                            data={this.state.fetchServicesInfo}
                                             type="Bar"
                                             options={optionsBar}
                                             responsiveOptions={responsiveBar}

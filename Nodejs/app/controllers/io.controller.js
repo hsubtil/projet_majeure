@@ -32,6 +32,7 @@ this.listen = function (server) {
     io.sockets.on('connection', function (socket) {
         LOG.log("[SOCKET] New client " + socket.id);
         //ADMIN.addSocket(socket);
+        STATS.addSocketToStats();
         socket_map[socket.id] = socket;
         /***************************************************************************** ADMIN *****************************************************************************/
         /*
@@ -144,21 +145,21 @@ this.listen = function (server) {
             if (json_object != undefined) {
                 checkToken(json_object['token'], socket, function (err) {
                     if (!err) {
-                        DB.updateUser(json_object['email'], json_object['profile'], function (err) {
+                        DB.updateUser(json_object['email'], json_object['profile'], function (err,res) {
                             if (!err) {
                                 LOG.debug("Profile updated");
                                 socket.emit('update_user_profil_success', err);
                             }
                             else {
                                 LOG.error("[SOCKET] Update user profil error.");
-                                socket.emit('error', err);
+                                socket.emit('node_error', err);
                             }
                         });
                     }
                 });
             } else {
                 LOG.error("[SOCKET] Update user profil undefined.");
-                socket.emit('error', "undefined JSON");
+                socket.emit('node_error', "undefined JSON");
             }
 
         });
@@ -511,6 +512,7 @@ this.listen = function (server) {
             LOG.log("[SOCKET] Client " + socket.id + " disconnect event");
             //Remove from 
             delete socket_map[socket.id];
+            STATS.removeSocketFromStats();
             /*for (var element in families_map['families']) {
                 if (families_map['families'][element]['socket'] === socket) {
                     families_map['families'].splice(i, 1);  // Remove from family array

@@ -7,6 +7,22 @@ var FAMILY = require("../models/familyModel.js");
 
 module.exports = this;
 
+/**/
+this.getStats = function (cb) {
+    DB.connect(db, function (error) {
+        if (!error) {
+            DB.getStats(db, function (err, stats) {
+                if (!err) {
+                    DB.disconnect(db);
+                    cb(stats);
+                }
+                else
+                    DB.disconnect(db);
+            });
+
+        }
+    });
+}
 /***************************************************************************** USERS *****************************************************************************/
 
 this.register = function (json_object) {
@@ -37,9 +53,9 @@ this.getProfile = function (email, cb) {
 
 this.updateUser = function (mail, new_info, cb) {
     DB.connect(db, function (error) {
-        DB.updateUserByMail(db, mail, new_info, function (res) {
+        DB.updateUserByMail(db, mail, new_info, function (err,res) {
             if (cb)
-                cb(res);
+                cb(err,res);
             DB.disconnect(db);
         });
     });
