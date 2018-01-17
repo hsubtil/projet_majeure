@@ -168,6 +168,8 @@ class MainPage extends Component {
           </form>
 
         </div>
+        <Chatroom />
+        <Calendar />
       </div>
     );
   }

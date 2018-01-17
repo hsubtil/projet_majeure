@@ -10,6 +10,7 @@ export default class Home extends Component {
           <p>Keep in Touch ! </p>
         </div>
       </div>
+
     );
   }
 }
