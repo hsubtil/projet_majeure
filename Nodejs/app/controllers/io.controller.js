@@ -58,25 +58,28 @@ this.listen = function (server) {
         /***************************************************************************** USERS *****************************************************************************/
 
         /*
-        *  param : JSON {'mail':"",'password':"",'profile':{'coord':{'lat':,'lon':}}} 
+        *  param : JSON {'email':"",'password':"",'profile':{'coord':{'lat':,'lon':}}} 
         *  return : JSON { 'email': "nabil.fekir@ol.com", 'name': "nabil", 'surname': "fekir", 'address': "Rue du stade", 'cp': "69110", 'city': "Decines", 'country': "France", 'birthday': "19-12-93" }
         *  When Front server send an auth event, ask to JEE server if auth is valid or not. 
         */
         socket.on('auth_attempt', function (json_object) {
             LOG.log("[SOCKET] Connection event" + JSON.stringify(json_object['email']));
+            var profile = json_object['profile'];
+            delete json_object['profile']; // Removes json.foo from the dictionary.
             REQUEST.connection(socket, json_object, function (err) {
                 if (!err) {
                     // Protection if profile is not provided 
-                    if (!json_object['profile']) {
+                    if (!profile) {
                         createToken(json_object['email'], function (token) {
                             if (token) {
                                 socket.emit('auth_success', token);
                             }
                         });
                     } else {
-                        DB.updateUser(json_object['email'], json_object['profile'], function (err) {
+                        DB.updateUser(json_object['email'], profile, function (err) {
                             createToken(json_object['email'], function (token) {
                                 if (token) {
+                                    STATS.addAuthRequest();
                                     socket.emit('auth_success', token);
                                 }
                             });
@@ -102,6 +105,7 @@ this.listen = function (server) {
                 LOG.log(error);
                 if (!error) {
                     DB.register(json_object);
+                    STATS.addNewUser();
                     socket.emit('registration_success');
                 }
                 else {
@@ -122,8 +126,10 @@ this.listen = function (server) {
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     DB.getProfile(json_object['email'], function (err, res) {
-                        if (!err)
+                        if (!err) {
+                            STATS.addProfileRequest();
                             socket.emit('request_profile_reply', res);
+                        }
                         else
                             socket.emit('node_error', err);
                     });
@@ -148,6 +154,7 @@ this.listen = function (server) {
                         DB.updateUser(json_object['email'], json_object['profile'], function (err,res) {
                             if (!err) {
                                 LOG.debug("Profile updated");
+                                STATS.addProfileRequest();
                                 socket.emit('update_user_profil_success', err);
                             }
                             else {
@@ -177,6 +184,7 @@ this.listen = function (server) {
                 if (!err) {
                     DB.getFamilies(json_object['email'], function (err, res) {
                         if (!err) {
+                            STATS.addFamilyRequest();
                             socket.emit('request_family_reply', res);
                         }
                         else {
@@ -187,6 +195,8 @@ this.listen = function (server) {
                 }
             });
         });
+
+        //TODO Add function for get localisation of all fam
 
         /*
             param: json_object : JSON {token:, code:}
@@ -226,11 +236,11 @@ this.listen = function (server) {
                     }
                     families_map['families'].push({ 'code': json_object['code'], 'socket': socket });
                     console.log(families_map['families']);
-                    socket.emit('selected_family_ok');
+                    socket.emit('select_family_success');
                 }
                 else {
                     LOG.error("[SOCKET] Switch family error.");
-                    socket.emit('selected_family_ko');   
+                    socket.emit('select_family_err');   
                 }
             });
 
@@ -245,6 +255,7 @@ this.listen = function (server) {
             LOG.log("[SOCKET] Switch family from " + json_object['current_family_id'] + " to " + json_object['next_family_id']);
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
+                    STATS.addFamilyRequest();
                     var i = 0;
                     for (var element in families_map['families']) {
                         LOG.debug(i);
@@ -282,6 +293,7 @@ this.listen = function (server) {
                                     if (!err) {
                                         LOG.log("[SOCKET] New family for user " + JSON.stringify(user));
                                         DB.addFamilyToUser(user, reply['code'], reply);
+                                        STATS.addFamilyRequest();
                                         socket.emit('new_family_success', family.getFamilyJson());
                                     }
                                     else {
@@ -310,6 +322,7 @@ this.listen = function (server) {
                     DB.getFamilyWithCode(json_object['code'], function (err, res) {
                         if (!err) {
                             DB.addFamilyToUser(json_object['email'], json_object['code'], res);
+                            STATS.addFamilyRequest();
                             socket.emit('add_family_to_user_success',res);
                         }
                         else
@@ -341,7 +354,8 @@ this.listen = function (server) {
                                 LOG.debug(json_object['msg']['code']);
                                 LOG.debug(families_map['families'][element]);
                                 if (families_map['families'][element]['code'] === json_object['msg']['code']) {
-                                    LOG.log("[SOCKET] Emit new message available event");
+                                    LOG.warning("[SOCKET] Emit new message available event");
+                                    STATS.addChatRequest();
                                     families_map['families'][element]['socket'].emit('new_message_available', json_object['msg']); // Emit new message to all family members connected
                                 }
                             }
@@ -363,6 +377,7 @@ this.listen = function (server) {
                     if (!err) {
                         DB.loadMessages(family_code, function (err, msgs) {
                             if (!err) {
+                                STATS.addChatRequest();
                                 socket.emit('load_messages_reply', msgs);
                             }
                         });
@@ -371,6 +386,7 @@ this.listen = function (server) {
             }
         });
 /***************************************************************************** GOOGLE *****************************************************************************/
+        //TODO: ADD remove / modify event + DOC
         // Check C:\Users\Hugo\.credentials
         socket.on('test_google', function (json_object) {
             checkToken(json_object['token'], socket, function (err) {
@@ -384,7 +400,7 @@ this.listen = function (server) {
                     GOOGLE.authorize(JSON.parse(content), function (oAuth) {
                         LOG.debug(json_object['code']);
                         GOOGLE.addCalendar(oAuth, json_object['code'], function (res) {
-                            //
+                            STATS.addGoogleRequest();
                         });
                     });
                 });
@@ -434,8 +450,10 @@ this.listen = function (server) {
                 DB.getFamilyByCode(json_object['code'], function (err, family) {
                     if (!err) {
                         GOOGLE.addEvents(family['calendarId'], json_object['event'], function (err, res) {
-                            if (!err)
+                            if (!err) {
+                                STATS.addGoogleRequest();
                                 socket.emit('google_set_event_reply');  //TODO : update doc
+                            }
                             else {
                                 socket.emit('google_set_event_err');
                                 LOG.error("[SOCKET] Google Error: cannot set event. " + err);
@@ -457,6 +475,7 @@ this.listen = function (server) {
                             if (!err) {
                                 LOG.log("[SOCKET] Emit reply google list events");
                                 console.log(res);
+                                STATS.addGoogleRequest();
                                 socket.emit('google_list_events_reply', res);
                             }
                             else {
@@ -494,6 +513,7 @@ this.listen = function (server) {
                                         LOG.debug("[METEO] IN");
                                         if (!err) {
                                             LOG.log("[SOCKET] Resultat Final : " + JSON.stringify(msgs));
+                                            STATS.addMeteoRequest();
                                             socket.emit("request_family_meteo_reply", msgs);
                                         } else {
                                             socket.emit("request_family_meteo_err", err);
@@ -513,6 +533,7 @@ this.listen = function (server) {
             //Remove from 
             delete socket_map[socket.id];
             STATS.removeSocketFromStats();
+            // TODO 
             /*for (var element in families_map['families']) {
                 if (families_map['families'][element]['socket'] === socket) {
                     families_map['families'].splice(i, 1);  // Remove from family array

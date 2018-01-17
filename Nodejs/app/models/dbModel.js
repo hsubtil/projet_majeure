@@ -2,6 +2,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var jwt = require('jsonwebtoken');
 var LOG = require("../utils/log");
+var STATS = require("../utils/stats");
 
 var CONFIG = require("../../config.json");
 process.env.CONFIG = JSON.stringify(CONFIG);
@@ -75,15 +76,14 @@ Db.getAllUsers = function (db_object, cb) {
         if (error) {
             LOG.error("[DB] " + error);
             if (cb)
-                cb(error);
+                cb(error,null);
         }
         LOG.log(results);
-        results.forEach(function (result) {
-            LOG.debug(result);
-            LOG.log("Name : " + result.name + "\n" + "Email : " + result.email);
+        if (!error) {
+            LOG.debug(JSON.stringify(results));
             if (cb)
-                cb(JSON.stringify(result[0]));
-        });
+                cb(error, results);
+        }
     });
 };
 
@@ -176,8 +176,25 @@ Db.register = function (db_object, new_user_json, cb) {
 /***************************************************************************** FAMILIES *****************************************************************************/
 
 /*
-*
+*  /!\ For stats 
 */
+Db.getAllFamiliesDb = function (db_object, cb) {
+    LOG.log("[DB] Query of all families : ");
+    db_object.database.collection(db_object.family_list).find({}).toArray(function (error, results) {
+        if (error) {
+            LOG.error("[DB] " + error);
+            if (cb)
+                cb(error, null);
+        }
+        LOG.log(results);
+        if (!error) {
+            LOG.debug(JSON.stringify(results));
+            if (cb)
+                cb(null, results);
+        }
+    });
+};
+
 Db.getUserFamilies = function (db_object, user_mail, cb) {
     LOG.log("[DB] Looking for user families : " + user_mail);
     db_object.database.collection(db_object.families_collection).find({ email: user_mail }).toArray(function (error, result) {

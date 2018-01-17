@@ -61,7 +61,29 @@ this.updateUser = function (mail, new_info, cb) {
     });
 };
 
+this.getAllUsers = function (cb) {
+    DB.connect(db, function (error) {
+        DB.getAllUsers(db, function (err, res) {
+            if (cb)
+                cb(err, res);
+            DB.disconnect(db);
+        });
+    });
+}
+
 /***************************************************************************** FAMILIES *****************************************************************************/
+
+
+this.getAllFamilies = function (cb) {
+    DB.connect(db, function (error) {
+        DB.getAllFamiliesDb(db, function (err, res) {
+            if (cb)
+                cb(err, res);
+            DB.disconnect(db);
+        });
+    });
+}
+
 this.getFamilies = function (email, cb) {
     DB.connect(db, function (error) {
         DB.getUserFamilies(db, email, function (err, res) {
