@@ -1,5 +1,5 @@
 var io = require('socket.io-client');
-var request_url = "http://192.168.1.100:1337";
+var request_url = "http://192.168.1.103:1337";
 
 class Comm {
    constructor() {

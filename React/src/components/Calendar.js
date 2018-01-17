@@ -2,6 +2,7 @@ import React from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import socketIOClient from 'socket.io-client';
+import "../../node_modules/react-big-calendar/lib/css/react-big-calendar.css";
 
 var request_url = "http://192.168.1.100:1337";
 
@@ -11,7 +12,7 @@ class Calendar extends React.Component {
 
         console.log(props);
 
-		this.socket = props.socket;
+		this.socket = props.socket.socket;
 		this.events = [];
 
         var self = this;

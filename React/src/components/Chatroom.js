@@ -12,7 +12,7 @@ class Chatroom extends React.Component {
     constructor(props) {
         super(props);
 
-        this.socket = props.socket;
+        this.socket = props.socket.socket;
 
         this.state = {
             chats: []
