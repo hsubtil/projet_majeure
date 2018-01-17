@@ -6,6 +6,7 @@ import Routes from "../Routes";
 import AppliedRoute from "../components/AppliedRoute";
 import SelectedGroup from "./SelectedGroup";
 
+
 class MainPage extends Component {
 
   constructor(props) {
@@ -164,12 +165,8 @@ class MainPage extends Component {
             Rejoindre un groupe
           </Button>
 
-
           </form>
-
         </div>
-        <Chatroom />
-        <Calendar />
       </div>
     );
   }

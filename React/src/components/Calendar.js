@@ -17,7 +17,7 @@ class Calendar extends React.Component {
         console.log("SOCKETCONNECTION");
         console.log("this");
         console.log(this);
-
+        
         var self = this;
 
         BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
