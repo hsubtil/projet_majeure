@@ -8,16 +8,12 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
 
-    var Comm = require('../tool/comm.js');
-    this.comm=new Comm();
-
     this.state = {
       email: "",
       password: ""
     };
 
-
-    this.comm.socketConnection("6969");
+  this.comm = props.socket;
     
   }
 

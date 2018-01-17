@@ -17,47 +17,9 @@ export default class Profil extends Component {
       'birthday': ""
     };
 
-    var Comm = require('../tool/comm.js');
-    this.comm=new Comm();
-    this.comm.socketConnection("6969");
+  this.comm = props.socket;
 
   }
-
-  /*handleRequestProfil = async event => {
-    event.preventDefault();
-    console.log("handleRequestProfil");
-    if(localStorage.getItem("token") === null)
-    {
-      this.props.history.push("/Login");
-    }
-    else{
-      try{
-        var json = JSON.stringify({token: localStorage.email, email: localStorage.email});
-        var jjson = await this.comm.emitConnect_gen(json, "request_profile_update");
-        if(jjson.result === true){
-          console.log("request_profile success");
-          var json_profil = JSON.parse(jjson.datas);
-
-          this.state.email = json_profil.email;
-          this.state.password = json_profil.password;
-          this.state.name = json_profil.name;
-          this.state.surname = json_profil.surname;
-          this.state.address = json_profil.address;
-          this.state.cp = json_profil.cp;
-          this.state.city = json_profil.city;
-          this.state.country = json_profil.country;
-          this.state.birthday = json_profil.birthday;
-
-        }
-        else{
-          console.log("request_profile unsuccess");
-        }
-      }catch(e){
-        alert(e);
-      }
-    }
-  }*/
-
 
   handleRequestProfilUpdate = async event => {
     event.preventDefault();
@@ -87,10 +49,6 @@ export default class Profil extends Component {
     });
   }
 
-  test = event => {
-    //console.log(this.state);
-  }
-
   componentWillMount(){
     console.log("componentDidMount");
     if(localStorage.getItem("token") === null)
@@ -118,19 +76,20 @@ export default class Profil extends Component {
           self.country = json_profil.country;
           self.birthday = json_profil.birthday;
           
+          this.setState({email: json_profil.email});
+
         }
         else{
           console.log("request_profile unsuccess");
         }
 
-        });
+        }.bind(this));
 
 
       }catch(e){
         alert(e);
       }
   }
-
 
   render() {
 

@@ -10,17 +10,19 @@ export default class SelectedGroup extends Component {
       'code': localStorage.getItem("selectedgroup_code")
     }
 
+    console.log(props.socket);
+
   }
 
   render() {
 
-    console.log(this.state);
 
     return (
 
       <div className="SelectedGroup">
         <div className="lander">
           <h1>Groupe {this.state.name}</h1>
+          <p>Code : {this.state.code}</p>
         </div>
       </div>
 

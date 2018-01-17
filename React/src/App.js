@@ -19,6 +19,10 @@ constructor(props) {
     this.state.isAuthenticated = true;
   }
 
+  var Comm = require('./tool/comm.js');
+  this.comm=new Comm();
+  this.comm.socketConnection("6969");
+
 }
 
 userHasAuthenticated = authenticated => {
@@ -58,7 +62,8 @@ handleLogout = event => {
 
     const childProps = {
       isAuthenticated: this.state.isAuthenticated,
-      userHasAuthenticated: this.userHasAuthenticated
+      userHasAuthenticated: this.userHasAuthenticated,
+      socket: this.comm
     };
 
     return (

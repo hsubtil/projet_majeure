@@ -1,5 +1,5 @@
 var io = require('socket.io-client');
-var request_url = "http://192.168.1.102:1337";
+var request_url = "http://192.168.1.100:1337";
 
 class Comm {
    constructor() {
@@ -19,6 +19,10 @@ class Comm {
        this.socket.emit('connection', this.comm.io.uuid, function (test) {
            console.log(test);
        });
+   }
+
+   socketDisconnection(){
+    this.socket.close();
    }
 
    socketConnection(uuid) {

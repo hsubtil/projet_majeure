@@ -17,9 +17,7 @@ class MainPage extends Component {
       'join_code':""
     };
 
-    var Comm = require('../tool/comm.js');
-    this.comm=new Comm();
-    this.comm.socketConnection("6969");
+  this.comm = props.socket;
 
   }
 
@@ -90,13 +88,14 @@ class MainPage extends Component {
           var json_group = json.datas;
           
           self.families = json_group;
+          this.setState({families: json_group});
           
         }
         else{
           console.log("request_family unsuccess");
         }
 
-        });
+        }.bind(this));
 
 
       }catch(e){

@@ -12,8 +12,7 @@ export default class Signup extends Component {
   constructor(props) {
     super(props);
 
-    var Comm = require('../tool/comm.js');
-    this.comm=new Comm();
+    this.comm = props.socket;
 
     this.state = {
     'email': "",
@@ -38,8 +37,6 @@ export default class Signup extends Component {
     'country': "",
     'birthday': ""
   };
-
-    this.comm.socketConnection("6969");
 
   }
 
