@@ -6,15 +6,15 @@ import java.util.Date;
  * Created by pia92 on 16/01/2018.
  */
 
-public class Event {
-    String date;
+public class EventModel {
+    Long date;
     String summary;
 
-    public String getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
