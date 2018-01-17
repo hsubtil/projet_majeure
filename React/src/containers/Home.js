@@ -10,6 +10,7 @@ export default class Home extends Component {
           <p>On a toujours pas d'idée de nom ... </p>
         </div>
       </div>
+
     );
   }
 }

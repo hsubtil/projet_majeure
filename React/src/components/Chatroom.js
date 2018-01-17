@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './Chatroom.css';
-import socketIOClient from 'socket.io-client'
-
+import socketIOClient from 'socket.io-client';
 import Message from './Message.js';
-var request_url = "http://192.168.1.102:1337";
-var ChatroomState = "";
+import Comm from "../tool/comm.js";
+
+var request_url = "http://192.168.1.100:1337";
+
 
 class Chatroom extends React.Component {
     constructor(props) {
@@ -85,7 +86,7 @@ class Chatroom extends React.Component {
 
     loadMessages() {
         console.log("loadMessages");
-        //const socket = socketIOClient(this.state.endpoint);      
+ 
         this.socket.emit('load_messages', {
                 "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
                 , 'code': "a177a1f8-255d-40a1-a757-30ba22766b52"
@@ -107,19 +108,9 @@ class Chatroom extends React.Component {
     submitMessage(e) {
         e.preventDefault();
         console.log("submitMessage");
-        //this.loadMessages();
         console.log(ReactDOM.findDOMNode(this.refs.msg).value);
         this.sendMessage(ReactDOM.findDOMNode(this.refs.msg).value);
         ReactDOM.findDOMNode(this.refs.msg).value = "";
-
-        /*this.setState({
-            chats: this.state.chats.concat([{
-                username: "Kevin Hsu",
-                content: <p>{ReactDOM.findDOMNode(this.refs.msg).value}</p>,
-            }])
-        }, () => {
-            ReactDOM.findDOMNode(this.refs.msg).value = "";
-        });*/
     }
 
     render() {
