@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.socket.client.IO;
@@ -26,7 +27,7 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        URI uri = URI.create("http://192.168.1.103:1337/");
+        URI uri = URI.create("http://192.168.1.100:1337/");
         this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
@@ -162,6 +163,19 @@ public class NetworkCom {
             e.printStackTrace();
         }
         mSocket.emit("google_list_events",json);
+    }
+
+    public void emitCreateEvent(String token, String code, JSONObject event) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("code",code);
+            json.put("event",event);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("google_set_event",json);
     }
 
 

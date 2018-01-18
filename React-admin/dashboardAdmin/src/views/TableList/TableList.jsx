@@ -1,10 +1,41 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { Grid, Row, Col, Table } from 'react-bootstrap';
 
 import Card from 'components/Card/Card.jsx';
 import {thArray, tdArray} from 'variables/Variables.jsx';
 
 class TableList extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fetchInfo:{
+                familyListCol: ["ID","Name","Code","Calendar"],
+                userListCol: ["ID","Name","Code","Calendar"],
+                familyListDb : [[]],
+                userListDb : [[]]
+            }
+        }
+        this.fetchInfo = this.fetchInfo.bind(this);
+      }
+
+      fetchInfo() {
+        axios.get('http://localhost:1337/admin/dbInfo')
+          .then( (response) => {
+            console.log("response", response);
+            this.setState({
+                fetchInfo: response.data
+            });
+            console.log("fetchInfo", this.state.fetchInfo);
+          })
+          .catch( (error) => {
+            console.log(error);
+          });  
+      }
+
+    componentWillMount(){
+        this.fetchInfo();
+    }
 
     render() {
         return (
@@ -21,7 +52,7 @@ class TableList extends Component {
                                         <thead>
                                             <tr>
                                                 {
-                                                    thArray.map((prop, key) => {
+                                                    this.state.fetchInfo.familyListCol.map((prop, key) => {
                                                         return (
                                                         <th  key={key}>{prop}</th>
                                                         );
@@ -31,7 +62,7 @@ class TableList extends Component {
                                         </thead>
                                         <tbody>
                                             {
-                                                tdArray.map((prop,key) => {
+                                                 this.state.fetchInfo.familyListDb.map((prop,key) => {
                                                     return (
                                                         <tr key={key}>{
                                                             prop.map((prop,key)=> {

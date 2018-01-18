@@ -29,12 +29,13 @@ class Dashboard extends Component {
             logEntry:'',
             dbCapacity: '',
             dbObjects:'',
+            dbRequest:'',
             socketConnected: ''
           },
         fetchServicesInfo:{
-            labels: ['Chateee', 'Family', 'Profile', 'GoogleCalendar', 'Auth', 'Meteo'],
+            labels: ['Chat', 'Family', 'Profile', 'GoogleCalendar', 'Auth', 'Meteo'],
             series: [
-              [542, 443, 320, 365, 553, 453]
+              [0, 0, 0, 0, 0, 0]
             ]
           }
         }

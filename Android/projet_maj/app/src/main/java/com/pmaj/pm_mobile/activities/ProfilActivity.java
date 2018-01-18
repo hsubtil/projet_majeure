@@ -146,6 +146,7 @@ public class ProfilActivity extends AppCompatActivity {
                 mEditor.putString("token",null).apply();
                 mEditor.putString("name",null).apply();
                 mEditor.putString("email",null).apply();
+                mEditor.clear().apply();
                 mEditor.commit();
 
                 //Redicrection to Login page

@@ -14,6 +14,7 @@ var authRequest = 0;
 var meteoRequest = 0;
 
 var newUser = 0;
+var dbRequest = 0;
 
 this.addNewUser = function () {
     newUser++;
@@ -43,6 +44,9 @@ this.addMeteoRequest = function () {
     meteoRequest++;
 };
 
+this.getDbRequest = function () {
+    return dbRequest;
+}
 this.getServicesStats = function () {
     return [[chatRequest, familyRequest, profileRequest, googleRequest, authRequest, meteoRequest]];
 }

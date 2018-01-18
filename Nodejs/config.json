@@ -2,7 +2,7 @@
   "port": 1337,
   "address": "127.0.0.1",
   "reactserver": "http://localhost:3000",
-  "jeeserver": "192.168.1.102",
+  "jeeserver": "192.168.1.101",
   "jeeport": "8080",
   "tokenkey": "NabilFeKir18",
   "contentDirectory": "/home/ubuntu/Documents/projet_info/NODE/asi2-node/tp_starter/uploads"
