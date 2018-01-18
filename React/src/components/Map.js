@@ -16,8 +16,6 @@ export default class Map extends Component {
       container: this.mapContainer,
       style: 'mapbox://styles/mapbox/light-v9',
     });
-
-
   }
 
   render() {

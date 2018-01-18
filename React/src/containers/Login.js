@@ -23,11 +23,6 @@ export default class Login extends Component {
     return this.state.email.length > 0 && this.state.password.length > 0;
   }
 
-  maPosition(position) {
-    this.setState({lat:position.coords.latitude, lon:position.coords.longitude});
-  }
-
-
   handleChange = event => {
     this.setState({
       [event.target.id]: event.target.value
@@ -41,13 +36,8 @@ export default class Login extends Component {
     event.preventDefault();
     try {
 
-      if(navigator.geolocation){
-         navigator.geolocation.getCurrentPosition(this.maPosition);
-      }
-
       var coord = {coord:{lat:this.state.lat, lon:this.state.lon}};
       var json = {email: this.state.email, password: this.state.password, profile:coord};
-      //var json = this.state;
       var jjson = await this.comm.emitConnect(json);
       jjson = JSON.parse(jjson);
       if(jjson.result === true){
@@ -73,6 +63,17 @@ export default class Login extends Component {
       console.log("CATCH");
       alert(e);
     }
+  }
+
+  componentWillMount(){
+
+      if(navigator.geolocation){
+         navigator.geolocation.getCurrentPosition(function(position){
+            this.state.lat = position.coords.latitude;
+            this.state.lon = position.coords.longitude;
+         }.bind(this));
+      }
+
   }
 
   render() {

@@ -12,7 +12,8 @@ export default class SelectedGroup extends Component {
     this.state = {
       'name': localStorage.getItem("selectedgroup_name"),
       'code': localStorage.getItem("selectedgroup_code"),
-      'socket': props.socket
+      'socket': props.socket,
+      'meteo':[]
     }
   }
 
@@ -24,8 +25,6 @@ export default class SelectedGroup extends Component {
         console.log(json.result);
         if(json.result === true){
           console.log("select_family success");
-          var json_group = json.datas;
-                  
         }
         else{
           console.log("select_family unsuccess");
@@ -37,10 +36,51 @@ export default class SelectedGroup extends Component {
       }catch(e){
         alert(e);
       }
+
+      try{
+        var json_t = {token: localStorage.token, code: this.state.code};
+        var self = this.state;
+        this.state.socket.emitConnect_gen(json_t, "request_family_meteo", function(json){
+        console.log(json.result);
+        if(json.result === true){
+          console.log("request_family_meteo success");
+          var json_group = json.datas;
+
+          this.setState({meteo: json_group});
+
+        }
+        else{
+          console.log("request_family_meteo unsuccess");
+        }
+
+        }.bind(this));
+
+
+      }catch(e){
+        alert(e);
+      }
+
   }
 
 
   render() {
+
+
+          var keys = [];
+          var json_meteo_content = [];
+          for(var k in this.state.meteo) keys.push(k);
+
+          for (var i = 0; i < keys.length; i++) {
+            var arraybis = [keys[i], this.state.meteo[keys[i]].main, this.state.meteo[keys[i]].icon];
+            json_meteo_content.push(arraybis);
+          }
+
+
+    var contentsList = json_meteo_content.map(function(content){
+        return (
+          <Meteo meteo_name={content[0]} meteo_main={content[1]} meteo_icon={content[2]} />
+          )
+    });
 
     return (
 
@@ -52,10 +92,42 @@ export default class SelectedGroup extends Component {
         <Map />
         <br/>
         <br/>
+        { contentsList }
+        <br/>
+        <br/>
 
         <Chatroom socket={this.state.socket} code={this.state.code}/>
         <Calendar socket={this.state.socket} code={this.state.code}/>
 
+      </div>
+
+    )
+  }
+}
+
+class Meteo extends Component {
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      'meteo_name': props.meteo_name,
+      'meteo_main': props.meteo_main,
+      'meteo_icon': props.meteo_icon
+    };
+  }
+
+  render(){
+
+    return(
+
+      <div className="SelectedGroup">
+        <div className="lander">
+          <h1> METEO </h1>
+          <p>Nom : {this.state.meteo_name}</p>
+          <p>Meteo : {this.state.meteo_main}</p>
+          <img src={this.state.meteo_icon} alt="meteo"></img>
+        </div>
       </div>
 
     )

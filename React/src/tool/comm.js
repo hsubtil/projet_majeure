@@ -1,5 +1,5 @@
 var io = require('socket.io-client');
-var request_url = "http://192.168.1.103:1337";
+var request_url = "http://192.168.1.100:1337";
 
 class Comm {
    constructor() {
@@ -35,6 +35,7 @@ class Comm {
    emitConnect(json) {
         return new Promise((resolve, reject) => 
         {
+        console.log(json);
         this.socket.emit('auth_attempt',json);
         this.socket.on('auth_success', function (data) {
           console.log("auth_success");
@@ -120,6 +121,13 @@ class Comm {
         console.log("select_family_error");
 
         var json = { result : false, datas : data}
+        CB(json);
+      });
+
+      this.socket.on('request_family_meteo_reply', function (data) {
+        console.log("request_family_meteo_reply");
+
+        var json = { result : true, datas : data}
         CB(json);
       });
     }
