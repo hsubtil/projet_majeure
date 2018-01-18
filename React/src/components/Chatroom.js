@@ -1,76 +1,38 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './Chatroom.css';
-import socketIOClient from 'socket.io-client';
-import Message from './Message.js';
-import Comm from "../tool/comm.js";
-
-var request_url = "http://192.168.1.100:1337";
-
+import Message from './Message.js'; 
 
 class Chatroom extends React.Component {
     constructor(props) {
         super(props);
-
-        this.socket = props.socket.socket;
-        this.user = "Nabil";
-        //this.code = "a177a1f8-255d-40a1-a757-30ba22766b52";
-        this.code = props.code;
-
         this.state = {
             chats: [],
-            user: this.user,
-            code: this.code
+            user: localStorage.getItem("user"),
+            code: localStorage.getItem("selectedgroup_code"),
+            token: localStorage.getItem("token")
         };
+        this.socket =  props.socket.socket;    
+    }
 
-        var self = this;
-        
-        console.log(props.socket);
-        console.log(this.socket);
+
+    componentWillMount(){
+        var self = this; 
 
         this.socket.on('load_messages_reply', function (data){
-
-            console.log('load_messages_reply');
-            console.log(data);
-
-            Object.keys(data).forEach(function(key) {
-                var val = data[key];
-                var user = val['user'];
-                var content = val['content'];
-                //console.log("user: " + user + ",content: " + content);
-                //console.log("self");
-                //console.log(self);
-                //regarder react socket io
-                self.setState({
-                    chats: self.state.chats.concat([{
-                    username: user,
-                    content: content,
-                    }])
-                });
-            });     
+            console.log('load_messages_reply');  
+            self.displayAllMessages(data,self);   
         });
-
+ 
         this.socket.on('new_message_available', function (data){
-
             console.log('new_message_available');
-            console.log(data); //{code: , user:, date: , content: }
-            
-            var user = data['user'];
-            var content = data['content'];
-            //console.log("user: " + user + ",content: " + content);
-            //console.log("self");
-            //console.log(self);
-            //regarder react socket io
-            self.setState({
-                chats: self.state.chats.concat([{
-                username: user,
-                content: content,
-                }])
-            });
+            self.displayNewMessage(data,self);            
         });    
 
         this.submitMessage = this.submitMessage.bind(this);
-        this.loadMessages(this.state.code);
+        this.displayAllMessages = this.displayAllMessages.bind(this);
+        this.displayNewMessage = this.displayNewMessage.bind(this);
+        this.loadMessages(this.state.token, this.state.code);
     }
 
     componentDidMount() {
@@ -85,20 +47,46 @@ class Chatroom extends React.Component {
         ReactDOM.findDOMNode(this.refs.chats).scrollTop = ReactDOM.findDOMNode(this.refs.chats).scrollHeight;
     }
 
-    loadMessages(code) {
+    displayAllMessages(data, obj){
+        Object.keys(data).forEach(function(key) {
+            var val = data[key];
+            var user = val['user'];
+            var content = val['content'];
+            obj.setState({
+                chats: obj.state.chats.concat([{
+                username: user,
+                content: content,
+                }])
+            });
+        });
+    }
+
+    displayNewMessage(data,obj){
+        var user = data['user'];
+        var content = data['content'];
+
+        obj.setState({
+            chats: obj.state.chats.concat([{
+            username: user,
+            content: content,
+            }])
+        });
+    }
+
+    loadMessages(token, code) {
         console.log("loadMessages");
  
         this.socket.emit('load_messages', {
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                "token": token
                 , 'code': code
             }) 
     }
 
-    sendMessage(content, code, user, date ){
+    sendMessage(token, content, code, user, date ){
          console.log("sendMessage, code: " + code + ",user: "+ user + ",date: " + date + ",content: " + content);
 
          this.socket.emit('new_message', {
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                "token": token
                 ,'msg': {'code': code, 'user': user, 'date': date, 'content': content}
             })
     }
@@ -107,12 +95,12 @@ class Chatroom extends React.Component {
         e.preventDefault();
         console.log("submitMessage");
         console.log(ReactDOM.findDOMNode(this.refs.msg).value);
-        this.sendMessage(ReactDOM.findDOMNode(this.refs.msg).value, this.state.code, this.state.user, "");
+        this.sendMessage(this.state.token, ReactDOM.findDOMNode(this.refs.msg).value, this.state.code, this.state.user, "");
         ReactDOM.findDOMNode(this.refs.msg).value = "";
     }
 
     render() {
-        const username = "Nabil";
+        const username = this.state.user;
         const { chats } = this.state;
 
         return (

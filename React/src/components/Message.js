@@ -1,8 +1,8 @@
 import React from 'react';
 
 const Message = ({chat, user}) => (
-    <li className={`chat ${user === chat.username ? "right" : "left"}`}>
-        {user !== chat.username && chat.username + ": "}
+    <li className={`chat ${user.toLowerCase() === chat.username.toLowerCase() ? "right" : "left"}`}>
+        {user.toLowerCase() !== chat.username.toLowerCase() && chat.username + ": "}
         {chat.content}
     </li>
 

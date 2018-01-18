@@ -1,101 +1,88 @@
 import React from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
-import socketIOClient from 'socket.io-client';
 import "../../node_modules/react-big-calendar/lib/css/react-big-calendar.css";
-
-var request_url = "http://192.168.1.100:1337";
 
 class Calendar extends React.Component {
     constructor(props) {
         super(props);
 
         console.log(props);
+        this.state = {
+        	googleEvents: [],
+            user: localStorage.getItem("user"),
+            code: localStorage.getItem("selectedgroup_code"),
+            token: localStorage.getItem("token")
+        };  
+        this.socket =  props.socket.socket;        
+    }
 
-		this.socket = props.socket.socket;
-		this.events = [];
-		//this.code = "a9e5-55e4-1c2f-463b";
-		this.code = props.code;
-		console.log("code");
-		console.log(this.code);
-
-        var self = this;
+    componentWillMount(){
+    	var self = this;
 
         BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
-        var myDate = moment().format();
-        console.log("myDate");
-        console.log(myDate);
-
-        var myDate2 = new Date();
-        console.log("myDate2");
-        console.log(myDate2);
-
-
+        
         this.socket.on('google_list_events_reply', function (data){
-
             console.log('google_list_events_reply');
-            console.log(data);
-            self.events = [];        
-            Object.keys(data).forEach(function(key) {
-                var val = data[key];
-                var end = val['end']['dateTime'];
-                var start = val['start']['dateTime'];
-                var summary = val['summary'];
-                var location = val['location'];
-                //start = start.substring(0,start.length-1);
-                //end = end.substring(0,end.length-1);
-				console.log("summary: " + summary + ",start: " + start + ",end: " + end);
-				console.log(start);
-				start = new Date(start);
-				end = new Date(end);
-				console.log(start);
-				console.log(typeof start);
-                self.setState({
-                    events: self.events.push({
-                    	title: summary,
-	                    startDate: start,
-	                    endDate: end,
-	                    location: location,
-	                    
-                    })
-                });
-            });   
-        });
+            self.displayEvents(data, self);
+              
+        }); 
 
-        this.socket.on('google_list_events_err', function (data){
-
+    	this.socket.on('google_list_events_err', function (data){
             console.log('google_list_events_err');
             alert("Error while retrieving the events, please reload the page !");
   
         });
 
         this.socket.on('google_set_event_err', function (data){
-
             console.log('google_set_event_err');
-            alert("Error while the event, please try again !");
+            alert("Error while the event, please reload the page !");
   
         });
 
         this.socket.on('google_set_event_reply', function (data){
-
             console.log('google_set_event_reply');
             alert("Event successfully created!");
   
         });
 
-
         this.setEvent = this.setEvent.bind(this); 
         this.getListEvents = this.getListEvents.bind(this); 
-        this.getListEvents(this.code);
-       // this.setEvent(code, "Alpes", "Ski", "fondue au programme",  new Date(2018, 0, 1), new Date(2018, 0, 3)); 
+        this.getListEvents(this.state.token, this.state.code);
+       // this.setEvent(this.state.token, this.state.code, "Alpes", "Ski", "fondue au programme",  new Date(2018, 0, 1), new Date(2018, 0, 3)); 
     }
 
-    setEvent(code, location, summary, description, start_dateTime, end_DateTime) {
+    displayEvents(data, obj){
+    	obj.googleEvents = []; 
+
+        Object.keys(data).forEach(function(key) {
+            var val = data[key];
+            var end = val['end']['dateTime'];
+            var start = val['start']['dateTime'];
+            var summary = val['summary'];
+            var location = val['location'];
+
+			console.log("summary: " + summary + ",start: " + start + ",end: " + end);
+			start = new Date(start);
+			end = new Date(end);
+
+            obj.setState({
+                events: obj.state.googleEvents.push({
+                    title: summary,
+	                startDate: start,
+	                endDate: end,
+	                location: location,	                    
+                })
+            });
+        }); 
+    }
+
+    setEvent(token, code, location, summary, description, start_dateTime, end_DateTime) {
         console.log("setEvent");
  		console.log("location: " + location + ", summary: " + summary + ", description: " + description 
  			+ ", start_dateTime: " + start_dateTime + ", end_DateTime: " + end_DateTime );
         this.socket.emit('google_set_event', {
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                "token": token
                 , 'code': code
                 , 'event' : {
 								 'summary': summary,
@@ -111,27 +98,24 @@ class Calendar extends React.Component {
 								 }
 							}
             }) 
-        this.getListEvents();
+        this.getListEvents(this.state.token, this.state.code);
     }
 
-    getListEvents(code) {
+    getListEvents(token, code) {
         console.log("getListEvents");
- 
+ 		console.log(code);
         this.socket.emit('google_list_events', {
-                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI"
+                "token": token
                 , 'code': code
             }) 
     }
 
-
-    
-
-
     render(){
+
 
     	return (<div>
 		    <BigCalendar
-		      events= {this.events}
+		      events= {this.state.googleEvents}
 		      startAccessor='startDate'
 		      endAccessor='endDate'
 		    />
