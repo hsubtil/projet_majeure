@@ -9,6 +9,8 @@ import {Card} from 'components/Card/Card.jsx';
 import {FormInputs} from 'components/FormInputs/FormInputs.jsx';
 import {UserCard} from 'components/UserCard/UserCard.jsx';
 import Button from 'elements/CustomButton/CustomButton.jsx';
+import NotificationSystem from 'react-notification-system';
+import {style} from "variables/Variables.jsx";
 
 import avatar from "assets/img/default-avatar.png";
 
@@ -17,6 +19,7 @@ class UserProfile extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            _notificationSystem: null,
             searchValue : "",
             fetchInfo:{
                 email: "",
@@ -26,25 +29,68 @@ class UserProfile extends Component {
                 cp: "",
                 city: "",
                 country: ""
-            }
+            },
+            name:"",
+            surname:"",
+            address:"",
+            city:"",
+            country:"",
+            cp:""         
         }
        // this.fetchInfo = this.fetchInfo.bind(this);
        this.postUserRequest = this.postUserRequest.bind(this);
        this.handleChange = this.handleChange.bind(this);
        this.handleNameChange = this.handleNameChange.bind(this);
+       this.handleSurnameChange = this.handleSurnameChange.bind(this);
+       this.handleAddressChange = this.handleAddressChange.bind(this);
+       this.handleCityChange = this.handleCityChange.bind(this);
+       this.handleCountryChange = this.handleCountryChange.bind(this);
+       this.handleCpChange = this.handleCpChange.bind(this);
        this.handleSubmit = this.handleSubmit.bind(this);
+      // this.handleClick = this.handleClick.bind(this);
+        this.componentDidMount = this.componentDidMount.bind(this);
       }
+
+    componentDidMount(){
+        this.setState({_notificationSystem: this.refs.notificationSystem});
+    }
 
     handleSubmit(){
         console.log("handleSubmit");
-        axios.post('http://localhost:1337/admin/updateProfil',{'profile':this.state.fetchInfo})
+
+        axios.post('http://localhost:1337/admin/updateProfil',{'email':this.state.searchValue,'profil':this.state.fetchInfo})
           .then( (response) => {
             console.log("response", response);
             // Affichage pop up
-            console.log("Notif ?");
+            //this.handleClick(this.state._notificationSystem,'tl');
+            //var _notificationSystem = this.refs.notificationSystem;
+            var _notificationSystem = this.refs.notificationSystem;
+            _notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                message: (
+                    <div>
+                        <b>{this.state.searchValue}</b> updated.
+                    </div>
+                ),
+                level: 'success',
+                position: "tc",
+                autoDismiss: 15,
+            });          
           })
           .catch( (error) => {
             console.log(error);
+            var _notificationSystem = this.refs.notificationSystem;
+            _notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-attention"></span>),
+                message: (
+                    <div>
+                        <b>Error</b> during update.
+                    </div>
+                ),
+                level: 'error',
+                position: "tc",
+                autoDismiss: 15,
+            }); 
           }); 
     }
 
@@ -69,12 +115,35 @@ class UserProfile extends Component {
       }
 
       handleNameChange(e){
-        this.setState({ fetchInfo:{name: e.target.value }});
+        this.setState({fetchInfo:{name: e.target.value, surname: this.state.fetchInfo.surname, address:this.state.fetchInfo.address ,
+            cp:this.state.fetchInfo.cp ,city: this.state.fetchInfo.city,country:this.state.fetchInfo.country }});
       }
+      handleSurnameChange(e){
+        this.setState({fetchInfo:{name: this.state.fetchInfo.name, surname: e.target.value, address:this.state.fetchInfo.address ,
+            cp:this.state.fetchInfo.cp ,city: this.state.fetchInfo.city,country:this.state.fetchInfo.country }});
+      }
+      handleAddressChange(e){
+        this.setState({fetchInfo:{name: this.state.fetchInfo.name, surname: this.state.fetchInfo.surname, address: e.target.value ,
+            cp:this.state.fetchInfo.cp ,city: this.state.fetchInfo.city,country:this.state.fetchInfo.country }});
+      }
+      handleCityChange(e){
+        this.setState({fetchInfo:{name: this.state.fetchInfo.name, surname: this.state.fetchInfo.surname, address:this.state.fetchInfo.address ,
+            cp:this.state.fetchInfo.cp ,city: e.target.value,country:this.state.fetchInfo.country }});
+      }
+      handleCountryChange(e){
+        this.setState({fetchInfo:{name: this.state.fetchInfo.name, surname:this.state.fetchInfo.surname, address:this.state.fetchInfo.address ,
+            cp:this.state.fetchInfo.cp ,city: this.state.fetchInfo.city,country:e.target.value }});
+      }
+      handleCpChange(e){
+        this.setState({fetchInfo:{name: this.state.fetchInfo.name, surname:this.state.fetchInfo.surname, address:this.state.fetchInfo.address ,
+            cp:e.target.value ,city: this.state.fetchInfo.city,country:this.state.fetchInfo.country }});
+      }
+
 
     render() {
         return (
-            <div className="content">
+            <div className="content">            
+            <NotificationSystem ref="notificationSystem" style={style}/>
                 <Grid fluid>
                     <Row>
                         <Col md={8}>
@@ -83,7 +152,7 @@ class UserProfile extends Component {
                             content={
                                 <form onSubmit={this.postUserRequest}>
                                     <FormInputs
-                                        ncols = {["col-md-5"]}                                        
+                                        ncols = {["col-md-8"]}                                        
                                         proprieties = {[
                                             {
                                              label : "Email address",
@@ -93,16 +162,14 @@ class UserProfile extends Component {
                                              onChange : this.handleChange
                                             }
                                         ]}
-                                    />     
-                                    <Button fill type="submit">
+                                    />   
+                                    
+                                   {/*<Button fill type="submit">
                                         <i className="pe-7s-search"></i>
-                                    </Button>                               
+                                    </Button>  */} 
                                 </form>   
                             }                     
-                        />
-
-
-                        
+                        />                        
                             <Card
                                 title="Edit User Profile"
                                 content={
@@ -138,6 +205,7 @@ class UserProfile extends Component {
                                                  bsClass : "form-control",
                                                  placeholder : "Surname",
                                                  value :this.state.fetchInfo.surname,
+                                                 onChange:this.handleSurnameChange,
                                                  defaultValue : ""
                                                 }
                                             ]}
@@ -151,6 +219,7 @@ class UserProfile extends Component {
                                                     bsClass : "form-control",
                                                     placeholder : "Home Adress",
                                                     value :this.state.fetchInfo.address,
+                                                    onChange:this.handleAddressChange,
                                                     defaultValue : ""
                                                 }
                                             ]}
@@ -164,6 +233,7 @@ class UserProfile extends Component {
                                                     bsClass : "form-control",
                                                     placeholder : "City",
                                                     value :this.state.fetchInfo.city,
+                                                    onChange:this.handleCityChange,
                                                     defaultValue : ""
                                                 },
                                                 {
@@ -172,6 +242,7 @@ class UserProfile extends Component {
                                                     bsClass : "form-control",
                                                     placeholder : "Country",
                                                     value :this.state.fetchInfo.country,
+                                                    onChange:this.handleCountryChange,
                                                     defaultValue : ""
                                                 },
                                                 {
@@ -179,6 +250,7 @@ class UserProfile extends Component {
                                                     type : "number",
                                                     bsClass : "form-control",
                                                     placeholder : "ZIP Code",
+                                                    onChange:this.handleCpChange,
                                                     value :this.state.fetchInfo.cp
                                                 }
                                             ]}

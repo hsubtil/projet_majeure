@@ -1,0 +1,7 @@
+[2018-01-19 17:08:56] [DEBUG] [GOOGLE] In GoogleCalendar connect
+[2018-01-19 17:08:56] App running with log level = debug
+[2018-01-19 17:08:56] [DEBUG] {"clientID":"83179479104-ivpen2at0nkvmdjlgrrshjbuie4q7cgs.apps.googleusercontent.com","clientSecret":"TRNxQpuE5aZgu_7kmjlFfRtz","callbackURL":"http://localhost:1337/auth/google/callback","scope":["openid","email","https://www.googleapis.com/auth/calendar"]}
+[2018-01-19 17:08:56] [SERVER] App running at http://:::1337
+[2018-01-19 17:08:56] [DEBUG] In io.controller.js
+[2018-01-19 17:08:56] [SOCKET] New client FTPL_ybVxvdEvnbWAAAA
+[2018-01-19 17:09:12] [ROUTER] /admin/log

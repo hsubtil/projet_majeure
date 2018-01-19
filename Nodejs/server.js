@@ -37,6 +37,7 @@ server.listen(CONFIG.port, CONFIG.addr, function () {
 
     LOG.log('[SERVER] App running at http://'+ host+':'+port);
 });
+// TODO: remove log file
 IOController.listen(server);
 
 app.use("/", express.static(path.join(__dirname, "public"))); // Ajoute une redirection vers le dossier public

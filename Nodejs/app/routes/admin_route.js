@@ -15,9 +15,9 @@ module.exports = router;
 
 /************************************************************************************** ADMIN **************************************************************************************/
 router.get("/admin/info", function (request, response) {
-    LOG.log("[ROUTER] /admin/info");
+   // LOG.log("[ROUTER] /admin/info");
     DB.getStats(function (stats) {
-        LOG.log(JSON.stringify(stats));
+       // LOG.log(JSON.stringify(stats));
         var dbCapacity = stats['dataSize'] / 100;
         response.send({ 'upTime': STATS.getUpTime(), 'errorNb': STATS.getErrorFromStats(), 'logEntry': STATS.getLogEntryFromStats(), 'dbCapacity': dbCapacity.toString()+' KB', 'dbObjects':stats['objects'],'dbRequest':STATS.getDbRequest(),'socketConnected': STATS.getSocketStats() });
     });    
@@ -26,6 +26,17 @@ router.get("/admin/info", function (request, response) {
 router.get("/admin/services", function (request, response) {
     LOG.log("[ROUTER] /admin/services_stats");
     response.send({ 'labels': ['Chat', 'Family', 'Profile', 'GoogleCalendar', 'Auth', 'Meteo'], 'series': STATS.getServicesStats()});
+});
+
+router.get("/admin/log", function (request, response) {
+    LOG.log("[ROUTER] /admin/log");
+    fs.readFile('log.log', 'utf8', function (err, data) {
+        if (err) throw err;
+        //LOG.warning(data);
+        console.log(typeof (data));
+        response.send(data);
+    });
+    //response.send({ 'labels': ['Chat', 'Family', 'Profile', 'GoogleCalendar', 'Auth', 'Meteo'], 'series': STATS.getServicesStats() });
 });
 
 router.get("/admin/dbInfo", function (request, response) {
@@ -61,7 +72,11 @@ router.post("/admin/userInfo", function (request, response) {
 });
 
 router.post("/admin/updateProfil", function (request, response) {
-    console.log(request.body['profile']);
+    console.log(request.body);
+    DB.updateUser(request.body['email'], request.body['profil'], function (err,res) {
+        if (!err)
+            response.send("Update done");
+    });
 
 });
 

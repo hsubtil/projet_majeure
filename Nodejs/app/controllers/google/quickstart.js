@@ -143,7 +143,7 @@ this.listUserEvents = function (calendar_id, cb) {
                 }
                 if (response) {
                     var events = response.items;
-                    if (events.length == 0) {
+                    if (events.length === 0) {
                         LOG.log('No upcoming events found.');
                     } else {
                         console.log('Upcoming 10 events:');

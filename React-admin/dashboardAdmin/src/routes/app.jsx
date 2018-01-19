@@ -11,9 +11,9 @@ const appRoutes = [
     { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
     { path: "/user", name: "User Profile", icon: "pe-7s-user", component: UserProfile },
     { path: "/table", name: "Table List", icon: "pe-7s-note2", component: TableList },
-    { path: "/typography", name: "Typography", icon: "pe-7s-news-paper", component: Typography },
-    { path: "/icons", name: "Icons", icon: "pe-7s-science", component: Icons },
-    { path: "/notifications", name: "Notifications", icon: "pe-7s-bell", component: Notifications },
+    { path: "/log", name: "Log", icon: "pe-7s-news-paper", component: Typography },
+   /* { path: "/icons", name: "Icons", icon: "pe-7s-science", component: Icons },*/
+    /*{ path: "/notifications", name: "Notifications", icon: "pe-7s-bell", component: Notifications },*/
     { redirect: true, path:"/", to:"/dashboard", name: "Dashboard" }
 ];
 

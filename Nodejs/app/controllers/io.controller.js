@@ -66,7 +66,9 @@ this.listen = function (server) {
             LOG.log("[SOCKET] Connection event " + JSON.stringify(json_object['email']));
             LOG.debug(JSON.stringify(json_object));
             var profile = json_object['profile'];
-            var coord = json_object['profile'].coord;
+            var coord = null;
+            if(profile)
+                coord = json_object['profile'].coord;
             delete json_object['profile']; // Removes json.foo from the dictionary.
             REQUEST.connection(socket, json_object, function (err, res) {
                 if (!err) {
@@ -79,7 +81,7 @@ this.listen = function (server) {
                         });
                     } else {
                         DB.updateUser(json_object['email'], profile, function (err) {
-                            createToken(json_object['email'], function (token) {
+                            createToken(json_object['email'], res['role'], function (token) {
                                 if (token) {
                                     STATS.addAuthRequest();
                                     socket.emit('auth_success', token);
@@ -318,14 +320,15 @@ this.listen = function (server) {
             param : JSON {'token','email','code'}
         */
         socket.on('add_family_to_user', function (json_object) {
-            LOG.log("[SOCKET] Add family to user.");
+            LOG.log("[SOCKET] Add family to user " + json_object['email']);
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     DB.getFamilyWithCode(json_object['code'], function (err, res) {
                         if (!err) {
-                            DB.addFamilyToUser(json_object['email'], json_object['code'], res);
-                            STATS.addFamilyRequest();
-                            socket.emit('add_family_to_user_success',res);
+                            DB.addFamilyToUser(json_object['email'], json_object['code'], function (res) {
+                                STATS.addFamilyRequest();
+                                socket.emit('add_family_to_user_success', res);
+                            });
                         }
                         else
                             LOG.error("[SOCKET] Add family to user error. User :" + json_object['email']);

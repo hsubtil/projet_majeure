@@ -79,7 +79,7 @@ class TableList extends Component {
                                 }
                             />
                         </Col>
-
+                                
 
                         <Col md={12}>
                             <Card
@@ -88,7 +88,7 @@ class TableList extends Component {
                                 category="MongoDB"
                                 ctTableFullWidth ctTableResponsive
                                 content={
-                                    <Table hover>
+                                    <Table striped hover>
                                         <thead>
                                             <tr>
                                                 {

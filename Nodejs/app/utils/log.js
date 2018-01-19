@@ -1,6 +1,7 @@
 ﻿"use strict";
 const dateTime = require('date-time');
 const STATS = require('./stats');
+var fs = require("fs");
 
 module.exports = this;
 
@@ -12,6 +13,8 @@ var colorCode = { 'warn': '\x1b[35m', 'error': "\x1b[31m", 'log': "\x1b[37m", 'd
 var affichageLevel = ['error', 'warn', 'log', 'debug'];
 var currentLevel = 'debug';
 
+//Add new logger for file
+
 /**
  * Does console.log and formats the data a nice way
  * Param : - affichageLevel['error', 'warn', 'log', 'debug']
@@ -22,14 +25,16 @@ this.getLevel = function () {
 }
 
 this.logConsole = function (code, msg, socket) {
-    var logToWrite;
     //console.log(affichageLevel.indexOf(currentLevel));
     if (affichageLevel.indexOf(code) <= affichageLevel.indexOf(currentLevel)) {
-        console.log(colorCode[code], msg);
-        if (socket) {
+        fs.appendFile('log.log', msg +'\r\n', function (err) {
+            if (err) throw err;
+            console.log(colorCode[code], msg);
+        });
+        /*if (socket) {
             socket.emit("admin_log", msg);
             console.log("EMIT ADMIN");
-        }
+        }*/
     }
 
 }
