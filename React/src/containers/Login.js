@@ -40,8 +40,17 @@ export default class Login extends Component {
       var json = {email: this.state.email, password: this.state.password, profile:coord};
       var jjson = await this.comm.emitConnect(json);
       jjson = JSON.parse(jjson);
+      console.log(jjson);
       if(jjson.result === true){
-        console.log("authentificated");
+
+        if(jjson.datas.role === "ADMIN"){
+
+        console.log("Admin authentificated");
+
+        }
+        else if (jjson.datas.role === "USER"){
+
+        console.log("User authentificated");
         this.props.userHasAuthenticated(true);
 
 
@@ -54,6 +63,8 @@ export default class Login extends Component {
         alert("authentificated !");
         this.props.history.push("/MainPage");
 
+
+        }
       }
       else{
         console.log("not authentificated");
