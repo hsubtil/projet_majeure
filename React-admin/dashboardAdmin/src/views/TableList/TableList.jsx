@@ -44,8 +44,8 @@ class TableList extends Component {
                     <Row>
                         <Col md={12}>
                             <Card
-                                title="Striped Table with Hover"
-                                category="Here is a subtitle for this table"
+                                title="Family Table"
+                                category="MongoDB"
                                 ctTableFullWidth ctTableResponsive
                                 content={
                                     <Table striped hover>
@@ -84,15 +84,15 @@ class TableList extends Component {
                         <Col md={12}>
                             <Card
                                 plain
-                                title="Striped Table with Hover"
-                                category="Here is a subtitle for this table"
+                                title="User Table"
+                                category="MongoDB"
                                 ctTableFullWidth ctTableResponsive
                                 content={
                                     <Table hover>
                                         <thead>
                                             <tr>
                                                 {
-                                                    thArray.map((prop, key) => {
+                                                   this.state.fetchInfo.userListCol.map((prop, key) => {
                                                         return (
                                                         <th  key={key}>{prop}</th>
                                                         );
@@ -102,7 +102,7 @@ class TableList extends Component {
                                         </thead>
                                         <tbody>
                                             {
-                                                tdArray.map((prop,key) => {
+                                                this.state.fetchInfo.userListDb.map((prop,key) => {
                                                     return (
                                                         <tr key={key}>{
                                                             prop.map((prop,key)=> {

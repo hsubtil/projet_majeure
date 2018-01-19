@@ -166,10 +166,8 @@ this.listUserEvents = function (calendar_id, cb) {
 }
 
 this.addEvents = function (calendar_id, event_json, cb) {
-    var calendar = google.calendar('v3');   
     LOG.log("[GOOGLE] Add event ");
     var calendar = google.calendar('v3');
-    LOG.log("[GOOGLE] Create calendar");
     fs.readFile('client_secret.json', function processClientSecrets(err, content) {
         if (err) {
             console.log('Error loading client secret file: ' + err);
@@ -185,12 +183,50 @@ this.addEvents = function (calendar_id, event_json, cb) {
                     LOG.error('There was an error contacting the Calendar service: ' + err);
                     cb(err,null);
                 }
-                LOG.log("[GOOGLE] Event created")
-                console.log('html link: %s', event_json.htmlLink);
+                LOG.log("[GOOGLE] Event created");
+                cb(null, event_json);
              });
         });
     });
 }
+
+/*
+
+*/
+this.deleteEvent = function (calendar_id, event_id, cb) {
+ 
+    var calendar = google.calendar('v3');
+    LOG.log("[GOOGLE] Delete event in calendar"+calendar_id);
+    fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+        if (err) {
+            console.log('Error loading client secret file: ' + err);
+            cb(err, null);
+        }
+        authorize(JSON.parse(content), function (oAuth) {
+            calendar.events.delete({
+                auth: oAuth,
+                calendarId: calendar_id,
+                eventId: event_id,
+            }, function (err, reply) {
+                if (err) {
+                    LOG.error('There was an error contacting the Calendar service: ' + err);
+                    cb(err, null);
+                }
+                if (!reply) {
+                    LOG.log("[GOOGLE] Event delete");
+                    cb(null, 'ok');
+                }
+                else {
+                    LOG.error("[GOOGLE] Error in deleting event");
+                    cb(err, null);
+                }
+            });
+        });
+    });
+
+}
+
+
 /*
 *  resp = JSON {id,etag,summary}
 */

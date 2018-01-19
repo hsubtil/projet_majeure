@@ -63,14 +63,16 @@ this.listen = function (server) {
         *  When Front server send an auth event, ask to JEE server if auth is valid or not. 
         */
         socket.on('auth_attempt', function (json_object) {
-            LOG.log("[SOCKET] Connection event" + JSON.stringify(json_object['email']));
+            LOG.log("[SOCKET] Connection event " + JSON.stringify(json_object['email']));
+            LOG.debug(JSON.stringify(json_object));
             var profile = json_object['profile'];
+            var coord = json_object['profile'].coord;
             delete json_object['profile']; // Removes json.foo from the dictionary.
-            REQUEST.connection(socket, json_object, function (err) {
+            REQUEST.connection(socket, json_object, function (err, res) {
                 if (!err) {
                     // Protection if profile is not provided 
-                    if (!profile) {
-                        createToken(json_object['email'], function (token) {
+                    if (!coord) {   // Test. Changed  from !profile !coord
+                        createToken(json_object['email'], res['role'], function (token) {
                             if (token) {
                                 socket.emit('auth_success', token);
                             }
@@ -452,7 +454,8 @@ this.listen = function (server) {
                         GOOGLE.addEvents(family['calendarId'], json_object['event'], function (err, res) {
                             if (!err) {
                                 STATS.addGoogleRequest();
-                                socket.emit('google_set_event_reply');  //TODO : update doc
+                                LOG.debug("Emit set event success");
+                                socket.emit('google_set_event_reply', res);  //TODO : update doc
                             }
                             else {
                                 socket.emit('google_set_event_err');
@@ -463,6 +466,7 @@ this.listen = function (server) {
                 });
             });
         });
+
         /*
         *
         */
@@ -480,6 +484,29 @@ this.listen = function (server) {
                             }
                             else {
                                 socket.emit('google_list_events_err');
+                                LOG.error("[SOCKET] Google Error: cannot list event. " + err);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        /*
+        *  param : JSON {'token','code','eventId'}
+        */
+        socket.on('google_remove_event', function (json_object) {
+            LOG.log("[SOCKET] In google remove event");
+            checkToken(json_object['token'], socket, function (err) {
+                DB.getFamilyByCode(json_object['code'], function (err, family) {
+                    if (!err) {
+                        GOOGLE.deleteEvent(family['calendarId'], json_object['eventId'], function (err, res) {
+                            if (!err) {
+                                LOG.log("[SOCKET] Delete event for family " + json_object['code']);
+                                socket.emit('google_remove_event_success', { 'id': json_object['eventId']});
+                            }
+                            else {
+                                socket.emit('google_remove_event_err');
                                 LOG.error("[SOCKET] Google Error: cannot list event. " + err);
                             }
                         });
@@ -574,10 +601,10 @@ function checkToken(token, socket, cb) {
  * @param {String} socket
  *  @param {function} cb
  */
-function createToken(email, cb) {
+function createToken(email, role, cb) {
     DB.getProfile(email, function (err, res) {
         if (!err) {
-            var reply = { "token": jwt.sign(res, CONFIG.tokenkey), "name":res['name'] };   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
+            var reply = { "token": jwt.sign(res, CONFIG.tokenkey), "name":res['name'], 'role':role };   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
             LOG.debug(JSON.stringify(reply));
             cb(reply);
         }

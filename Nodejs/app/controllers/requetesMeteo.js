@@ -54,21 +54,34 @@ this.get_meteo = function (json, cb) {
         });
         res.on('end', function () {
             // LOG.log("[HTTP] -> Resultat: "+ msg);
-             msg=JSON.parse(msg);
-             var result = {};
-             result["main"]=msg["weather"][0]["main"];
-             result["description"]=msg["weather"][0]["description"];
-             result["icon"]="http://openweathermap.org/img/w/" + msg["weather"][0]["icon"] + ".png";
-             result["temp"]=msg["main"]["temp"];
-             result["humidity"]=msg["main"]["humidity"];
-             result["wind"]=msg["wind"];
-             LOG.log("[HTTP] -> Resultat: "+ JSON.stringify(result));
-             return_json[key2]=result;
-             wait--; 
-             if(wait === 0){
-                LOG.log("[HTTP] -> Resultat Final : "+ JSON.stringify(return_json));
-                cb(null,return_json);
-             }         
+            msg = JSON.parse(msg);
+            LOG.log(JSON.stringify(msg));
+            var result = {};
+            if (msg['cod']) {
+                if (msg['cod'] == 400) {
+                    LOG.error("[METEO] Empty coord. Cannot get meteo.");
+                    cb(msg, null);
+                }
+                else {
+                    result["main"] = msg["weather"][0]["main"];
+                    result["description"] = msg["weather"][0]["description"];
+                    result["icon"] = "http://openweathermap.org/img/w/" + msg["weather"][0]["icon"] + ".png";
+                    result["temp"] = msg["main"]["temp"];
+                    result["humidity"] = msg["main"]["humidity"];
+                    result["wind"] = msg["wind"];
+                    LOG.log("[HTTP] -> Resultat: " + JSON.stringify(result));
+                    return_json[key2] = result;
+                    wait--;
+                    if (wait === 0) {
+                        LOG.log("[HTTP] -> Resultat Final : " + JSON.stringify(return_json));
+                        cb(null, return_json);
+                    }
+                }
+            }
+            else {
+                LOG.warning("[METEO] No code in meteo WS reply");
+            }
+        
         });
     });
 

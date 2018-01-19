@@ -31,6 +31,7 @@ router.get("/admin/services", function (request, response) {
 router.get("/admin/dbInfo", function (request, response) {
     LOG.log("[ROUTER] /admin/dbInfo");
     var familiesArray = [];
+    var userArray = [];
     DB.getAllFamilies(function (err, res) {
         LOG.warning("LAAAAA");
         for (var element in res) {
@@ -39,8 +40,29 @@ router.get("/admin/dbInfo", function (request, response) {
         };
         console.log(familiesArray);
         //console.log(res[0]);
-        response.send({ 'familyListCol': ["ID", "Name", "Code", "Calendar Id"], 'userListCol': ["ID", "Name", "Code", "Calendar"], 'familyListDb': familiesArray, 'userListDb': [[]] });
+        DB.getAllUsers(function (err, reply) {
+            for (var element in reply) {
+                console.log(reply[element]);
+                userArray.push([reply[element]._id, reply[element].email, reply[element].name, reply[element].surname, reply[element].address, reply[element].cp, reply[element].city, reply[element].country])
+            };
+            response.send({ 'familyListCol': ["ID", "Name", "Code", "Calendar Id"], 'userListCol': ["ID", "email", "name", "surname","address","cp","city","country"], 'familyListDb': familiesArray, 'userListDb': userArray });
+        });
     });       
+});
+
+router.post("/admin/userInfo", function (request, response) {
+    LOG.log('[ROUTER] /admin/userInfo ' + request.body['email']);
+    DB.getProfile(request.body['email'], function (err, profil) {
+        if(!err)
+            response.send({ 'email': profil.email, 'name': profil.name, 'surname': profil.surname, 'address': profil.address, 'cp': profil.cp, 'city': profil.city, 'country': profil.country });
+        else
+            response.send({ 'email': "", 'name': "", 'surname': "", 'address': "", 'cp': "", 'city': "", 'country': "" });
+    });
+});
+
+router.post("/admin/updateProfil", function (request, response) {
+    console.log(request.body['profile']);
+
 });
 
 

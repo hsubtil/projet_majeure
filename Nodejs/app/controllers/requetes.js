@@ -59,7 +59,7 @@ this.connection = function (socket, json, cb) {
                 else {
                     LOG.log("[HTTP] <- Auth is true form JEE Auth attempt " + reply);
                     if (cb)
-                        cb(null);
+                        cb(null,reply);
                 }
             }
         });
