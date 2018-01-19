@@ -22,10 +22,10 @@ export default class Map extends Component {
 
     const style = ({
           position: 'absolute',
-          top: 100,
-          bottom: 100,
-          width: '20%',
-          height: '20%'
+          //top: 200,
+          //bottom: 200,
+          width: '100%',
+          height: '100%'
         });
 
     return (

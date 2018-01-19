@@ -89,18 +89,32 @@ export default class SelectedGroup extends Component {
           <h1>Groupe {this.state.name}</h1>
           <p>Code : {this.state.code}</p>
         </div>
-        <Map />
-        <br/>
-        <br/>
-        { contentsList }
-        <br/>
-        <br/>
-
-        <Chatroom socket={this.state.socket} code={this.state.code}/>
-        <Calendar socket={this.state.socket} code={this.state.code}/>
-
+        <div class="container">
+          <div class="col-lg-12">
+            <div class="col-lg-4">
+              <Chatroom socket={this.state.socket}/>
+            </div>
+            <div class="col-lg-8">
+              <div class="row">
+                <div class="col-lg-8">
+                  <Calendar socket={this.state.socket}/>
+                </div>  
+              </div>   
+              <div class="row">
+                <div class="col-lg-8">
+                  { contentsList }
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-8">
+                  <Map />
+                </div>
+              </div>  
+            </div>
+          </div>  
+        </div>  
       </div>
-
+ 
     )
   }
 }
