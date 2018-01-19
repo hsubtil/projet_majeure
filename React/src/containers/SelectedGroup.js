@@ -85,33 +85,39 @@ export default class SelectedGroup extends Component {
     return (
 
       <div className="SelectedGroup">
+
         <div className="lander">
           <h1>Groupe {this.state.name}</h1>
           <p>Code : {this.state.code}</p>
         </div>
+
         <div class="container">
           <div class="col-lg-12">
-            <div class="col-lg-4">
-              <Chatroom socket={this.state.socket}/>
+
+             <div class="row">
+              <Calendar socket={this.state.socket}/>
             </div>
-            <div class="col-lg-8">
-              <div class="row">
-                <div class="col-lg-8">
-                  <Calendar socket={this.state.socket}/>
-                </div>  
-              </div>   
-              <div class="row">
-                <div class="col-lg-8">
-                  { contentsList }
-                </div>
+
+            
+
+            <div class="row">
+              <div class="col-lg-4">
+                <Chatroom socket={this.state.socket}/>
               </div>
-              <div class="row">
-                <div class="col-lg-8">
-                  <Map />
+
+              <div class="col-lg-8">
+                <div class="row">
+                   { contentsList }
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-8">
+                    <Map/>                   
+                  </div>  
                 </div>
               </div>  
             </div>
-          </div>  
+          </div>    
         </div>  
       </div>
  
