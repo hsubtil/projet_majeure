@@ -24,7 +24,7 @@ router.get("/admin/info", function (request, response) {
 });
 
 router.get("/admin/services", function (request, response) {
-    LOG.log("[ROUTER] /admin/services_stats");
+    //LOG.log("[ROUTER] /admin/services_stats");
     response.send({ 'labels': ['Chat', 'Family', 'Profile', 'GoogleCalendar', 'Auth', 'Meteo'], 'series': STATS.getServicesStats()});
 });
 
@@ -33,7 +33,6 @@ router.get("/admin/log", function (request, response) {
     fs.readFile('log.log', 'utf8', function (err, data) {
         if (err) throw err;
         //LOG.warning(data);
-        console.log(typeof (data));
         response.send(data);
     });
     //response.send({ 'labels': ['Chat', 'Family', 'Profile', 'GoogleCalendar', 'Auth', 'Meteo'], 'series': STATS.getServicesStats() });
@@ -44,18 +43,17 @@ router.get("/admin/dbInfo", function (request, response) {
     var familiesArray = [];
     var userArray = [];
     DB.getAllFamilies(function (err, res) {
-        LOG.warning("LAAAAA");
         for (var element in res) {
             console.log(res[element]);
-            familiesArray.push([res[element]._id, res[element].name, res[element].code, res[element].calendarId])
-        };
+            familiesArray.push([res[element]._id, res[element].name, res[element].code, res[element].calendarId]);
+        }
         console.log(familiesArray);
         //console.log(res[0]);
         DB.getAllUsers(function (err, reply) {
             for (var element in reply) {
                 console.log(reply[element]);
-                userArray.push([reply[element]._id, reply[element].email, reply[element].name, reply[element].surname, reply[element].address, reply[element].cp, reply[element].city, reply[element].country])
-            };
+                userArray.push([reply[element]._id, reply[element].email, reply[element].name, reply[element].surname, reply[element].address, reply[element].cp, reply[element].city, reply[element].country]);
+            }
             response.send({ 'familyListCol': ["ID", "Name", "Code", "Calendar Id"], 'userListCol': ["ID", "email", "name", "surname","address","cp","city","country"], 'familyListDb': familiesArray, 'userListDb': userArray });
         });
     });       

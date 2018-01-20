@@ -8,7 +8,7 @@ class Typography extends Component {
     constructor(props){
         super(props);
         this.state={
-            value :null
+            value :""
         }
         this.getLog=this.getLog.bind(this);
     }
@@ -18,7 +18,7 @@ class Typography extends Component {
         .then( (response) => {
             console.log("response", response);
             this.setState({
-                fetchInfo: response.data
+                value: response.data
             });
             console.log("fetchInfo", this.state.fetchInfo);
         })
@@ -43,8 +43,10 @@ class Typography extends Component {
                                 title="Log File"
                                 content={
                                     <div>
-                                        <div className="typo-line">
-                                            <p className="category">Log entry</p>
+                                        <div>
+                                            {this.state.value.split("\n").map(i => {
+                                                return <p className="category">{i}</p>;
+                                            })}
                                         </div>
                                     </div>
                                 }

@@ -1,7 +1,20 @@
-[2018-01-19 17:08:56] [DEBUG] [GOOGLE] In GoogleCalendar connect
-[2018-01-19 17:08:56] App running with log level = debug
-[2018-01-19 17:08:56] [DEBUG] {"clientID":"83179479104-ivpen2at0nkvmdjlgrrshjbuie4q7cgs.apps.googleusercontent.com","clientSecret":"TRNxQpuE5aZgu_7kmjlFfRtz","callbackURL":"http://localhost:1337/auth/google/callback","scope":["openid","email","https://www.googleapis.com/auth/calendar"]}
-[2018-01-19 17:08:56] [SERVER] App running at http://:::1337
-[2018-01-19 17:08:56] [DEBUG] In io.controller.js
-[2018-01-19 17:08:56] [SOCKET] New client FTPL_ybVxvdEvnbWAAAA
-[2018-01-19 17:09:12] [ROUTER] /admin/log
+[2018-01-20 16:04:32] [DEBUG] [GOOGLE] In GoogleCalendar connect
+[2018-01-20 16:04:32] [DEBUG] {"clientID":"83179479104-ivpen2at0nkvmdjlgrrshjbuie4q7cgs.apps.googleusercontent.com","clientSecret":"TRNxQpuE5aZgu_7kmjlFfRtz","callbackURL":"http://localhost:1337/auth/google/callback","scope":["openid","email","https://www.googleapis.com/auth/calendar"]}
+[2018-01-20 16:04:32] [DEBUG] In io.controller.js
+[2018-01-20 16:04:32] App running with log level = debug
+[2018-01-20 16:04:32] [SERVER] App running at http://:::1337
+[2018-01-20 16:04:37] [SOCKET] New client CWIcefJIhngaCrB3AAAA
+[2018-01-20 16:05:36] [SOCKET] Client CWIcefJIhngaCrB3AAAA disconnect event
+[2018-01-20 16:05:37] [SOCKET] New client twhNasAcLqe_TyT5AAAB
+[2018-01-20 16:05:38] [object Object]
+[2018-01-20 16:05:38] [SOCKET] Sign Up event
+[2018-01-20 16:05:38] [DEBUG] In register {"email":"tangy.ndombele@ol.com","password":"mouctar","role":"USER"}
+[2018-01-20 16:05:43] [ROUTER] /admin/log
+[2018-01-20 16:05:47] [ROUTER] /admin/log
+[2018-01-20 16:05:48] [HTTP] Jee server reply Timeout. Olivier your firewall ?
+[2018-01-20 16:05:57] [ROUTER] /admin/log
+[2018-01-20 16:05:59] [HTTP] <- Error in the comm with JEE server 
+[2018-01-20 16:05:59] Error: connect ETIMEDOUT 192.168.1.100:8080
+[2018-01-20 16:05:59] [SOCKET] Emit error event
+[2018-01-20 16:07:51] [ROUTER] /admin/log
+[2018-01-20 16:11:46] [ROUTER] /admin/log

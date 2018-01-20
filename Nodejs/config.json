@@ -5,5 +5,6 @@
   "jeeserver": "192.168.1.100",
   "jeeport": "8080",
   "tokenkey": "NabilFeKir18",
+  "logpath": "log.log",
   "contentDirectory": "/home/ubuntu/Documents/projet_info/NODE/asi2-node/tp_starter/uploads"
 }

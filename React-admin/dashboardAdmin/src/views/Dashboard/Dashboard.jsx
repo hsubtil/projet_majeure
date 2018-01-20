@@ -94,6 +94,7 @@ class Dashboard extends Component {
         this.fetchInfo();
         this.fetchServicesInfo();
         setInterval(this.fetchInfo , 1000);
+        setInterval(this.fetchServicesInfo , 1000);
     }
 
 

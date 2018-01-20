@@ -172,8 +172,10 @@ Db.register = function (db_object, new_user_json, cb) {
                 LOG.warning("LA PUTAIN DE TE RACE"); /// PROBLEME ICI
                 if (!error)
                     LOG.log("[DB] New family to user saved ");
-                else
-                    LOG.error("[DB] New family not saved");
+                else {
+                    LOG.error("[DB] New family to user not saved");
+                    console.log(error);
+                }
             });
         }
     });

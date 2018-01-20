@@ -105,16 +105,19 @@ this.listen = function (server) {
             var json_jee = { 'email': json_object['email'], 'password': json_object['password'], 'role': "USER" };
             delete json_object['password'];
             REQUEST.register(socket, json_jee, function (error) {
-                LOG.log("Error debug");
-                LOG.log(error);
                 if (!error) {
-                    DB.register(json_object);
-                    STATS.addNewUser();
-                    socket.emit('registration_success');
+                    DB.register(json_object, function (err) {
+                        if (!err) {
+                            STATS.addNewUser();
+                            socket.emit('registration_success');
+                        }
+                        else
+                            socket.emit('registration_failed', error);
+                    });
+
                 }
-                else {
+                else       
                     socket.emit('registration_failed', error);
-                }
             });
         });
 
@@ -601,7 +604,7 @@ function checkToken(token, socket, cb) {
 /**
  *
  * @param {String} email
- * @param {String} socket
+ * @param {String} role
  *  @param {function} cb
  */
 function createToken(email, role, cb) {

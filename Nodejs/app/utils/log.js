@@ -1,4 +1,6 @@
 ﻿"use strict";
+var CONFIG = require("../../config.json");
+process.env.CONFIG = JSON.stringify(CONFIG);
 const dateTime = require('date-time');
 const STATS = require('./stats');
 var fs = require("fs");
@@ -22,12 +24,12 @@ var currentLevel = 'debug';
 */
 this.getLevel = function () {
     return currentLevel;
-}
+};
 
 this.logConsole = function (code, msg, socket) {
     //console.log(affichageLevel.indexOf(currentLevel));
     if (affichageLevel.indexOf(code) <= affichageLevel.indexOf(currentLevel)) {
-        fs.appendFile('log.log', msg +'\r\n', function (err) {
+        fs.appendFile(CONFIG.logpath, msg + '\n', function (err) {
             if (err) throw err;
             console.log(colorCode[code], msg);
         });
@@ -37,24 +39,24 @@ this.logConsole = function (code, msg, socket) {
         }*/
     }
 
-}
+};
 
 this.debug = function (msg, socket) {
-    var d = dateTime({ local: false });
+    var d = dateTime({ local: true });
     this.logConsole('debug', '[' + d.toString() + '] ' + '[DEBUG] ' + msg, socket);
-}
+};
 
 this.log = function (msg, socket) {
-    var d = dateTime({ local: false });
+    var d = dateTime({ local: true });
     this.logConsole('log', '[' + d.toString() + '] ' + msg, socket);
     STATS.addLogEntry();
-}
+};
 this.error = function (msg, socket) {
-    var d = dateTime({ local: false });
+    var d = dateTime({ local: true });
     this.logConsole('error', '[' + d.toString() + '] ' + msg, socket);
     STATS.addErrorToStats();
-}
+};
 this.warning = function (msg, socket) {
-    var d = dateTime({ local: false });
+    var d = dateTime({ local: true });
     this.logConsole('warn', '[' + d.toString() + '] ' + msg, socket);
-}
+};
