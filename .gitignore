@@ -2,3 +2,4 @@
 obj/
 /React-admin/dashboardAdmin/node_modules
 /React/node_modules
+/React/node_modules/.bin/

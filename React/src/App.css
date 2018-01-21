@@ -1,8 +1,9 @@
 body {
   background-color: white;
 }
-.container-fluid{
-    background-color: #639fb6;
+
+.navbarcustom{
+    background-color: #639fb6!important;
 }
 
 

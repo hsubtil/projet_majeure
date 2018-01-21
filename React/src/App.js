@@ -65,37 +65,39 @@ handleLogout = event => {
       userHasAuthenticated: this.userHasAuthenticated,
       socket: this.comm
     };
-
+//  className="App container"
     return (
-      <div className="App container">
-        <Navbar fluid collapseOnSelect>
-          <Navbar.Header>
-            {this.state.isAuthenticated
-            ?
-              buttonInstance
-            :
-            <Navbar.Brand>
-              <Link to="/">KeepCo</Link>
-            </Navbar.Brand>
-            }
-            <Navbar.Toggle />
-          </Navbar.Header>
-          <Navbar.Collapse>
-          <Nav pullRight>
-            {this.state.isAuthenticated
-            ? 
-              <NavItem onClick={this.handleLogout}>Logout</NavItem>
-               : [
-                <RouteNavItem key={1} href="/signup">
-                  Signup
-                </RouteNavItem>,
-                <RouteNavItem key={2} href="/login">
-                  Login
-                </RouteNavItem>
-              ]}
-          </Nav>
-        </Navbar.Collapse>
-        </Navbar>
+      <div>
+         <div className="App container">
+            <Navbar fluid collapseOnSelect className="navbarcustom">
+              <Navbar.Header>
+                {this.state.isAuthenticated
+                ?
+                  buttonInstance
+                :
+                <Navbar.Brand>
+                  <Link to="/">KeepCo</Link>
+                </Navbar.Brand>
+                }
+                <Navbar.Toggle />
+              </Navbar.Header>
+              <Navbar.Collapse>
+              <Nav pullRight>
+                {this.state.isAuthenticated
+                ? 
+                  <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                  : [
+                    <RouteNavItem key={1} href="/signup">
+                      Signup
+                    </RouteNavItem>,
+                    <RouteNavItem key={2} href="/login">
+                      Login
+                    </RouteNavItem>
+                  ]}
+              </Nav>
+            </Navbar.Collapse>
+            </Navbar>
+          </div>
         <Routes childProps={childProps} />
       </div>
     );
