@@ -1,4 +1,5 @@
 /Nodejs/node_modules
+/Nodejs/log.log
 obj/
 /React-admin/dashboardAdmin/node_modules
 /React/node_modules
