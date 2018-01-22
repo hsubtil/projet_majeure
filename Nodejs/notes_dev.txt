@@ -1,4 +1,4 @@
-Changer pour : un calendrier associé a hs.subtil@gmail.com par famille et géré ca sur ma boite mail.
+
 Changer socket.io pour webservice
 
 email : mylittleplaner

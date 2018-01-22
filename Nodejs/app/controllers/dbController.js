@@ -22,14 +22,23 @@ this.getStats = function (cb) {
 
         }
     });
-}
+};
 /***************************************************************************** USERS *****************************************************************************/
 
-this.register = function (json_object) {
+this.register = function (json_object,cb) {
     DB.connect(db, function (error) {
         if (!error) {
-            DB.register(db, json_object);
-            DB.disconnect(db);
+            DB.register(db, json_object, function (err) {
+                if (!err) {
+                    cb(null);
+                    DB.disconnect(db);
+                }
+                else {
+                    cb(err);
+                    DB.disconnect(db);
+                }
+            });
+
         }
     });
 };
@@ -69,7 +78,7 @@ this.getAllUsers = function (cb) {
             DB.disconnect(db);
         });
     });
-}
+};
 
 /***************************************************************************** FAMILIES *****************************************************************************/
 
@@ -82,7 +91,7 @@ this.getAllFamilies = function (cb) {
             DB.disconnect(db);
         });
     });
-}
+};
 
 this.getFamilies = function (email, cb) {
     DB.connect(db, function (error) {
@@ -218,4 +227,4 @@ this.setLocalisation = function (email, localisation, cb) {
         }
         DB.disconnect(db);
     });
-}
+};

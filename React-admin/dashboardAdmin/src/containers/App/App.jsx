@@ -82,7 +82,7 @@ class App extends Component {
                      Welcome to the <b>admin panel</b>.
                 </div>
             ),
-            level: level,
+            level: 'success',
             position: "tr",
             autoDismiss: 15,
         });

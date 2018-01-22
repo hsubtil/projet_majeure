@@ -16,11 +16,6 @@ class HeaderLinks extends Component{
             <div>
                 <Nav>
                     <NavDropdown eventKey={2} title={notification} noCaret id="basic-nav-dropdown">
-                        <MenuItem eventKey={2.1}>Notification 1</MenuItem>
-                        <MenuItem eventKey={2.2}>Notification 2</MenuItem>
-                        <MenuItem eventKey={2.3}>Notification 3</MenuItem>
-                        <MenuItem eventKey={2.4}>Notification 4</MenuItem>
-                        <MenuItem eventKey={2.5}>Another notifications</MenuItem>
                     </NavDropdown>
                     <NavItem eventKey={3} href="#">
                         <i className="fa fa-search"></i>
@@ -28,7 +23,6 @@ class HeaderLinks extends Component{
                     </NavItem>
                 </Nav>
                 <Nav pullRight>
-                    <NavItem eventKey={1} href="#">Account</NavItem>
                     <NavItem eventKey={3} href="#">Log out</NavItem>
                 </Nav>
             </div>

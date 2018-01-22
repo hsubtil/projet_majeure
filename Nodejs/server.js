@@ -7,6 +7,7 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser'); 
 const passport = require('passport');
+var fs = require("fs");
 
 // init server
 var app = express();
@@ -37,6 +38,8 @@ server.listen(CONFIG.port, CONFIG.addr, function () {
 
     LOG.log('[SERVER] App running at http://'+ host+':'+port);
 });
+// TODO: remove log file
+fs.writeFileSync(CONFIG.logpath,"");
 IOController.listen(server);
 
 app.use("/", express.static(path.join(__dirname, "public"))); // Ajoute une redirection vers le dossier public

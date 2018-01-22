@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FormGroup, ControlLabel, FormControl, Row } from 'react-bootstrap';
 
-function FieldGroup({ label, ...props }) {
+function FieldGroup({ label,defaultValue, ...props }) {
     return (
         <FormGroup>
             <ControlLabel>{label}</ControlLabel>
@@ -11,6 +11,14 @@ function FieldGroup({ label, ...props }) {
 }
 
 export class FormInputs extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            value:props.value
+        }
+        console.log(this.state);
+    }
+
     render(){
         var row = [];
         for(var i = 0; i < this.props.ncols.length ; i++){

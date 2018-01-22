@@ -69,7 +69,6 @@ this.getLogEntryFromStats = function () {
 
 this.addSocketToStats = function () {
     socketsOpen++;
-    console.log(socketsOpen);  //TODO : remove
 }
 
 this.removeSocketFromStats = function () {
@@ -77,7 +76,6 @@ this.removeSocketFromStats = function () {
 }
 
 this.getSocketStats = function () {
-    console.log(socketsOpen);
     return socketsOpen;
 }
 

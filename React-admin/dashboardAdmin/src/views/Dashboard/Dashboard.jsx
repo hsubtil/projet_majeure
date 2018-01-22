@@ -42,19 +42,20 @@ class Dashboard extends Component {
         this.fetchInfo = this.fetchInfo.bind(this);
         this.fetchServicesInfo = this.fetchServicesInfo.bind(this);
       }
+
     
       fetchInfo() {
-        axios.get('http://localhost:1337/admin/info')
-          .then( (response) => {
-            console.log("response", response);
-            this.setState({
-                fetchInfo: response.data
-            });
-            console.log("fetchInfo", this.state.fetchInfo);
-          })
-          .catch( (error) => {
-            console.log(error);
-          });  
+            axios.get('http://localhost:1337/admin/info')
+            .then( (response) => {
+                console.log("response", response);
+                this.setState({
+                    fetchInfo: response.data
+                });
+                console.log("fetchInfo", this.state.fetchInfo);
+            })
+            .catch( (error) => {
+                console.log(error);
+            });  
       }
 
       fetchServicesInfo() {
@@ -92,6 +93,8 @@ class Dashboard extends Component {
     componentWillMount(){
         this.fetchInfo();
         this.fetchServicesInfo();
+        setInterval(this.fetchInfo , 1000);
+        setInterval(this.fetchServicesInfo , 1000);
     }
 
 
@@ -154,7 +157,7 @@ class Dashboard extends Component {
                         <Col lg={3} sm={6}>
                             <StatsCard
                                 bigIcon={<i className="pe-7s-server text-warning"></i>}
-                                statsText="DB Capacity"
+                                statsText="DB Size"
                                 statsValue={this.state.fetchInfo.dbCapacity}
                                 statsIcon={<i className="fa fa-refresh"></i>}
                                 statsIconText="Updated now"
@@ -246,7 +249,7 @@ class Dashboard extends Component {
                             <Card
                                 title="Tasks"
                                 category="Backend development"
-                                stats="Updated 3 minutes ago"
+                                stats="Updated now"
                                 statsIcon="fa fa-history"
                                 content={
                                     <div className="table-full-width">

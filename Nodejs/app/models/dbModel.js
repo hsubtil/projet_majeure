@@ -42,7 +42,7 @@ Db.connect = function (db_object, cb) {
             if (cb)
                 cb(error);
         }
-        LOG.log("[DB] Connection to " + db_object.db_name);
+       // LOG.log("[DB] Connection to " + db_object.db_name);
         db_object.database = db;
         if (cb)
             cb(null);
@@ -50,10 +50,10 @@ Db.connect = function (db_object, cb) {
 }
 /**/
 Db.getStats = function (db_object, cb) {
-    LOG.log("[DB] Get stats from db : ");
+   // LOG.log("[DB] Get stats from db : ");
     db_object.database.command({ dbStats: 1, scale: 1 }, function (err, result) {
         if (err) {
-            LOG.error("[DB] Get stats");
+            //LOG.error("[DB] Get stats");
             cb(err, null);
         }
         else {
@@ -166,10 +166,18 @@ Db.register = function (db_object, new_user_json, cb) {
             if (cb)
                 cb(err);
         } else {
-            LOG.log("[DB] New user saved ");
+            var new_family_json = { 'email': new_user_json['email'], 'families': [] };
+            console.log(new_family_json);
+            db_object.database.collection(db_object.families_collection).insert(new_family_json, null, function (error, result) {
+                LOG.warning("LA PUTAIN DE TE RACE"); /// PROBLEME ICI
+                if (!error)
+                    LOG.log("[DB] New family to user saved ");
+                else {
+                    LOG.error("[DB] New family to user not saved");
+                    console.log(error);
+                }
+            });
         }
-        if (cb)
-            cb(null);
     });
 };
 
@@ -315,11 +323,11 @@ Db.addFamily = function (db_object, family_info, cb) {
 }
 
 Db.addFamilyToUser = function (db_object, mail, family_info, cb) {
-    LOG.log("[DB] Adding new family : " + JSON.stringify(family_info));
+    LOG.log("[DB] Adding new family : " + JSON.stringify(family_info)+ ". To user : "+mail);
     var newvalues;
     db_object.database.collection(db_object.families_collection).find({ email: mail }).toArray(function (error, result) {
         if (result[0] === undefined) {
-            LOG.error("[DB] User not found : " + user_mail);
+            LOG.error("[DB] User not found : " + mail);
             if (cb)
                 cb("Error, user not found.");
         }
@@ -450,7 +458,7 @@ Db.loadMessages = function (db_object, code, cb) {
 *   Disconnect. Realise the deconnection of the database. 
 */
 Db.disconnect = function (db_object, cb) {
-    LOG.log("[DB] Deconnection to " + db_object.db_name);
+   // LOG.log("[DB] Deconnection to " + db_object.db_name);
     db_object.database.close(function (err) {
         if (err) {
             LOG.error("[DB] " + err);
