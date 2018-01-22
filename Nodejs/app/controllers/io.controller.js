@@ -74,18 +74,20 @@ this.listen = function (server) {
                 if (!err) {
                     // Protection if profile is not provided 
                     if (!coord) {   // Test. Changed  from !profile !coord
-                        createToken(json_object['email'], res['role'], function (token) {
-                            if (token) {
+                        createToken(json_object['email'], res['role'], function (err, token) {
+                            if (!err) {
                                 socket.emit('auth_success', token);
-                            }
+                            } else
+                                socket.emit('auth_failed');
                         });
                     } else {
                         DB.updateUser(json_object['email'], profile, function (err) {
-                            createToken(json_object['email'], res['role'], function (token) {
-                                if (token) {
+                            createToken(json_object['email'], res['role'], function (err, token) {
+                                if (!err) {
                                     STATS.addAuthRequest();
                                     socket.emit('auth_success', token);
-                                }
+                                } else
+                                    socket.emit('auth_failed');
                             });
                         });
                     }
@@ -520,6 +522,12 @@ this.listen = function (server) {
                 });
             });
         });
+
+        /***************************************************************************** POS *****************************************************************************/
+        socket.on('family_position', function () {
+            socket.emit('family_position_reply');
+        });
+
 /***************************************************************************** METEO *****************************************************************************/
 
         /*
@@ -610,12 +618,14 @@ function checkToken(token, socket, cb) {
 function createToken(email, role, cb) {
     DB.getProfile(email, function (err, res) {
         if (!err) {
-            var reply = { "token": jwt.sign(res, CONFIG.tokenkey), "name":res['name'], 'role':role };   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
+            var reply = { "token": jwt.sign(res, CONFIG.tokenkey), "name": res['name'], 'role': role };   // If timeout exp: Math.floor(Date.now() / 1000) + (60 * 60),
             LOG.debug(JSON.stringify(reply));
-            cb(reply);
+            cb(null,reply);
         }
-        else
+        else {
             LOG.error("[AUTH] Error: cannot create token. Profile is not found. " + err);
+            cb(err,null);
+        }
     });
 }
 

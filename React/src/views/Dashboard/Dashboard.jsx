@@ -47,11 +47,11 @@ class Dashboard extends Component {
       fetchInfo() {
             axios.get('http://localhost:1337/admin/info')
             .then( (response) => {
-                console.log("response", response);
+                //console.log("response", response);
                 this.setState({
                     fetchInfo: response.data
                 });
-                console.log("fetchInfo", this.state.fetchInfo);
+               // console.log("fetchInfo", this.state.fetchInfo);
             })
             .catch( (error) => {
                 console.log(error);
@@ -61,11 +61,11 @@ class Dashboard extends Component {
       fetchServicesInfo() {
         axios.get('http://localhost:1337/admin/services')
           .then( (response) => {
-            console.log("response services", response);
+            //console.log("response services", response);
             this.setState({
                 fetchServicesInfo: response.data
             });
-            console.log("fetchServicesInfo", this.state.fetchServicesInfo);
+            //console.log("fetchServicesInfo", this.state.fetchServicesInfo);
           })
           .catch( (error) => {
             console.log(error);

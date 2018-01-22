@@ -6,13 +6,13 @@ import Typography from '../views/Typography/Typography';
 //import Notifications from '../views/Notifications/Notifications';
 
 const appRoutes = [
-    { path: "/admin/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
-    { path: "/admin/user", name: "User Profile", icon: "pe-7s-user", component: UserProfile },
-    { path: "/admin/table", name: "Table List", icon: "pe-7s-note2", component: TableList },
-    { path: "/admin/log", name: "Log", icon: "pe-7s-news-paper", component: Typography },
+    { path: "/admin", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
+    { path: "/adminuser", name: "User Profile", icon: "pe-7s-user", component: UserProfile },
+    { path: "/admintable", name: "Table List", icon: "pe-7s-note2", component: TableList },
+    { path: "/adminlog", name: "Log", icon: "pe-7s-news-paper", component: Typography },
    /* { path: "/icons", name: "Icons", icon: "pe-7s-science", component: Icons },*/
     /*{ path: "/notifications", name: "Notifications", icon: "pe-7s-bell", component: Notifications },*/
-    { redirect: true, path:"/admin", to:"/admin/dashboard", name: "Dashboard" }
+    /*{ redirect: true, path:"/admin", to:"/admin/dashboard", name: "Dashboard" }*/
 ];
 
 export default appRoutes;

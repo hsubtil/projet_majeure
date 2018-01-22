@@ -2,7 +2,7 @@
   "port": 1337,
   "address": "127.0.0.1",
   "reactserver": "http://localhost:3000",
-  "jeeserver": "192.168.1.100",
+  "jeeserver": "192.168.1.102",
   "jeeport": "8080",
   "tokenkey": "NabilFeKir18",
   "logpath": "log.log",
