@@ -22,8 +22,10 @@ class App extends Component {
         this.componentDidMount = this.componentDidMount.bind(this);
         this.handleNotificationClick = this.handleNotificationClick.bind(this);
         this.state = {
+            _isAuth: props.isAuthenticated,
             _notificationSystem: null
         };
+        console.log(props);
     }
     handleNotificationClick(position){
         var color = Math.floor((Math.random() * 4) + 1);
@@ -57,6 +59,11 @@ class App extends Component {
         });
     }
     componentDidMount(){
+
+        if(localStorage.getItem("token") === null || this.state._isAuth === false )
+        {
+          this.props.history.push("/Login");
+        }
         this.setState({_notificationSystem: this.refs.notificationSystem});
         var _notificationSystem = this.refs.notificationSystem;
         var color = Math.floor((Math.random() * 4) + 1);

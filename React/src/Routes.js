@@ -18,6 +18,9 @@ import SelectedGroup from "./containers/SelectedGroup";
     <AppliedRoute path="/mainpage" exact component={MainPage} props={childProps} />
     <AppliedRoute path="/profil" exact component={Profil} props={childProps} />
     <AppliedRoute path="/selectedgroup" exact component={SelectedGroup} props={childProps} />
-    <Route path="/admin" component={App} />
+    <AppliedRoute path="/admin" exact component={App} props={childProps} />
+    <AppliedRoute path="/adminuser" exact component={App} props={childProps} />
+    <AppliedRoute path="/admintable" exact component={App} props={childProps} />
+    <AppliedRoute path="/adminlog" exact component={App} props={childProps} />
     <Route component={NF} />
   </Switch>;
