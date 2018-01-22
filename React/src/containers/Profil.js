@@ -25,6 +25,11 @@ export default class Profil extends Component {
     event.preventDefault();
     if(localStorage.getItem("token") === null)
     {
+      this.userHasAuthenticated(false);
+      this.adminHasAuthenticated(false);
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("email");
       this.props.history.push("/Login");
     }
     try{

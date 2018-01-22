@@ -22,7 +22,7 @@ class App extends Component {
         this.componentDidMount = this.componentDidMount.bind(this);
         this.handleNotificationClick = this.handleNotificationClick.bind(this);
         this.state = {
-            _isAuth: props.isAuthenticated,
+            _isAuth: props.adminIsAuthenticated,
             _notificationSystem: null
         };
         console.log(props);
@@ -60,8 +60,13 @@ class App extends Component {
     }
     componentDidMount(){
 
-        if(localStorage.getItem("token") === null || this.state._isAuth === false )
+        if(localStorage.getItem("token") === null || this.state._isAuth != true )
         {
+          this.userHasAuthenticated(false);
+          this.adminHasAuthenticated(false);
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("email");
           this.props.history.push("/Login");
         }
         this.setState({_notificationSystem: this.refs.notificationSystem});

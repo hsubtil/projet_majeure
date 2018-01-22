@@ -12,7 +12,8 @@ constructor(props) {
   super(props);
 
   this.state = {
-    isAuthenticated: false
+    isAuthenticated: false,
+    adminIsAuthenticated: false
   };
 
   if(localStorage.getItem("token") != null){
@@ -29,8 +30,15 @@ userHasAuthenticated = authenticated => {
   this.setState({ isAuthenticated: authenticated });
 }
 
+
+adminHasAuthenticated = authenticated => {
+  this.setState({ adminIsAuthenticated: authenticated });
+}
+
 handleLogout = event => {
   this.userHasAuthenticated(false);
+  this.adminHasAuthenticated(false);
+  localStorage.removeItem("user");
   localStorage.removeItem("token");
   localStorage.removeItem("email");
   this.props.history.push("/Login");
@@ -62,7 +70,9 @@ handleLogout = event => {
 
     const childProps = {
       isAuthenticated: this.state.isAuthenticated,
+      adminHasAuthenticated: this.adminHasAuthenticated,
       userHasAuthenticated: this.userHasAuthenticated,
+      adminIsAuthenticated: this.state.adminIsAuthenticated,
       socket: this.comm
     };
 //  className="App container"
@@ -83,7 +93,7 @@ handleLogout = event => {
               </Navbar.Header>
               <Navbar.Collapse>
               <Nav pullRight>
-                {this.state.isAuthenticated
+                {this.state.isAuthenticated || this.state.adminIsAuthenticated
                 ? 
                   <NavItem onClick={this.handleLogout}>Logout</NavItem>
                   : [
