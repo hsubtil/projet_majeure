@@ -94,7 +94,7 @@ handleLogout = event => {
               <Navbar.Collapse>
             <div className="custombutton">
                 <Nav pullRight>
-                  {this.state.isAuthenticated || this.state.adminIsAuthenticated
+                {this.state.isAuthenticated || this.state.adminIsAuthenticated
                   ? 
                     <NavItem onClick={this.handleLogout}>Logout</NavItem>
                     : [
