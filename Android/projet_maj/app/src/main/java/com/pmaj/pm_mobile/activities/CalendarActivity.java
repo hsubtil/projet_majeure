@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,24 +16,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.pmaj.pm_mobile.R;
 import com.pmaj.pm_mobile.model.EventModel;
 import com.pmaj.pm_mobile.tools.EventsAdapter;
-import com.pmaj.pm_mobile.tools.FamilyAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,7 +38,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import io.socket.emitter.Emitter;
 
@@ -55,11 +49,10 @@ public class CalendarActivity extends AppCompatActivity {
     private TextView monthYear;
     private RecyclerView recyclerEvents;
     private FloatingActionButton btnAddEvent;
-    // private CalendarView calendarView;
-    CompactCalendarView compactCalendar;
+    private static CompactCalendarView compactCalendar;
     private SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MMMM-yyyy", Locale.getDefault());
-    private SharedPreferences mPrefs;
-    private List<EventModel> listEvents = new ArrayList<EventModel>();
+    private static SharedPreferences mPrefs;
+    private static List<EventModel> listEvents = new ArrayList<EventModel>();
 
 
     @Override
@@ -102,9 +95,8 @@ public class CalendarActivity extends AppCompatActivity {
 
         LoginActivity.getSocketInstance().getmSocket().on("google_list_events_reply", onGetEventSuccess);
         LoginActivity.getSocketInstance().getmSocket().on("google_list_events_err", onGetEventFail);
-        LoginActivity.getSocketInstance().getmSocket().on("google_set_event_reply",onSetEventSuccess);
-        LoginActivity.getSocketInstance().getmSocket().on("google_set_event_err",onSetEventFail);
-
+        LoginActivity.getSocketInstance().getmSocket().on("google_set_event_reply", onSetEventSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("google_set_event_err", onSetEventFail);
 
 
         LoginActivity.getSocketInstance().emitGetListEvent(mPrefs.getString("token", ""), mPrefs.getString("family_code", ""));
@@ -113,26 +105,17 @@ public class CalendarActivity extends AppCompatActivity {
         compactCalendar.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
-                Context context = getApplicationContext();
-                Long dateSelectedMilliseconds = dateClicked.getTime();
+
+                TextView title = (TextView) findViewById(R.id.title);
+                title.setText("Events of : "+ convertDateToString(dateClicked,"dd-MM-YYYY"));
                 List<EventModel> listEventsDay = new ArrayList<EventModel>();
                 listEventsDay = getListEventsDay(dateClicked);
-                if(listEventsDay.isEmpty())
-                {
-                    final Dialog dialog = new Dialog(CalendarActivity.this);
 
-                    dialog.setContentView(R.layout.pop_up_window_no_events);
-                    dialog.setTitle("No Events");
-                    dialog.show();
-                }
 
-                else
-                {
-                    final Dialog dialog = new Dialog(CalendarActivity.this);
+                if (!listEventsDay.isEmpty()) {
+                    //dialog.setContentView(R.layout.pop_up_window_events);
 
-                    dialog.setContentView(R.layout.pop_up_window_events);
-
-                    recyclerEvents = (RecyclerView) dialog.findViewById(R.id.recyclerEvents);
+                    recyclerEvents = (RecyclerView) findViewById(R.id.recyclerEvents);
                     recyclerEvents.setHasFixedSize(true);
 
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(CalendarActivity.this);
@@ -140,8 +123,10 @@ public class CalendarActivity extends AppCompatActivity {
 
                     RecyclerView.Adapter myAdapter = new EventsAdapter(listEventsDay, CalendarActivity.this);
                     recyclerEvents.setAdapter(myAdapter);
-                    dialog.setTitle("Events");
-                    dialog.show();
+
+                    //dialog.setTitle("Events");
+                    //dialog.show();
+
                 }
 
             }
@@ -149,6 +134,7 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 monthYear.setText(dateFormatMonth.format(firstDayOfNewMonth));
+
             }
         });
 
@@ -193,30 +179,29 @@ public class CalendarActivity extends AppCompatActivity {
                                 SimpleDateFormat df = new SimpleDateFormat(format);
 
                                 Calendar calStart = Calendar.getInstance();
-                                calStart.set(year,month,day,hour,min);
+                                calStart.set(year, month, day, hour, min);
                                 String dateStart = df.format(calStart.getTime());
 
                                 Calendar calEnd = Calendar.getInstance();
-                                calEnd.set(year,month,day,hour+1,min);
+                                calEnd.set(year, month, day, hour + 1, min);
                                 String dateEnd = df.format(calEnd.getTime());
-
 
 
                                 JSONObject event = new JSONObject();
                                 JSONObject start = new JSONObject();
                                 JSONObject end = new JSONObject();
                                 try {
-                                    start.put("dateTime",dateStart);
-                                    end.put("dateTime",dateEnd);
-                                    event.put("summary",summary);
-                                    event.put("start",start);
-                                    event.put("end",end);
+                                    start.put("dateTime", dateStart);
+                                    end.put("dateTime", dateEnd);
+                                    event.put("summary", summary);
+                                    event.put("start", start);
+                                    event.put("end", end);
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
-                                LoginActivity.getSocketInstance().emitCreateEvent(mPrefs.getString("token",""),mPrefs.getString("family_code",""),event);
+                                LoginActivity.getSocketInstance().emitCreateEvent(mPrefs.getString("token", ""), mPrefs.getString("family_code", ""), event);
                                 dialog.dismiss();
 
                             }
@@ -238,22 +223,28 @@ public class CalendarActivity extends AppCompatActivity {
                     JSONObject event = (JSONObject) eventsArray.getJSONObject(i);
                     JSONObject start = (JSONObject) event.getJSONObject("start");
                     EventModel e = new EventModel();
-                    if (start.has("dateTime") && event.has("summary")) {
-                        e.setDate(convertDateStringToLong(start.getString("dateTime"),"yyyy-MM-dd'T'HH:mm:ss'Z'"));
+                    if (start.has("dateTime") && event.has("summary") && event.has("id")) {
+                        e.setDate(convertDateStringToLong(start.getString("dateTime"), "yyyy-MM-dd'T'HH:mm:ss'Z'"));
                         e.setSummary(event.getString("summary"));
+                        e.setEventId(event.getString("id"));
 
                     } else {
-                        if (start.has("date") && event.has("summary") ) {
+                        if (start.has("date") && event.has("summary") && event.has("id")) {
                             e.setSummary(event.getString("summary"));
-                            e.setDate( convertDateStringToLong(start.getString("date"),"yyyy-MM-dd"));
+                            e.setDate(convertDateStringToLong(start.getString("date"), "yyyy-MM-dd"));
+                            e.setEventId(event.getString("id"));
                         }
                     }
-                    if (e != null)
-                    {
-                        listEvents.add(e);
+                    if (e != null) {
+                        if (!eventAlreadyExists(e)) {
+                            listEvents.add(e);
+
+                            final Event ev = new Event(Color.RED, e.getDate(), e.getSummary());
+                            compactCalendar.addEvent(ev, false);
+                        }
                     }
                 }
-                displayEvents();
+                // displayEvents();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -272,42 +263,47 @@ public class CalendarActivity extends AppCompatActivity {
     private Emitter.Listener onSetEventSuccess = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            JSONObject res = (JSONObject) args[0];
-            JSONObject event = null;
-            JSONObject start =null;
+            JSONObject event = (JSONObject) args[0];
+            JSONObject start = null;
 
             try {
-                event = (JSONObject) res.getJSONObject("event");
                 start = (JSONObject) event.getJSONObject("start");
                 EventModel e = new EventModel();
-                if (start.has("dateTime") && event.has("summary")) {
-                    e.setDate(convertDateStringToLong(start.getString("dateTime"),"yyyy-MM-dd'T'HH:mm:ss'Z'"));
+                if (start.has("dateTime") && event.has("summary") && event.has("id")) {
+                    e.setDate(convertDateStringToLong(start.getString("dateTime"), "yyyy-MM-dd'T'HH:mm:ss'Z'"));
                     e.setSummary(event.getString("summary"));
+                    e.setEventId(event.getString("id"));
 
                 } else {
-                    if (start.has("date") && event.has("summary") ) {
+                    if (start.has("date") && event.has("summary") && event.has("id")) {
                         e.setSummary(event.getString("summary"));
-                        e.setDate(convertDateStringToLong(start.getString("date"),"yyyy-MM-dd"));
+                        e.setDate(convertDateStringToLong(start.getString("date"), "yyyy-MM-dd"));
+                        e.setEventId(event.getString("id"));
                     }
                 }
-                if (e != null)
-                {
+                if (e != null && !eventAlreadyExists(e)) {
                     listEvents.add(e);
 
                     final Event ev = new Event(Color.RED, e.getDate(), e.getSummary());
                     compactCalendar.addEvent(ev, false);
+
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            // PopupWindow popUpMessage = new PopupWindow(CalendarActivity.this);
+            //View popUpView = (View) findViewById(R.id.title_calendar);
+            //popUpMessage.setContentView(popUpView);
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
                     final Dialog dialog = new Dialog(CalendarActivity.this);
-                    dialog.setContentView(R.layout.pop_up_window_event_added);
+                    dialog.setContentView(R.layout.pop_up_window_event_status);
+                    TextView status = (TextView) dialog.findViewById(R.id.title);
+                    status.setText("Your Event has been added !");
                     dialog.show();
-                    dialog.dismiss();
+                    //dialog.dismiss();
                 }
             });
 
@@ -319,21 +315,32 @@ public class CalendarActivity extends AppCompatActivity {
     private Emitter.Listener onSetEventFail = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            final Dialog dialog = new Dialog(CalendarActivity.this);
-            dialog.setContentView(R.layout.pop_up_window_event_not_added);
-            dialog.show();
-            try {
-                wait(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            dialog.dismiss();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Dialog dialog = new Dialog(CalendarActivity.this);
+                    dialog.setContentView(R.layout.pop_up_window_event_status);
+                    TextView status = (TextView) dialog.findViewById(R.id.title);
+                    status.setText("Ouuuups there was a problem.Please Try again !");
+                    dialog.show();
+                    //dialog.dismiss();
+                }
+            });
 
             return;
         }
     };
 
-    private void displayEvents() {
+    private boolean eventAlreadyExists(EventModel e) {
+        for (EventModel event : listEvents) {
+            if (event.getEventId().equals(e.getEventId()))
+                return true;
+        }
+        return false;
+    }
+
+
+   /* private void displayEvents() {
         for (EventModel e : listEvents) {
             Long dateLong = e.getDate();
             String eSummary = e.getSummary();
@@ -342,7 +349,7 @@ public class CalendarActivity extends AppCompatActivity {
         }
 
         return;
-    }
+    }*/
 
     private Long convertDateStringToLong(String dateString, String format) {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
@@ -358,7 +365,7 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
-    private String convertDateToString(Date date, String format){
+    private String convertDateToString(Date date, String format) {
 
         SimpleDateFormat df = new SimpleDateFormat(format);
         String stringDate = df.format(date);
@@ -366,22 +373,59 @@ public class CalendarActivity extends AppCompatActivity {
         return stringDate;
     }
 
-    private List<EventModel> getListEventsDay(Date date){
+    private Date convertLongToDate(Long date, String format) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        Date convertedDate = new Date();
+        try {
+            convertedDate = formatter.parse(format);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return convertedDate;
+    }
+
+    private List<EventModel> getListEventsDay(Date date) {
         List<EventModel> listEventsDay = new ArrayList<EventModel>();
         String format = "yyyy-MM-dd";
-        String stringDate = convertDateToString(date,format);
-        Long actualDay = convertDateStringToLong(stringDate,format);
-        Long dayBefore = actualDay - 86400000L;
+        String stringDate = convertDateToString(date, format);
+        Long actualDay = convertDateStringToLong(stringDate, format);
         Long dayAfter = actualDay + 86400000L;
 
-        for(EventModel e : listEvents){
-            if(e.getDate()<dayAfter && e.getDate()>dayBefore)
+        for (EventModel e : listEvents) {
+            if (e.getDate() >= actualDay && e.getDate() < dayAfter)
                 listEventsDay.add(e);
         }
 
         return listEventsDay;
     }
 
+    public static List<EventModel> getlistEvents() {
+        return listEvents;
+    }
+
+    public static CompactCalendarView getCalendar() {
+        return compactCalendar;
+    }
+
+    public void deleteEventSuccess(EventModel eventRemoved){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final Dialog dialog = new Dialog(CalendarActivity.this);
+
+                dialog.setContentView(R.layout.pop_up_window_event_status);
+                TextView status = (TextView) dialog.findViewById(R.id.title);
+                status.setText("Your Event has been removed !");
+                dialog.show();
+            }
+        });
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

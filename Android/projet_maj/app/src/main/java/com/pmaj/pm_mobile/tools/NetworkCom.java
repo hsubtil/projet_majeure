@@ -27,7 +27,7 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        URI uri = URI.create("http://192.168.1.100:1337/");
+        URI uri = URI.create("http://192.168.1.101:1337/");
         this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
@@ -176,6 +176,19 @@ public class NetworkCom {
             e.printStackTrace();
         }
         mSocket.emit("google_set_event",json);
+    }
+
+    public void emitDeleteEvent(String token, String code, String eventId) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("code",code);
+            json.put("eventId",eventId);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("google_remove_event",json);
     }
 
 

@@ -7,8 +7,17 @@ import java.util.Date;
  */
 
 public class EventModel {
+    String eventId;
     Long date;
     String summary;
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
 
     public Long getDate() {
         return date;
