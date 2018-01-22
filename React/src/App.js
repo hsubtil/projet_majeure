@@ -92,19 +92,22 @@ handleLogout = event => {
                 <Navbar.Toggle />
               </Navbar.Header>
               <Navbar.Collapse>
-              <Nav pullRight>
-                {this.state.isAuthenticated || this.state.adminIsAuthenticated
-                ? 
-                  <NavItem onClick={this.handleLogout}>Logout</NavItem>
-                  : [
-                    <RouteNavItem key={1} href="/signup">
-                      Signup
-                    </RouteNavItem>,
-                    <RouteNavItem key={2} href="/login">
-                      Login
-                    </RouteNavItem>
-                  ]}
-              </Nav>
+            <div className="custombutton">
+                <Nav pullRight>
+                  {this.state.isAuthenticated || this.state.adminIsAuthenticated
+                  ? 
+                    <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                    : [
+                      <RouteNavItem key={1} href="/signup">
+                        Signup
+                      </RouteNavItem>,
+                      <RouteNavItem key={2} href="/login">
+                        Login
+                      </RouteNavItem>
+                    ]}
+                </Nav>
+              </div>
+
             </Navbar.Collapse>
             </Navbar>
           </div>

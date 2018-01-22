@@ -509,9 +509,10 @@ this.listen = function (server) {
                 DB.getFamilyByCode(json_object['code'], function (err, family) {
                     if (!err) {
                         GOOGLE.deleteEvent(family['calendarId'], json_object['eventId'], function (err, res) {
+                            //TO REMOVE
                             if (!err) {
                                 LOG.log("[SOCKET] Delete event for family " + json_object['code']);
-                                socket.emit('google_remove_event_success', { 'id': json_object['eventId']});
+                                socket.emit('google_remove_event_success', json_object['eventId']);
                             }
                             else {
                                 socket.emit('google_remove_event_err');
@@ -524,8 +525,35 @@ this.listen = function (server) {
         });
 
         /***************************************************************************** POS *****************************************************************************/
-        socket.on('family_position', function () {
-            socket.emit('family_position_reply');
+        /*
+        * param : JSON {'token':,'code':} // add to doc
+        */
+        socket.on('family_position', function (json_object) {
+            LOG.log("[SOCKET] Get family position");
+            var positionJson = {};
+            var lock_increment = 0;
+            checkToken(json_object['token'], socket, function (err) {
+                if (!err) {
+                    DB.getMemberOfFamily(json_object['code'], function (err, family_members) {
+                        if (!err) {
+                            for (var member in family_members) {
+                                LOG.debug(member);
+                                lock_increment++;  // Increment lock_increment
+                                DB.getProfile(family_members[member]['email'], function (err, profile) {
+                                    LOG.debug(profile);
+                                    var name = profile['name'];
+                                    positionJson[name] = profile['coord'];
+                                    if (lock_increment === family_members.length) {
+                                        socket.emit('family_position_reply', positionJson);
+                                    }
+                                });
+                            }
+                        }
+                        else
+                            socket.emit('family_position_err');
+                    });
+                }
+            });
         });
 
 /***************************************************************************** METEO *****************************************************************************/

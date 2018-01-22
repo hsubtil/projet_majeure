@@ -4,8 +4,13 @@ body {
 
 .navbarcustom{
     background-color: #639fb6!important;
+    color:white!important;
 }
-
+.btn{
+  color:white!important;
+  border-color:white!important;
+  background-color:#f9c10f!important;
+}
 
 .App {
   margin-top: 15px;
@@ -15,7 +20,10 @@ body {
 .App .navbar-brand {
   font-weight: bold;
   background-color: #639fb6;
-    color: white;
+  color: white!important;
+}
+.App a{
+  color:white!important;
 }
 
 .App-logo {
@@ -27,7 +35,7 @@ body {
   background-color: #222;
   height: 150px;
   padding: 20px;
-  color: white;
+  color: white!important;
 }
 
 .App-title {
