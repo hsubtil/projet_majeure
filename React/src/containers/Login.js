@@ -46,7 +46,15 @@ export default class Login extends Component {
         if(jjson.datas.role === "ADMIN"){
 
         console.log("Admin authentificated");
-                this.props.userHasAuthenticated(true);
+        this.props.adminHasAuthenticated(true);
+
+
+        localStorage.setItem("user",jjson.datas.name);
+        localStorage.setItem("token", jjson.datas.token);
+        localStorage.setItem("email", json.email);
+
+        this.props.history.push("/admin");
+
 
         }
         else if (jjson.datas.role === "USER"){

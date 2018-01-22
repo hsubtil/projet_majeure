@@ -130,6 +130,18 @@ class Comm {
         var json = { result : true, datas : data}
         CB(json);
       });
+      this.socket.on('family_position_reply', function (data) {
+        console.log("family_position_reply");
+
+        var json = { result : true, datas : data}
+        CB(json);
+      });
+      this.socket.on('family_position_err', function (data) {
+        console.log("family_position_err");
+
+        var json = { result : false, datas : data}
+        CB(json);
+      });
     }
 
     emitConnect_gen2(json, request){

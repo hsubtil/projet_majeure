@@ -26,7 +26,12 @@ class MainPage extends Component {
     event.preventDefault();
     if(localStorage.getItem("token") === null)
     {
-      this.props.history.push("/Login");
+        this.userHasAuthenticated(false);
+        this.adminHasAuthenticated(false);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("email");
+        this.props.history.push("/Login");
     }
     try{
       var json = {token: localStorage.token, email: localStorage.email, family: this.state.new_name_family};
