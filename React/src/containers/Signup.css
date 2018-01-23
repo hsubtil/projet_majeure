@@ -5,7 +5,8 @@
 
   .Signup form {
     margin: 0 auto;
-    max-width: 320px;
+    margin-left: 25%;
+    margin-right: 25%;
   }
 }
 
@@ -13,9 +14,4 @@
   font-size: 14px;
   padding-bottom: 10px;
   color: #999;
-}
-
-form{
-  margin-left: 25%;
-  margin-right: 25%;
 }

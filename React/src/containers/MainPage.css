@@ -9,10 +9,22 @@
   font-family: "Open Sans", sans-serif;
   font-weight: 600;
 }
+
 .lander{
   margin-left: 25%;
   margin-right: 25%;
 }
+
 .MainPage .lander p {
   color: #999;
+}
+
+.listGroup .btn{
+  width: 30%;
+  display: block;
+  margin: auto;
+}
+
+.listGroup ul{
+  padding: 0px;
 }

@@ -41,6 +41,9 @@ handleLogout = event => {
   localStorage.removeItem("user");
   localStorage.removeItem("token");
   localStorage.removeItem("email");
+  localStorage.removeItem("selectedgroup_code");
+  localStorage.removeItem("selectedgroup_name");
+
   this.props.history.push("/Login");
 }
 
@@ -79,7 +82,7 @@ handleLogout = event => {
     return (
       <div>
          <div className="App container">
-            <Navbar fluid collapseOnSelect className="navbarcustom">
+            <Navbar fluid collapseOnSelect className="navbarcustom yellowBtnSpe">
               <Navbar.Header>
                 {this.state.isAuthenticated
                 ?

@@ -18,6 +18,11 @@ export default class SelectedGroup extends Component {
   }
 
   componentWillMount(){
+
+      if(localStorage.getItem("token") === null || localStorage.getItem("selectedgroup_code") === null)
+      {
+        this.props.history.push("/Login");
+      }
       try{
         var json_t = {token: localStorage.token, code: this.state.code};
         var self = this.state;
@@ -112,7 +117,7 @@ export default class SelectedGroup extends Component {
 
                 <div class="row">
                   <div class="col-lg-8">
-                    <Map/>                   
+                    <Map socket={this.state.socket}/>                   
                   </div>  
                 </div>
               </div>  

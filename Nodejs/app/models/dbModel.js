@@ -21,7 +21,7 @@ module.exports = Db;
  */
 function Db() {
     this.db_name = 'monpetitplanning';
-    this.dbURI = "mongodb://localhost:27017/monpetitplanning";
+    this.dbURI = "mongodb://localhost:27017/monpetitplanning"; //PROD :keepco  DEV: monpetitplanning
     this.users_collection = "users";
     this.families_collection = "families";
     this.family_chat = "family-chat";
@@ -42,25 +42,25 @@ Db.connect = function (db_object, cb) {
             if (cb)
                 cb(error);
         }
-       // LOG.log("[DB] Connection to " + db_object.db_name);
+        // LOG.log("[DB] Connection to " + db_object.db_name);
         db_object.database = db;
         if (cb)
             cb(null);
     });
-}
+};
 /**/
 Db.getStats = function (db_object, cb) {
-   // LOG.log("[DB] Get stats from db : ");
+    // LOG.log("[DB] Get stats from db : ");
     db_object.database.command({ dbStats: 1, scale: 1 }, function (err, result) {
         if (err) {
             //LOG.error("[DB] Get stats");
             cb(err, null);
         }
         else {
-            cb(null,result);
+            cb(null, result);
         }
     });
-}
+};
 
 /***************************************************************************** USERS *****************************************************************************/
 
@@ -304,7 +304,7 @@ Db.getFamilyWithCode = function (db_object, family_code, cb) {
 
         }
     });
-}
+};
 
 Db.addFamily = function (db_object, family_info, cb) {
     LOG.log("[DB] Adding new family to family list: " + JSON.stringify(family_info));
@@ -320,7 +320,7 @@ Db.addFamily = function (db_object, family_info, cb) {
         if (cb)
             cb(null);
     });
-}
+};
 
 Db.addFamilyToUser = function (db_object, mail, family_info, cb) {
     LOG.log("[DB] Adding new family : " + JSON.stringify(family_info)+ ". To user : "+mail);
@@ -337,7 +337,7 @@ Db.addFamilyToUser = function (db_object, mail, family_info, cb) {
             LOG.log("[DB] User id " + JSON.stringify(user));
             db_object.database.collection(db_object.families_collection).update(user, newvalues, function (err, res) {
                 if (err) {
-                    LOG.error("[DB] Error in updating family")
+                    LOG.error("[DB] Error in updating family");
                     LOG.error(err);
                 } else {
                     LOG.log("[DB] Document updated");
@@ -367,12 +367,12 @@ Db.addUserToFamily = function (db_object, mail, family_code, cb) {
             Db.getUserByMail(db_object, mail, function (err,user) {
                 if (!err) {
                     console.log(user);
-                    var newuser = { "id": user['_id'], "email": user['email'] }
+                    var newuser = { "id": user['_id'], "email": user['email'] };
                     var newvalue = { "$addToSet": { "members": newuser } };
                     LOG.debug("[DB] Add to family " + JSON.stringify(family_code) + "User " + JSON.stringify(user));
                     db_object.database.collection(db_object.family_list).update(family, newvalue, function (err, res) {
                         if (err) {
-                            LOG.error("[DB] Error in updating family")
+                            LOG.error("[DB] Error in updating family");
                             LOG.error(err);
                         } else {
                             LOG.log("[DB] Document updated");
@@ -398,7 +398,7 @@ Db.getMemeberOfFamilyByCode = function (db_object, family_code, cb) {
             var family = result[0];
             LOG.log("[DB] Get family members" + JSON.stringify(family));
             LOG.debug(JSON.stringify(family['members']));
-            LOG.debug(family['members'])
+            LOG.debug(family['members']);
             if (cb) {
                 cb(null, family['members']);
             }
@@ -412,7 +412,7 @@ Db.getMemeberOfFamilyByCode = function (db_object, family_code, cb) {
 /*
 *  param : msg, JSON {code:, user:, date: , content: }
 */
-Db.saveMessage = function (db_object,msg, cb) {
+Db.saveMessage = function (db_object, msg, cb) {
     LOG.log("[DB] Saving message in DB :" + JSON.stringify(msg));
     db_object.database.collection(db_object.family_chat).insert(msg, null, function (err, result) {
         if (err) {
@@ -425,8 +425,8 @@ Db.saveMessage = function (db_object,msg, cb) {
         if (cb)
             cb(null);
     });
-    
-}
+
+};
 
 /*
     param : db_object
@@ -442,15 +442,15 @@ Db.loadMessages = function (db_object, code, cb) {
             LOG.error("[DB] Error in DB when reading msgs " + JSON.stringify(msg));
             LOG.error(err);
             if (cb)
-                cb(err,null);
+                cb(err, null);
         }
         LOG.log("[DB] All messages retrived from db");
         LOG.debug(JSON.stringify(result));
         if (cb)
-            cb(null,result);
+            cb(null, result);
     });
 
-}
+};
 /*
 *   param :
 *       db_object : object of type Db()
@@ -458,7 +458,7 @@ Db.loadMessages = function (db_object, code, cb) {
 *   Disconnect. Realise the deconnection of the database. 
 */
 Db.disconnect = function (db_object, cb) {
-   // LOG.log("[DB] Deconnection to " + db_object.db_name);
+    // LOG.log("[DB] Deconnection to " + db_object.db_name);
     db_object.database.close(function (err) {
         if (err) {
             LOG.error("[DB] " + err);
@@ -468,7 +468,7 @@ Db.disconnect = function (db_object, cb) {
         if (cb)
             cb(null);
     });
-}
+};
 
 /***************************************************************************** LOCALISATION *****************************************************************************/
 // Not used
@@ -480,7 +480,7 @@ Db.setLocalisationToUser = function (db_object, mail, localisation, cb) {
         LOG.debug("[DB] Add to family " + JSON.stringify(family_code) + "User " + JSON.stringify(user));
         db_object.database.collection(db_object.family_list).update(family, newvalue, function (err, res) {
             if (err) {
-                LOG.error("[DB] Error in updating family")
+                LOG.error("[DB] Error in updating family");
                 LOG.error(err);
             } else {
                 LOG.log("[DB] Document updated");
