@@ -87,7 +87,7 @@ handleLogout = event => {
     return (
       <div>
          <div className="App container">
-            <Navbar fluid collapseOnSelect className="navbarcustom">
+            <Navbar fluid collapseOnSelect className="navbarcustom yellowBtnSpe">
               <Navbar.Header>
                 {this.state.isAuthenticated
                 ?

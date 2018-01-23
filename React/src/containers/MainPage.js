@@ -133,42 +133,47 @@ class MainPage extends Component {
           <h1>Groupes</h1>
           <p>Tout vos groupes à porté de main ! </p>
           <br />
-          <ul>{ contentsList }</ul>
+          <div class="listGroup">
+            <ul>{ contentsList }</ul>
           <br />
-          <form onSubmit={this.newFamily}>
-          <FormGroup controlId="new_name_family" bsSize="large">
-              <ControlLabel>Nom nouveau groupe </ControlLabel>
-              <FormControl
-                autoFocus
-                type="text"
-                onChange={this.handleChange}
-              />
-          </FormGroup>
+            <form onSubmit={this.newFamily}>
+            <FormGroup controlId="new_name_family" bsSize="large">
+                <ControlLabel>Nom nouveau groupe </ControlLabel>
+                <FormControl
+                  autoFocus
+                  type="text"
+                  onChange={this.handleChange}
+                />
+            </FormGroup>
 
-          <Button
-            bsSize="large"
-            type="submit">
-            Créer un groupe
-          </Button>
-          </form>
-          <br />
-          <form onSubmit={this.joinFamily}>   
-          <FormGroup controlId="join_code" bsSize="large">
-              <ControlLabel>Code groupe </ControlLabel>
-              <FormControl
-                autoFocus
-                type="text"
-                onChange={this.handleChange}
-              />
-          </FormGroup>
+            <Button
+              bsSize="large"
+              type="submit"
+              className="yellowBtn">
+              Créer un groupe
+            </Button>
+            </form>
+            <br />
 
-          <Button
-            bsSize="large"
-            type="submit">
-            Rejoindre un groupe
-          </Button>
+            <form onSubmit={this.joinFamily}>   
+            <FormGroup controlId="join_code" bsSize="large">
+                <ControlLabel>Code groupe </ControlLabel>
+                <FormControl
+                  autoFocus
+                  type="text"
+                  onChange={this.handleChange}
+                />
+            </FormGroup>
 
-          </form>
+            <Button
+              bsSize="large"
+              type="submit"
+              className="yellowBtn">
+              Rejoindre un groupe
+            </Button>
+
+            </form>
+          </div>
         </div>
       </div>
     );
@@ -199,7 +204,8 @@ class Famille extends Component {
           <Button
             block
             bsSize="large"
-            onClick={this.selectFamily}>
+            onClick={this.selectFamily}
+            className="yellowBtn">
             {this.state.family_name}
           </Button>
           <ControlLabel>Code : {this.state.family_code}</ControlLabel>

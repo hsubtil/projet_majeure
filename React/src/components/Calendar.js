@@ -4,6 +4,8 @@ import moment from 'moment';
 import {Modal,FormGroup,Button,Form, ControlLabel, FormControl} from 'react-bootstrap';
 import "../../node_modules/react-big-calendar/lib/css/react-big-calendar.css";
 import ReactDOM from 'react-dom';
+import NotificationSystem from 'react-notification-system';
+import {style} from "../variables/Variables.jsx";
 
 class Calendar extends React.Component {
     constructor(props) {
@@ -24,7 +26,8 @@ class Calendar extends React.Component {
             startDateTimeEvent: null,
             endDateTimeEvent: null,
             startDateTimeString: null,
-            endDateTimeString: null
+            endDateTimeString: null,
+            _notificationSystem: null,
 
         };  
         this.socket =  props.socket.socket;        
@@ -32,43 +35,98 @@ class Calendar extends React.Component {
 
     componentWillMount(){
     	var self = this;
-
+        
         BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
         
         this.socket.on('google_list_events_reply', function (data){
             console.log('google_list_events_reply');
-            self.displayEvents(data, self);
-              
+            self.displayEvents(data, self);             
         }); 
 
     	this.socket.on('google_list_events_err', function (data){
-            console.log('google_list_events_err');
-            alert("Error while retrieving the events, please reload the page !");
+            console.log('google_list_events_err');       
+            //alert("Error while retrieving the events, please reload the page !");
+            self.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                message: (
+                    <div>
+                        <b>Error while retrieving the events, please reload the page !</b>
+                    </div>
+                ),
+                level: 'error',
+                position: "tc",
+                autoDismiss: 3,
+            }); 
   
         });
 
         this.socket.on('google_set_event_err', function (data){
             console.log('google_set_event_err');
-            alert("Error while creating the event, please try again or reload the page !");
+            //alert("Error while creating the event, please try again or reload the page !");
+            self.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                message: (
+                    <div>
+                        <b>Error while creating the event, please try again or reload the page !</b>
+                    </div>
+                ),
+                level: 'error',
+                position: "tc",
+                autoDismiss: 3,
+            }); 
+
   
         });
 
         this.socket.on('google_set_event_reply', function (data){
             console.log('google_set_event_reply');
-            alert("Event successfully created!");
+            //alert("Event successfully created!");
+            self.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                message: (
+                    <div>
+                        <b>Event successfully created !</b>
+                    </div>
+                ),
+                level: 'success',
+                position: "tc",
+                autoDismiss: 3,
+            }); 
             self.getListEvents(self.state.token, self.state.code);
   
         });
         this.socket.on('google_remove_event_err', function (data){
             console.log('google_remove_event_err');
-            alert("Error while removing the event, please try again or reload the page!");
+            //alert("Error while removing the event, please try again or reload the page!");
+            self.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                message: (
+                    <div>
+                        <b>Error while removing the event, please try again or reload the page !</b>
+                    </div>
+                ),
+                level: 'error',
+                position: "tc",
+                autoDismiss: 3,
+            }); 
   
         });
 
         this.socket.on('google_remove_event_success', function (data){
             console.log('google_remove_event_success');
-            alert("Event successfully deleted !");
+            //alert("Event successfully deleted !");
             self.getListEvents(self.state.token, self.state.code);
+            self.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                message: (
+                    <div>
+                        <b>Event successfully deleted !</b>
+                    </div>
+                ),
+                level: 'success',
+                position: "tc",
+                autoDismiss: 3,
+            }); 
   
         });
 
@@ -80,11 +138,19 @@ class Calendar extends React.Component {
         this.closeEvent = this.closeEvent.bind(this); 
         this.openEvent = this.openEvent.bind(this); 
         this.handleDeleteEvent.bind(this);
+        this.componentDidMount.bind(this);
+
 
         
         this.getListEvents(this.state.token, this.state.code);
 
        // this.setEvent(this.state.token, this.state.code, "Alpes", "Ski", "fondue au programme",  new Date(2018, 0, 1), new Date(2018, 0, 3)); 
+    }
+
+    componentDidMount(){
+        this.setState({
+            _notificationSystem : this.refs.notificationSystem
+        });
     }
 
     displayEvents(data, obj){
@@ -215,6 +281,7 @@ class Calendar extends React.Component {
 
 
     	return (<div>
+            <NotificationSystem ref="notificationSystem" style={style}/>
             
 		    <BigCalendar
 		      events= {this.state.googleEvents}
@@ -225,7 +292,7 @@ class Calendar extends React.Component {
 
             <Button
               bsStyle="primary"
-              bsSize=""
+              className="yellowBtn"
               onClick={this.open}
             >
             <span class="glyphicon glyphicon-plus"></span>
@@ -235,7 +302,7 @@ class Calendar extends React.Component {
 
             <Modal show={this.state.showModal} onHide={this.close}>
               <Modal.Header closeButton>
-                <Modal.Title>Add an event</Modal.Title>
+                <Modal.Title>Create an event</Modal.Title>
               </Modal.Header>
               <Modal.Body>
 
@@ -262,7 +329,7 @@ class Calendar extends React.Component {
                     </FormGroup>{' '}
 
                      <FormGroup controlId="formEndTime">
-                        <ControlLabel>End Date</ControlLabel>{' '}
+                        <ControlLabel>End Time</ControlLabel>{' '}
                         <FormControl type="time" validate='required' ref="endTime"/>
                     </FormGroup>{' '}
 
@@ -276,7 +343,7 @@ class Calendar extends React.Component {
                         <FormControl type="text" placeholder="My Description" validate='required' ref="description"/>
                     </FormGroup>{' '}
 
-                    <Button bsStyle="primary" onClick={(e) => this.handleSubmit(e)} >Create Event</Button>
+                    <Button bsStyle="primary" className="yellowBtn" onClick={(e) => this.handleSubmit(e)} >Create Event</Button>
 
                 </Form>
 
