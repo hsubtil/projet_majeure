@@ -55,7 +55,7 @@ class Calendar extends React.Component {
                 ),
                 level: 'error',
                 position: "tc",
-                autoDismiss: 3,
+                autoDismiss: 5,
             }); 
   
         });
@@ -72,7 +72,7 @@ class Calendar extends React.Component {
                 ),
                 level: 'error',
                 position: "tc",
-                autoDismiss: 3,
+                autoDismiss: 5,
             }); 
 
   
@@ -90,7 +90,7 @@ class Calendar extends React.Component {
                 ),
                 level: 'success',
                 position: "tc",
-                autoDismiss: 3,
+                autoDismiss: 5,
             }); 
             self.getListEvents(self.state.token, self.state.code);
   
@@ -107,7 +107,7 @@ class Calendar extends React.Component {
                 ),
                 level: 'error',
                 position: "tc",
-                autoDismiss: 3,
+                autoDismiss: 5,
             }); 
   
         });
@@ -125,7 +125,7 @@ class Calendar extends React.Component {
                 ),
                 level: 'success',
                 position: "tc",
-                autoDismiss: 3,
+                autoDismiss: 5,
             }); 
   
         });
@@ -155,31 +155,39 @@ class Calendar extends React.Component {
 
     displayEvents(data, obj){
     	obj.state.googleEvents = []; 
+        if(Object.keys(data[0]).length !== 0){
+            Object.keys(data).forEach(function(key) {
+                var val = data[key];
+                var end = val['end']['dateTime'];
+                var start = val['start']['dateTime'];
+                var summary = val['summary'];
+                var location = val['location'];
+                var id = val['id'];
+                var description = val['description'];          
 
-        Object.keys(data).forEach(function(key) {
-            var val = data[key];
-            var end = val['end']['dateTime'];
-            var start = val['start']['dateTime'];
-            var summary = val['summary'];
-            var location = val['location'];
-            var id = val['id'];
-            var description = val['description'];          
+    			console.log("summary: " + summary + ",start: " + start + ",end: " + end);
+                console.log("location: " + location + ",id: " + id + ",description: " + description);
+    			start = new Date(start);
+    			end = new Date(end);
 
-			console.log("summary: " + summary + ",start: " + start + ",end: " + end);
-			start = new Date(start);
-			end = new Date(end);
-
+                obj.setState({
+                    events: obj.state.googleEvents.push({
+                        title: summary,
+    	                startDate: start,
+    	                endDate: end,
+    	                location: location,	
+                        id: id,  
+                        description: description                  
+                    })
+                });
+            }); 
+        }
+        else{
             obj.setState({
-                events: obj.state.googleEvents.push({
-                    title: summary,
-	                startDate: start,
-	                endDate: end,
-	                location: location,	
-                    id: id,  
-                    description: description                  
-                })
+                    googleEvents: []
             });
-        }); 
+
+        }
     }
 
     setEvent(token, code, location, summary, description, start_dateTime, end_DateTime) {
@@ -248,7 +256,7 @@ class Calendar extends React.Component {
                         idEvent: event["id"],
                         titleEvent: event["title"],
                         locationEvent: event["location"],
-                        descriptionEvent: null,
+                        descriptionEvent: event["description"],
                         startDateTimeEvent: event["startDate"],
                         endDateTimeEvent: event["endDate"],
                         startDateTimeString: event["startDate"].toString(),
@@ -257,10 +265,26 @@ class Calendar extends React.Component {
      }
 
     handleSubmit(){
-        var startDateTime = ReactDOM.findDOMNode(this.refs.startDate).value 
-        + "T" + ReactDOM.findDOMNode(this.refs.startTime).value + ":00";
-        var endDateTime = ReactDOM.findDOMNode(this.refs.endDate).value 
-        + "T" + ReactDOM.findDOMNode(this.refs.endTime).value + ":00";
+
+        if(ReactDOM.findDOMNode(this.refs.startTime).value !== ""){
+            var startDateTime = ReactDOM.findDOMNode(this.refs.startDate).value 
+            + "T" + ReactDOM.findDOMNode(this.refs.startTime).value + ":00"; 
+        }
+        else{
+            startDateTime = ReactDOM.findDOMNode(this.refs.startDate).value 
+            + "T00:00:00"; 
+        }
+
+        if(ReactDOM.findDOMNode(this.refs.endTime).value !== ""){
+            var endDateTime = ReactDOM.findDOMNode(this.refs.endDate).value 
+            + "T" + ReactDOM.findDOMNode(this.refs.endTime).value + ":00";
+        }
+        else{
+             endDateTime = ReactDOM.findDOMNode(this.refs.endDate).value 
+             + "T23:59:59"; 
+        }
+        
+       
         this.setEvent(this.state.token, this.state.code, ReactDOM.findDOMNode(this.refs.location).value
             , ReactDOM.findDOMNode(this.refs.title).value, ReactDOM.findDOMNode(this.refs.description).value
             ,  startDateTime, endDateTime); 
@@ -302,7 +326,9 @@ class Calendar extends React.Component {
 
             <Modal show={this.state.showModal} onHide={this.close}>
               <Modal.Header closeButton>
-                <Modal.Title>Create an event</Modal.Title>
+                <Modal.Title>Create an event
+                <br/> (fields with * are required)
+                </Modal.Title>
               </Modal.Header>
               <Modal.Body>
 
@@ -310,37 +336,44 @@ class Calendar extends React.Component {
 
                     <FormGroup controlId="formTitle">
                         <ControlLabel>Title</ControlLabel>{' '}
-                        <FormControl type="text" placeholder="My Event" validate='required' ref="title"/>
+                        <FormControl type="text" placeholder="My Event" ref="title"/>
+                        <FormControl.Feedback />
                     </FormGroup>{' '}
 
                     <FormGroup controlId="formStartDate">
                         <ControlLabel>Start Date</ControlLabel>{' '}
-                        <FormControl type="date" validate='required' ref="startDate"/>
+                        <FormControl type="date" ref="startDate"/>
+                        <FormControl.Feedback />
                     </FormGroup>{' '}
 
                     <FormGroup controlId="formStartTime">
                         <ControlLabel>Start Time</ControlLabel>{' '}
-                        <FormControl type="time" validate='required' ref="startTime"/>
+                        <FormControl type="time" ref="startTime"/>
+                        <FormControl.Feedback />
                     </FormGroup>{' '}
 
                     <FormGroup controlId="formEndDate">
                         <ControlLabel>End Date</ControlLabel>{' '}
-                        <FormControl type="date" validate='required' ref="endDate"/>
+                        <FormControl type="date" ref="endDate"/>
+                        <FormControl.Feedback />
                     </FormGroup>{' '}
 
                      <FormGroup controlId="formEndTime">
                         <ControlLabel>End Time</ControlLabel>{' '}
-                        <FormControl type="time" validate='required' ref="endTime"/>
+                        <FormControl type="time" ref="endTime"/>
+                        <FormControl.Feedback />
                     </FormGroup>{' '}
 
                      <FormGroup controlId="formLocation">
                         <ControlLabel>Location</ControlLabel>{' '}
-                        <FormControl type="text" placeholder="My Location" validate='required' ref="location"/>
+                        <FormControl type="text" placeholder="My Location" ref="location"/>
+                        <FormControl.Feedback />
                     </FormGroup>{' '}
 
                     <FormGroup controlId="formDescription">
                         <ControlLabel>Description</ControlLabel>{' '}
-                        <FormControl type="text" placeholder="My Description" validate='required' ref="description"/>
+                        <FormControl type="text" placeholder="My Description" ref="description"/>
+                        <FormControl.Feedback />
                     </FormGroup>{' '}
 
                     <Button bsStyle="primary" className="yellowBtn" onClick={(e) => this.handleSubmit(e)} >Create Event</Button>
@@ -383,7 +416,7 @@ class Calendar extends React.Component {
                     </FormGroup>{' '}
 
                     <FormGroup controlId="formDescription">
-                        <ControlLabel>Description</ControlLabel>{' '}
+                        <ControlLabel>Description:</ControlLabel>{' '}
                         <ControlLabel >{this.state.descriptionEvent} </ControlLabel>
                     </FormGroup>{' '}
 
