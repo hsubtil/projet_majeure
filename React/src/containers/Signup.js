@@ -76,6 +76,8 @@ export default class Signup extends Component {
       if(jjson.result === true){
         console.log("signed");
         alert("Signed in !")
+        this.props.history.push("/Login");
+
       }
       else{
         console.log("not signed");
