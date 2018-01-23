@@ -5,29 +5,32 @@ export default class Map extends Component {
     super(props);
 
     this.state = {
-      'fam_pos': ""
+      'fam_pos': "",
+      'json_family_position': {
+        'type':"FeatureCollection",
+        'features': []
+      },
+      'map': null
     };
+
+    this.comm = props.socket;
 
   }
 
   componentDidMount(){
-
-      if(localStorage.getItem("token") === null)
-      {
-        this.props.history.push("/Login");
-      }
-
       try{
         var json_t = {token: localStorage.token, code: localStorage.selectedgroup_code};
         var self = this.state;
-        this.comm.emitConnect_gen(json_t, "family_position", function(json){
+        this.comm.emitConnect_gen3(json_t, "family_position", function(json){
         console.log(json.result);
         if(json.result === true){
           console.log("family_position_reply");
           var json_group = json.datas;
-          
-          self.families = json_group;
+
           this.setState({fam_pos: json_group});
+
+          console.log(this.state.fam_pos);
+
           
         }
         else{
@@ -45,10 +48,13 @@ export default class Map extends Component {
 
     mapboxgl.accessToken = 'pk.eyJ1Ijoid2FscGl0YSIsImEiOiJjamNqMXJhcGgxdmMzMndvMGczeTE5ZTZsIn0.1-HP4CYxggzJdTZcLky71A';
 
+
     const map = new mapboxgl.Map({
       container: this.mapContainer,
       style: 'mapbox://styles/mapbox/light-v9',
     });
+
+    this.setState({map: map});
 
     var geojson = {
       type: 'FeatureCollection',
@@ -76,16 +82,57 @@ export default class Map extends Component {
       }]
     };
 
-        // add markers to map
-    geojson.features.forEach(function(marker) {
+    console.log(geojson);
+    console.log(this.state.fam_pos);
+    console.log(this.state.json_family_position);
 
-      // make a marker for each feature and add to the map
-      new mapboxgl.Marker().setLngLat(marker.geometry.coordinates).addTo(map);
-    });
+        // add markers to map
 
   }
 
   render() {
+
+    var mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
+
+    mapboxgl.accessToken = 'pk.eyJ1Ijoid2FscGl0YSIsImEiOiJjamNqMXJhcGgxdmMzMndvMGczeTE5ZTZsIn0.1-HP4CYxggzJdTZcLky71A';
+
+    console.log(this.state.fam_pos);
+
+    console.log(Object.keys(this.state.fam_pos).length);
+
+
+    if (this.state.fam_pos != ""){
+          var keys = [];
+          var json_position_content = [];
+          for(var k in this.state.fam_pos) keys.push(k);
+    console.log(keys.length);
+
+          for (var i = 0; i < keys.length; i++) {
+            console.log(this.state.fam_pos[keys[i]]);
+            var arraybis = {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [this.state.fam_pos[keys[i]].lon, this.state.fam_pos[keys[i]].lat]
+            },
+            properties: {
+              title: keys[i],
+              description: 'Here'
+            }
+          }
+          this.state.json_family_position.features.push(arraybis);
+          }
+    }
+
+    console.log(this.state.json_family_position);
+
+    this.state.json_family_position.features.forEach(function(marker) {
+
+      // make a marker for each feature and add to the map
+      new mapboxgl.Marker().setLngLat(marker.geometry.coordinates).addTo(this.state.map);
+    }.bind(this));
+
+
 
     const style = ({
           position: 'absolute',

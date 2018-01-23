@@ -1,5 +1,5 @@
 var io = require('socket.io-client');
-var request_url = "http://192.168.1.101:1337";
+var request_url = "http://192.168.1.100:1337";
 
 class Comm {
    constructor() {
@@ -130,6 +130,13 @@ class Comm {
         var json = { result : true, datas : data}
         CB(json);
       });
+    }
+
+    emitConnect_gen3(json, request, CB){
+      console.log("emitConnect_gen");
+      console.log(request);
+      console.log(json);
+      this.socket.emit(request,json);
       this.socket.on('family_position_reply', function (data) {
         console.log("family_position_reply");
 
@@ -143,7 +150,7 @@ class Comm {
         CB(json);
       });
     }
-
+    
     emitConnect_gen2(json, request){
         console.log("emitConnect_gen2");
         return new Promise((resolve, reject) => 
