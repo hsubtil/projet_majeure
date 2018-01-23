@@ -75,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/button"
+                android:background="@color/colorAccent"
                 android:text="Sign Up"
                 android:textColor="@color/buttonTextColor"/>
 
@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/signUp"
                 android:layout_weight="1"
-                android:background="@drawable/button"
+                android:background="@color/colorAccent"
                 android:text="Connect"
                 android:textColor="@color/buttonTextColor"/>
         </LinearLayout>

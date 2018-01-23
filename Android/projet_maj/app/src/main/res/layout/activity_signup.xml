@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:text="Sign Up"
             android:layout_below="@+id/birthday"
-            android:background="@drawable/button"
+            android:background="@color/colorAccent"
             android:gravity="center_horizontal"
             android:textColor="@color/buttonTextColor"/>
     </RelativeLayout>

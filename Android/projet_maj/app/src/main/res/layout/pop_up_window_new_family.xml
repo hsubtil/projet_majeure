@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10sp"
                 android:layout_marginTop="10sp"
-                android:background="@drawable/button"
+                android:background="@color/colorAccent"
                 android:text="Create"
                 android:textColor="@color/buttonTextColor"
                 android:layout_marginRight="20sp"
@@ -44,7 +44,7 @@
                 android:layout_marginBottom="10sp"
                 android:layout_marginTop="10sp"
                 android:layout_toRightOf="@+id/btnCreate"
-                android:background="@drawable/button"
+                android:background="@color/colorAccent"
                 android:text="Join"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="22sp" />

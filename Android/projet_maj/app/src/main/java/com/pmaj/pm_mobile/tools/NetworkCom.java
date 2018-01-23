@@ -2,6 +2,8 @@ package com.pmaj.pm_mobile.tools;
 
 import android.content.SharedPreferences;
 
+import com.pmaj.pm_mobile.model.Profile;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,7 +29,7 @@ public class NetworkCom {
     private SharedPreferences mPrefs;
 
     public NetworkCom(){
-        URI uri = URI.create("http://192.168.1.101:1337/");
+        URI uri = URI.create("http://192.168.1.100:1337/");
         this.mSocket = IO.socket(uri);
         this.mSocket.connect();
     }
@@ -77,6 +79,19 @@ public class NetworkCom {
             e.printStackTrace();
         }
         mSocket.emit("request_profile",json);
+    }
+
+    public void emitEditProfile(String token, String email, JSONObject profile){
+        JSONObject json = new JSONObject();
+        try {
+            json.put("token", token);
+            json.put("email",email);
+            json.put("profile",profile);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mSocket.emit("update_user_profil",json);
     }
 
     public void emitGetFamilies(String token,String email){

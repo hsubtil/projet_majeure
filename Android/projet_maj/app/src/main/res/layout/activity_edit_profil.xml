@@ -48,17 +48,10 @@
                     android:hint="Surname"/>
 
                 <EditText
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/surname"
-                    android:hint="Email"/>
-
-                <EditText
                     android:id="@+id/address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/email"
+                    android:layout_below="@+id/surname"
                     android:hint="Address"/>
 
                 <LinearLayout
@@ -105,11 +98,11 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/edit_profil"
+                    android:id="@+id/editProfil"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@drawable/button"
+                    android:background="@color/colorAccent"
                     android:text="Edit Profil"
                     android:textColor="@color/buttonTextColor"/>
 

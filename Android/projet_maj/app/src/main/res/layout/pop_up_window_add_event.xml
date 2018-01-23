@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10sp"
                 android:layout_marginRight="10sp"
-                android:background="@drawable/button"
+                android:background="@color/colorAccent"
                 android:text="Next"
                 android:textColor="@color/buttonTextColor"
                 android:textSize="22sp" />

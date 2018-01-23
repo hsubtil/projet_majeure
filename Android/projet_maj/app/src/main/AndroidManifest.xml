@@ -31,7 +31,6 @@
         <activity android:name=".activities.ChatActivity" />
         <activity android:name=".activities.EditProfilActivity" />
         <activity android:name=".activities.CalendarActivity" />
-        <activity android:name=".activities.MapActivity"></activity>
     </application>
 
 </manifest>

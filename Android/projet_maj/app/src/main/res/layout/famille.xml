@@ -18,9 +18,9 @@
 
             <Button
                 android:id="@+id/family"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button"
+                android:background="@color/colorAccent"
                 android:textColor="@color/buttonTextColor"/>
             <!-- <Button
                  android:id="@+id/codeButton"
@@ -31,6 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Family Code : "
+                android:textColor="@color/colorPrimaryDark"
                 android:textStyle="italic"/>
 
             <TextView
@@ -38,6 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
                 android:layout_marginBottom="20sp"/>
         </LinearLayout>
 

@@ -45,7 +45,6 @@ public class CalendarActivity extends AppCompatActivity {
 
     private TextView calendar;
     private TextView family;
-    private TextView map;
     private TextView monthYear;
     private RecyclerView recyclerEvents;
     private FloatingActionButton btnAddEvent;
@@ -53,6 +52,7 @@ public class CalendarActivity extends AppCompatActivity {
     private SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MMMM-yyyy", Locale.getDefault());
     private static SharedPreferences mPrefs;
     private static List<EventModel> listEvents = new ArrayList<EventModel>();
+    private Date dateSelected;
 
 
     @Override
@@ -63,18 +63,9 @@ public class CalendarActivity extends AppCompatActivity {
         mPrefs = getSharedPreferences("authToken", 0);
         calendar = (TextView) findViewById(R.id.calendar);
         family = (TextView) findViewById(R.id.family);
-        map = (TextView) findViewById(R.id.map);
         btnAddEvent = (FloatingActionButton) findViewById(R.id.btnAddEvent);
 
         calendar.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Redicrection to Map page
-                Intent intentLogged = new Intent(CalendarActivity.this, MapActivity.class);
-                startActivity(intentLogged);
-            }
-        });
 
         family.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +101,8 @@ public class CalendarActivity extends AppCompatActivity {
                 title.setText("Events of : "+ convertDateToString(dateClicked,"dd-MM-YYYY"));
                 List<EventModel> listEventsDay = new ArrayList<EventModel>();
                 listEventsDay = getListEventsDay(dateClicked);
+                dateSelected = dateClicked;
+
 
 
                 if (!listEventsDay.isEmpty()) {

@@ -2,6 +2,7 @@ package com.pmaj.pm_mobile.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -26,11 +27,15 @@ public class ProfilActivity extends AppCompatActivity {
     private TextView surname;
     private TextView address;
     private TextView birthday;
-    private Button edit_profil;
+    private FloatingActionButton edit_profil;
     private SharedPreferences mPrefs;
     private TextView calendar;
     private TextView family;
-    private TextView map;
+
+    private String addressB;
+    private String cp;
+    private String city;
+    private String country;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,22 +45,12 @@ public class ProfilActivity extends AppCompatActivity {
 
         calendar = (TextView) findViewById(R.id.calendar);
         family = (TextView) findViewById(R.id.family);
-        map = (TextView) findViewById(R.id.map);
 
         calendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Redicrection to Calendar page
                 Intent intentLogged = new Intent(ProfilActivity.this, CalendarActivity.class);
-                startActivity(intentLogged);
-            }
-        });
-
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Redicrection to Map page
-                Intent intentLogged = new Intent(ProfilActivity.this, MapActivity.class);
                 startActivity(intentLogged);
             }
         });
@@ -75,7 +70,7 @@ public class ProfilActivity extends AppCompatActivity {
         surname = (TextView) findViewById(R.id.surname);
         address = (TextView) findViewById(R.id.address);
         birthday = (TextView) findViewById(R.id.birthday);
-        edit_profil = (Button) findViewById(R.id.edit_profil);
+        edit_profil = (FloatingActionButton) findViewById(R.id.edit_profil);
 
         LoginActivity.getSocketInstance().getmSocket().on("request_profile_reply", onProfilSuccess);
         LoginActivity.getSocketInstance().getmSocket().on("error", onProfilFail);
@@ -86,6 +81,13 @@ public class ProfilActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intentEditProfil = new Intent(ProfilActivity.this,EditProfilActivity.class);
+                intentEditProfil.putExtra("name",name.getText().toString());
+                intentEditProfil.putExtra("surname",surname.getText().toString());
+                intentEditProfil.putExtra("address",addressB);
+                intentEditProfil.putExtra("cp",cp);
+                intentEditProfil.putExtra("city",city);
+                intentEditProfil.putExtra("country",country);
+                intentEditProfil.putExtra("birthday",birthday.getText().toString());
                 startActivity(intentEditProfil);
             }
         });
@@ -106,6 +108,10 @@ public class ProfilActivity extends AppCompatActivity {
                     name.setText(obk.getString("name"));
                     surname.setText(obk.getString("surname"));
                     address.setText(obk.getString("address") + " " + obk.getString("cp") + " " + obk.getString("city") + " " + obk.getString("country"));
+                    addressB = obk.getString("address");
+                    cp = obk.getString("cp");
+                    city = obk.getString("city");
+                    country = obk.getString("country");
                     birthday.setText(obk.getString("birthday"));
                 } catch (JSONException e) {
                     e.printStackTrace();

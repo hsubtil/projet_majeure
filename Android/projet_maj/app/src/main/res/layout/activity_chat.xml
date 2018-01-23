@@ -76,7 +76,7 @@
                             android:layout_width="25px"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:backgroundTint="@color/colorPrimary"
+                            android:backgroundTint="@color/colorAccent"
                             android:text="Send"
                             android:textColor="@color/buttonTextColor" />
                     </LinearLayout>

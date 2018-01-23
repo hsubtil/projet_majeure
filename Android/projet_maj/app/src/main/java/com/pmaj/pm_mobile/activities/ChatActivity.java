@@ -51,7 +51,6 @@ public class ChatActivity extends AppCompatActivity {
     private SharedPreferences mPrefs;
     private TextView calendar;
     private TextView family;
-    private TextView map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,6 @@ public class ChatActivity extends AppCompatActivity {
 
         calendar = (TextView) findViewById(R.id.calendar);
         family = (TextView) findViewById(R.id.family);
-        map = (TextView) findViewById(R.id.map);
 
 
         //Socket
@@ -78,15 +76,6 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Redicrection to Calendar page
                 Intent intentLogged = new Intent(ChatActivity.this, CalendarActivity.class);
-                startActivity(intentLogged);
-            }
-        });
-
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Redicrection to Map page
-                Intent intentLogged = new Intent(ChatActivity.this, MapActivity.class);
                 startActivity(intentLogged);
             }
         });

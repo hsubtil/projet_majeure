@@ -37,7 +37,6 @@ public class HomeActivity extends AppCompatActivity {
     private Button add_family;
     private TextView calendar;
     private TextView family;
-    private TextView map;
     private RecyclerView family_list;
     List<Family> familyList = new ArrayList<Family>();
     private SharedPreferences mPrefs;
@@ -52,7 +51,6 @@ public class HomeActivity extends AppCompatActivity {
         * Nav Bar */
         calendar = (TextView) findViewById(R.id.calendar);
         family = (TextView) findViewById(R.id.family);
-        map = (TextView) findViewById(R.id.map);
 
 
         calendar.setOnClickListener(new View.OnClickListener() {
@@ -60,15 +58,6 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //Redicrection to Calendar page
                 Intent intentLogged = new Intent(HomeActivity.this, CalendarActivity.class);
-                startActivity(intentLogged);
-            }
-        });
-
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Redicrection to Map page
-                Intent intentLogged = new Intent(HomeActivity.this, MapActivity.class);
                 startActivity(intentLogged);
             }
         });
