@@ -74,7 +74,7 @@ this.listen = function (server) {
                 if (!err) {
                     // Protection if profile is not provided 
                     LOG.debug("Before if chelou.");
-                    if (!coord || coord.lat == "") {   // Test. Changed  from !profile !coord
+                    if (!coord || coord.lat === "") {   // Test. Changed  from !profile !coord
                         LOG.debug("In if chelou.");
                         createToken(json_object['email'], res['role'], function (err, token) {
                             if (!err) {
@@ -536,6 +536,7 @@ this.listen = function (server) {
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     DB.getMemberOfFamily(json_object['code'], function (err, family_members) {
+                        LOG.debug("IN GET MEMBER FAMILY");
                         if (!err) {
                             for (var member in family_members) {
                                 LOG.debug(member);
@@ -545,13 +546,16 @@ this.listen = function (server) {
                                     var name = profile['name'];
                                     positionJson[name] = profile['coord'];
                                     if (lock_increment === family_members.length) {
+                                        LOG.warning("EMIT family_position_reply");
                                         socket.emit('family_position_reply', positionJson);
                                     }
                                 });
                             }
                         }
-                        else
+                        else {
+                            LOG.warning("EMIT family_position_reply");
                             socket.emit('family_position_err');
+                        }
                     });
                 }
             });

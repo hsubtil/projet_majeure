@@ -99,76 +99,78 @@ export default class Profil extends Component {
   render() {
 
     const profil = (
-      <form onSubmit={this.handleRequestProfilUpdate}>
-      <FormGroup controlId="name" bsSize="large">
-          <ControlLabel>Name</ControlLabel>
-          <FormControl
-            autoFocus
-            type="text"
-            value={this.state.name}
-            onChange={this.handleChange}
-          />
-      </FormGroup>
-      <FormGroup controlId="surname" bsSize="large">
-          <ControlLabel>Surname</ControlLabel>
-          <FormControl
-            type="text"
-            value={this.state.surname}
-            onChange={this.handleChange}
-          />
-      </FormGroup>
-      <FormGroup controlId="address" bsSize="large">
-          <ControlLabel>Address</ControlLabel>
-          <FormControl
-            type="text"
-            value={this.state.address}
-            onChange={this.handleChange}
-          />
-      </FormGroup>
-      <FormGroup controlId="cp" bsSize="large">
-          <ControlLabel>Postal Code</ControlLabel>
-          <FormControl
-            type="text"
-            value={this.state.cp}
-            onChange={this.handleChange}
-          />
-      </FormGroup>
-      <FormGroup controlId="city" bsSize="large">
-          <ControlLabel>City</ControlLabel>
-          <FormControl
-            type="text"
-            value={this.state.city}
-            onChange={this.handleChange}
-          />
-      </FormGroup>
-      <FormGroup controlId="country" bsSize="large">
-          <ControlLabel>Country</ControlLabel>
-          <FormControl
-            type="text"
-            value={this.state.country}
-            onChange={this.handleChange}
-          />
-      </FormGroup>
-      <FormGroup controlId="birthday" bsSize="large">
-          <ControlLabel>Birthday</ControlLabel>
-          <FormControl
-            type="date"
-            value={this.state.birthday}
-            onChange={this.handleChange}
-          />
-      </FormGroup>
-      <FormGroup controlId="email" bsSize="large">
-          <ControlLabel>Email</ControlLabel>
-          <FormControl
-            type="email"
-            value={this.state.email}
-            onChange={this.handleChange}
-          />
-      </FormGroup>
-        <Button block bsSize="large" type="submit">
-            Modifier
-          </Button>
-      </form>
+      <div class="profil">
+        <form onSubmit={this.handleRequestProfilUpdate}>
+        <FormGroup controlId="name" bsSize="large">
+            <ControlLabel>Name</ControlLabel>
+            <FormControl
+              autoFocus
+              type="text"
+              value={this.state.name}
+              onChange={this.handleChange}
+            />
+        </FormGroup>
+        <FormGroup controlId="surname" bsSize="large">
+            <ControlLabel>Surname</ControlLabel>
+            <FormControl
+              type="text"
+              value={this.state.surname}
+              onChange={this.handleChange}
+            />
+        </FormGroup>
+        <FormGroup controlId="address" bsSize="large">
+            <ControlLabel>Address</ControlLabel>
+            <FormControl
+              type="text"
+              value={this.state.address}
+              onChange={this.handleChange}
+            />
+        </FormGroup>
+        <FormGroup controlId="cp" bsSize="large">
+            <ControlLabel>Postal Code</ControlLabel>
+            <FormControl
+              type="text"
+              value={this.state.cp}
+              onChange={this.handleChange}
+            />
+        </FormGroup>
+        <FormGroup controlId="city" bsSize="large">
+            <ControlLabel>City</ControlLabel>
+            <FormControl
+              type="text"
+              value={this.state.city}
+              onChange={this.handleChange}
+            />
+        </FormGroup>
+        <FormGroup controlId="country" bsSize="large">
+            <ControlLabel>Country</ControlLabel>
+            <FormControl
+              type="text"
+              value={this.state.country}
+              onChange={this.handleChange}
+            />
+        </FormGroup>
+        <FormGroup controlId="birthday" bsSize="large">
+            <ControlLabel>Birthday</ControlLabel>
+            <FormControl
+              type="date"
+              value={this.state.birthday}
+              onChange={this.handleChange}
+            />
+        </FormGroup>
+        <FormGroup controlId="email" bsSize="large">
+            <ControlLabel>Email</ControlLabel>
+            <FormControl
+              type="email"
+              value={this.state.email}
+              onChange={this.handleChange}
+            />
+        </FormGroup>
+          <Button block bsSize="large" type="submit">
+              Modifier
+            </Button>
+        </form>
+      </div>
     );
     
     console.log(this.state);
