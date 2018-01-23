@@ -60,10 +60,12 @@ class App extends Component {
     }
     componentDidMount(){
 
+        alert(this.state._isAuth);
+
         if(localStorage.getItem("token") === null || this.state._isAuth != true )
         {
           //this.props.userHasAuthenticated(false);
-          this.props.adminHasAuthenticated(false);
+          //this.props.adminHasAuthenticated(false);
           //localStorage.removeItem("user");
           //localStorage.removeItem("token");
           //localStorage.removeItem("email");

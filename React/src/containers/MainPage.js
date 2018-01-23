@@ -26,7 +26,6 @@ class MainPage extends Component {
     event.preventDefault();
     if(localStorage.getItem("token") === null)
     {
-
         this.adminHasAuthenticated(false);
 
         this.props.history.push("/MainPage");
