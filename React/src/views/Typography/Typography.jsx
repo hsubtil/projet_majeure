@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Grid, Row, Col } from 'react-bootstrap';
 
-import Card from '../../components/Card/Card.jsx'
+import Card from '../../components/Card/Card.jsx';
+
+import CONFIG from '../../config.json';
+
+
 
 class Typography extends Component {
     constructor(props){
@@ -14,7 +18,7 @@ class Typography extends Component {
     }
     
     getLog() {
-        axios.get('http://localhost:1337/admin/log')
+        axios.get('http://'+ CONFIG.nodeserver +':' + CONFIG.port + '/admin/log')
         .then( (response) => {
             console.log("response", response);
             this.setState({

@@ -4,6 +4,7 @@ import { Grid, Row, Col, Table } from 'react-bootstrap';
 
 import Card from '../../components/Card/Card.jsx';
 import {thArray, tdArray} from '../../variables/Variables.jsx';
+import CONFIG from '../../config.json';
 
 class TableList extends Component {
     constructor(props) {
@@ -20,7 +21,7 @@ class TableList extends Component {
       }
 
       fetchInfo() {
-        axios.get('http://localhost:1337/admin/dbInfo')
+        axios.get('http://'+ CONFIG.nodeserver +':' + CONFIG.port + '/admin/dbInfo')
           .then( (response) => {
             console.log("response", response);
             this.setState({
