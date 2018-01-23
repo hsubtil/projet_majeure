@@ -315,8 +315,8 @@ public class CalendarActivity extends AppCompatActivity {
                     dialog.setContentView(R.layout.pop_up_window_event_status);
                     TextView status = (TextView) dialog.findViewById(R.id.title);
                     status.setText("Ouuuups there was a problem.Please Try again !");
+
                     dialog.show();
-                    //dialog.dismiss();
                 }
             });
 
