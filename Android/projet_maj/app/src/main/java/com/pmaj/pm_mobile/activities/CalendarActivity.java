@@ -46,6 +46,7 @@ public class CalendarActivity extends AppCompatActivity {
     private TextView calendar;
     private TextView family;
     private TextView monthYear;
+    private TextView title;
     private RecyclerView recyclerEvents;
     private FloatingActionButton btnAddEvent;
     private static CompactCalendarView compactCalendar;
@@ -64,6 +65,8 @@ public class CalendarActivity extends AppCompatActivity {
         calendar = (TextView) findViewById(R.id.calendar);
         family = (TextView) findViewById(R.id.family);
         btnAddEvent = (FloatingActionButton) findViewById(R.id.btnAddEvent);
+        title = (TextView) findViewById(R.id.title);
+
 
         calendar.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
 
@@ -97,31 +100,20 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public void onDayClick(Date dateClicked) {
 
-                TextView title = (TextView) findViewById(R.id.title);
-                title.setText("Events of : "+ convertDateToString(dateClicked,"dd-MM-YYYY"));
+                title.setText("Events of : " + convertDateToString(dateClicked, "dd-MM-YYYY"));
                 List<EventModel> listEventsDay = new ArrayList<EventModel>();
                 listEventsDay = getListEventsDay(dateClicked);
                 dateSelected = dateClicked;
 
 
+                recyclerEvents = (RecyclerView) findViewById(R.id.recyclerEvents);
+                recyclerEvents.setHasFixedSize(true);
 
-                if (!listEventsDay.isEmpty()) {
-                    //dialog.setContentView(R.layout.pop_up_window_events);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(CalendarActivity.this);
+                recyclerEvents.setLayoutManager(mLayoutManager);
 
-                    recyclerEvents = (RecyclerView) findViewById(R.id.recyclerEvents);
-                    recyclerEvents.setHasFixedSize(true);
-
-                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(CalendarActivity.this);
-                    recyclerEvents.setLayoutManager(mLayoutManager);
-
-                    RecyclerView.Adapter myAdapter = new EventsAdapter(listEventsDay, CalendarActivity.this);
-                    recyclerEvents.setAdapter(myAdapter);
-
-                    //dialog.setTitle("Events");
-                    //dialog.show();
-
-                }
-
+                RecyclerView.Adapter myAdapter = new EventsAdapter(listEventsDay, CalendarActivity.this);
+                recyclerEvents.setAdapter(myAdapter);
             }
 
             @Override
@@ -212,32 +204,33 @@ public class CalendarActivity extends AppCompatActivity {
         public void call(Object... args) {
             JSONArray eventsArray = (JSONArray) args[0];
             try {
-                for (int i = 0; i < eventsArray.length(); i++) {
-                    JSONObject event = (JSONObject) eventsArray.getJSONObject(i);
-                    JSONObject start = (JSONObject) event.getJSONObject("start");
-                    EventModel e = new EventModel();
-                    if (start.has("dateTime") && event.has("summary") && event.has("id")) {
-                        e.setDate(convertDateStringToLong(start.getString("dateTime"), "yyyy-MM-dd'T'HH:mm:ss'Z'"));
-                        e.setSummary(event.getString("summary"));
-                        e.setEventId(event.getString("id"));
-
-                    } else {
-                        if (start.has("date") && event.has("summary") && event.has("id")) {
+                if (eventsArray != null) {
+                    for (int i = 0; i < eventsArray.length(); i++) {
+                        JSONObject event = (JSONObject) eventsArray.getJSONObject(i);
+                        JSONObject start = (JSONObject) event.getJSONObject("start");
+                        EventModel e = new EventModel();
+                        if (start.has("dateTime") && event.has("summary") && event.has("id")) {
+                            e.setDate(convertDateStringToLong(start.getString("dateTime"), "yyyy-MM-dd'T'HH:mm:ss'Z'"));
                             e.setSummary(event.getString("summary"));
-                            e.setDate(convertDateStringToLong(start.getString("date"), "yyyy-MM-dd"));
                             e.setEventId(event.getString("id"));
-                        }
-                    }
-                    if (e != null) {
-                        if (!eventAlreadyExists(e)) {
-                            listEvents.add(e);
 
-                            final Event ev = new Event(Color.RED, e.getDate(), e.getSummary());
-                            compactCalendar.addEvent(ev, false);
+                        } else {
+                            if (start.has("date") && event.has("summary") && event.has("id")) {
+                                e.setSummary(event.getString("summary"));
+                                e.setDate(convertDateStringToLong(start.getString("date"), "yyyy-MM-dd"));
+                                e.setEventId(event.getString("id"));
+                            }
+                        }
+                        if (e != null) {
+                            if (!eventAlreadyExists(e)) {
+                                listEvents.add(e);
+
+                                final Event ev = new Event(Color.RED, e.getDate(), e.getSummary());
+                                compactCalendar.addEvent(ev, false);
+                            }
                         }
                     }
                 }
-                // displayEvents();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -406,7 +399,7 @@ public class CalendarActivity extends AppCompatActivity {
         return compactCalendar;
     }
 
-    public void deleteEventSuccess(EventModel eventRemoved){
+    public void deleteEventSuccess(EventModel eventRemoved) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -419,6 +412,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

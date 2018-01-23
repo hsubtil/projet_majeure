@@ -79,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(checkFields()){
                     socket.emitSignUp(textToString(name),textToString(surname),textToString(email),textToString(password),textToString(address),textToString(cp),textToString(city),textToString(country),textToString(birthday));
-                    Toast.makeText(SignUpActivity.this, "Sign Up Attempt", Toast.LENGTH_LONG).show();
+                   // Toast.makeText(SignUpActivity.this, "Sign Up Attempt", Toast.LENGTH_LONG).show();
                 }
 
 

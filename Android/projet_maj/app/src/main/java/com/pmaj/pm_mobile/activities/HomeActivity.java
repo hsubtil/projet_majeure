@@ -38,7 +38,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView calendar;
     private TextView family;
     private RecyclerView family_list;
-    List<Family> familyList = new ArrayList<Family>();
+    private List<Family> familyList = new ArrayList<Family>();
     private SharedPreferences mPrefs;
 
 
@@ -137,6 +137,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //Socket
         LoginActivity.getSocketInstance().getmSocket().on("add_family_to_user_success", onAddFamilyToUserSuccess);
+        LoginActivity.getSocketInstance().getmSocket().on("new_family_success", onAddFamilyToUserSuccess);
         LoginActivity.getSocketInstance().getmSocket().on("request_family_reply", onFamiliesSuccess);
         family_list = (RecyclerView) findViewById(R.id.family_list);
 
@@ -167,7 +168,7 @@ public class HomeActivity extends AppCompatActivity {
                     familyList.add(f);
                 }
 
-                displayFamilies(familyList);
+                displayFamilies();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -190,14 +191,14 @@ public class HomeActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            displayFamilies(familyList);
+            displayFamilies();
 
             return;
         }
     };
 
 
-    private void displayFamilies(final List<Family> familyList) {
+    private void displayFamilies() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

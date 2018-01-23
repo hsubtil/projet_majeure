@@ -94,23 +94,28 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        if (dataset == null) {
+            holder.eventTitle.setText("");
+            holder.date.setText("");
+        } else {
 
-        holder.eventTitle.setText(dataset.get(position).getSummary());
-        Long ms = dataset.get(position).getDate();
-        Date date = new Date(ms);
-        SimpleDateFormat dateformat = new SimpleDateFormat("MMM dd, yyyy HH:mm");
-        holder.date.setText(dateformat.format(date));
-        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoginActivity.getSocketInstance().emitDeleteEvent(mPrefs.getString("token", ""), mPrefs.getString("family_code", ""), dataset.get(position).getEventId());
-                holder.eventTitle.setText("");
-                holder.date.setText("");
-                holder.deleteBtn.setImageResource(0);
 
-            }
-        });
+            holder.eventTitle.setText(dataset.get(position).getSummary());
+            Long ms = dataset.get(position).getDate();
+            Date date = new Date(ms);
+            SimpleDateFormat dateformat = new SimpleDateFormat("MMM dd, yyyy HH:mm");
+            holder.date.setText(dateformat.format(date));
+            holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    LoginActivity.getSocketInstance().emitDeleteEvent(mPrefs.getString("token", ""), mPrefs.getString("family_code", ""), dataset.get(position).getEventId());
+                    holder.eventTitle.setText("");
+                    holder.date.setText("");
+                    holder.deleteBtn.setImageResource(0);
 
+                }
+            });
+        }
 
     }
 
@@ -118,20 +123,22 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         @Override
         public void call(Object... args) {
             String eventID = (String) args[0];
-           // String eventID = null;
             EventModel eventRemoved = new EventModel();
             int index = 0;
 
-            for(EventModel event : CalendarActivity.getlistEvents())
-            {
-                if(event.getEventId().equals(eventID))
+            for (EventModel event : CalendarActivity.getlistEvents()) {
+                if (event.getEventId().equals(eventID))
                     eventRemoved = event;
 
                 index++;
             }
-            Event ev = new Event(Color.RED,eventRemoved.getDate(),eventRemoved.getSummary());
-            CalendarActivity.getCalendar().removeEvent(ev,false);
-            CalendarActivity.getlistEvents().remove(index-1);
+            if (eventRemoved != null) {
+
+                Event ev = new Event(Color.RED, eventRemoved.getDate(), eventRemoved.getSummary());
+                CalendarActivity.getCalendar().removeEvent(ev, false);
+                CalendarActivity.getlistEvents().remove(index - 1);
+                eventRemoved = null;
+            }
 
             return;
         }
@@ -141,12 +148,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         @Override
         public void call(Object... args) {
 
-                    final Dialog dialog = new Dialog(ActivityContext);
+            final Dialog dialog = new Dialog(ActivityContext);
 
-                    dialog.setContentView(R.layout.pop_up_window_event_status);
-                    TextView status = (TextView) dialog.findViewById(R.id.title);
-                    status.setText("Ouuuups there was a problem.Please Try again !");
-                    dialog.show();
+            dialog.setContentView(R.layout.pop_up_window_event_status);
+            TextView status = (TextView) dialog.findViewById(R.id.title);
+            status.setText("Ouuuups there was a problem.Please Try again !");
+            dialog.show();
             return;
         }
     };
