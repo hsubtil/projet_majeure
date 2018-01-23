@@ -21,7 +21,7 @@ module.exports = Db;
  */
 function Db() {
     this.db_name = 'monpetitplanning';
-    this.dbURI = "mongodb://localhost:27017/monpetitplanning"; //PROD :keepco  DEV: monpetitplanning
+    this.dbURI = CONFIG.dbURI;
     this.users_collection = "users";
     this.families_collection = "families";
     this.family_chat = "family-chat";
@@ -169,12 +169,13 @@ Db.register = function (db_object, new_user_json, cb) {
             var new_family_json = { 'email': new_user_json['email'], 'families': [] };
             console.log(new_family_json);
             db_object.database.collection(db_object.families_collection).insert(new_family_json, null, function (error, result) {
-                LOG.warning("LA PUTAIN DE TE RACE"); /// PROBLEME ICI
-                if (!error)
+                if (!error) {
                     LOG.log("[DB] New family to user saved ");
+                    cb(null);
+                }
                 else {
                     LOG.error("[DB] New family to user not saved");
-                    console.log(error);
+                    cb(error);
                 }
             });
         }
@@ -374,8 +375,10 @@ Db.addUserToFamily = function (db_object, mail, family_code, cb) {
                         if (err) {
                             LOG.error("[DB] Error in updating family");
                             LOG.error(err);
+                            cb(err, null);
                         } else {
                             LOG.log("[DB] Document updated");
+                            cb(null,res);
                         }
                     });
                 }
