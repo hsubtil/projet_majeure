@@ -41,6 +41,9 @@ handleLogout = event => {
   localStorage.removeItem("user");
   localStorage.removeItem("token");
   localStorage.removeItem("email");
+  localStorage.removeItem("selectedgroup_code");
+  localStorage.removeItem("selectedgroup_name");
+
   this.props.history.push("/Login");
 }
 
