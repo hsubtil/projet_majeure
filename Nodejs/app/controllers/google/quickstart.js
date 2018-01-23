@@ -145,6 +145,7 @@ this.listUserEvents = function (calendar_id, cb) {
                     var events = response.items;
                     if (events.length === 0) {
                         LOG.log('No upcoming events found.');
+                        cb(null, [{}]);
                     } else {
                         console.log('Upcoming 10 events:');
                         for (var i = 0; i < events.length; i++) {
@@ -181,10 +182,11 @@ this.addEvents = function (calendar_id, event_json, cb) {
             }, function (err, event_json) {
                 if (err) {
                     LOG.error('There was an error contacting the Calendar service: ' + err);
-                    cb(err,null);
+                    cb(err, null);
+                } else {
+                    LOG.log("[GOOGLE] Event created");
+                    cb(null, event_json);
                 }
-                LOG.log("[GOOGLE] Event created");
-                cb(null, event_json);
              });
         });
     });

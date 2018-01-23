@@ -159,11 +159,14 @@ this.addFamily = function (family_object, cb) {
 this.addFamilyToUser = function (email, family_code, family, cb) {
     DB.connect(db, function (error) {
         DB.addFamilyToUser(db, email, family, function (res) {
-            DB.addUserToFamily(db, email, family_code, function (reply) {
+            DB.addUserToFamily(db, email, family_code, function (err, reply) {
                 if (cb) {
-                    cb(reply);
+                    LOG.debug("CALLBAKC")
+                    cb(err, reply);
+                } else {
+                    LOG.debug("[DB] No callback");
+                    DB.disconnect(db);
                 }
-                DB.disconnect(db);
             });
         });
     });

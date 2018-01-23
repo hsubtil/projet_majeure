@@ -109,19 +109,26 @@ this.listen = function (server) {
             var json_jee = { 'email': json_object['email'], 'password': json_object['password'], 'role': "USER" };
             delete json_object['password'];
             REQUEST.register(socket, json_jee, function (error) {
+                LOG.warning("LAAAAAAAAA");
                 if (!error) {
                     DB.register(json_object, function (err) {
                         if (!err) {
                             STATS.addNewUser();
+                            LOG.log("[SOCKET] Emit registration success");
                             socket.emit('registration_success');
                         }
-                        else
+                        else {
+                            LOG.error("[SOCKET] Emit registration failed");
                             socket.emit('registration_failed', error);
+                        }
+
                     });
 
                 }
-                else       
+                else {
+                    LOG.error("[SOCKET] Emit registration failed");
                     socket.emit('registration_failed', error);
+                }                         
             });
         });
 
@@ -302,9 +309,17 @@ this.listen = function (server) {
                                 DB.getFamily(family.name, function (err, reply) {
                                     if (!err) {
                                         LOG.log("[SOCKET] New family for user " + JSON.stringify(user));
-                                        DB.addFamilyToUser(user, reply['code'], reply);
-                                        STATS.addFamilyRequest();
-                                        socket.emit('new_family_success', family.getFamilyJson());
+                                        DB.addFamilyToUser(user, reply['code'], reply, function (err, res) {
+                                            if (!err) {
+                                                STATS.addFamilyRequest();
+                                                LOG.warning("AVANT EMIT")
+                                                socket.emit('new_family_success', family.getFamilyJson());
+                                            }
+                                            else {
+                                                LOG.error("[SOCKET] New family error.");
+                                            }
+                                        });
+
                                     }
                                     else {
                                         LOG.error("[SOCKET] New family error.");
@@ -331,9 +346,15 @@ this.listen = function (server) {
                 if (!err) {
                     DB.getFamilyWithCode(json_object['code'], function (err, res) {
                         if (!err) {
-                            DB.addFamilyToUser(json_object['email'], json_object['code'], function (res) {
-                                STATS.addFamilyRequest();
-                                socket.emit('add_family_to_user_success', res);
+                            DB.addFamilyToUser(json_object['email'], json_object['code'], res, function (err,reply) {
+                                if (!err) {
+                                    STATS.addFamilyRequest();
+                                    LOG.debug("[SOCKET] Emit family to user success")
+                                    socket.emit('add_family_to_user_success', res);
+                                }
+                                else {
+                                    LOG.error("[SOCKET] Add family to user error. User :" + json_object['email'])
+                                }
                             });
                         }
                         else
@@ -581,19 +602,23 @@ this.listen = function (server) {
                                 LOG.debug(profile);
                                 var name = profile['name'];
                                 meteoRequestJson[name] = profile['coord'];
-                                lock_increment++;  // Increment lock_increment
-                                if (lock_increment === family_members.length) {
-                                    METEO.get_meteo(meteoRequestJson, function (err, msgs) {
-                                        LOG.debug("[METEO] IN");
-                                        if (!err) {
-                                            LOG.log("[SOCKET] Resultat Final : " + JSON.stringify(msgs));
-                                            STATS.addMeteoRequest();
-                                            socket.emit("request_family_meteo_reply", msgs);
-                                        } else {
-                                            socket.emit("request_family_meteo_err", err);
-                                            LOG.error("[SOCKET] Meteo Error: cannot get meteo. " + err);
-                                        }
-                                    });
+                                if (profile['coord']) {
+                                    lock_increment++;  // Increment lock_increment
+                                    if (lock_increment === family_members.length) {
+                                        METEO.get_meteo(meteoRequestJson, function (err, msgs) {
+                                            LOG.debug("[METEO] IN");
+                                            if (!err) {
+                                                LOG.log("[SOCKET] Resultat Final : " + JSON.stringify(msgs));
+                                                STATS.addMeteoRequest();
+                                                socket.emit("request_family_meteo_reply", msgs);
+                                            } else {
+                                                socket.emit("request_family_meteo_err", err);
+                                                LOG.error("[SOCKET] Meteo Error: cannot get meteo. " + err);
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    LOG.warning("[METEO] Pas de météo pour cet utilisateur");
                                 }
                             });
                         }                        
