@@ -292,7 +292,7 @@ class Calendar extends React.Component {
 
             <Button
               bsStyle="primary"
-              bsSize=""
+              className="yellowBtn"
               onClick={this.open}
             >
             <span class="glyphicon glyphicon-plus"></span>
@@ -302,7 +302,7 @@ class Calendar extends React.Component {
 
             <Modal show={this.state.showModal} onHide={this.close}>
               <Modal.Header closeButton>
-                <Modal.Title>Add an event</Modal.Title>
+                <Modal.Title>Create an event</Modal.Title>
               </Modal.Header>
               <Modal.Body>
 
@@ -329,7 +329,7 @@ class Calendar extends React.Component {
                     </FormGroup>{' '}
 
                      <FormGroup controlId="formEndTime">
-                        <ControlLabel>End Date</ControlLabel>{' '}
+                        <ControlLabel>End Time</ControlLabel>{' '}
                         <FormControl type="time" validate='required' ref="endTime"/>
                     </FormGroup>{' '}
 
@@ -343,7 +343,7 @@ class Calendar extends React.Component {
                         <FormControl type="text" placeholder="My Description" validate='required' ref="description"/>
                     </FormGroup>{' '}
 
-                    <Button bsStyle="primary" onClick={(e) => this.handleSubmit(e)} >Create Event</Button>
+                    <Button bsStyle="primary" className="yellowBtn" onClick={(e) => this.handleSubmit(e)} >Create Event</Button>
 
                 </Form>
 
