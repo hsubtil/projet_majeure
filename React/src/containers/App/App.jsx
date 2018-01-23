@@ -62,12 +62,12 @@ class App extends Component {
 
         if(localStorage.getItem("token") === null || this.state._isAuth != true )
         {
-          this.userHasAuthenticated(false);
-          this.adminHasAuthenticated(false);
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          localStorage.removeItem("email");
-          this.props.history.push("/Login");
+          //this.props.userHasAuthenticated(false);
+          this.props.adminHasAuthenticated(false);
+          //localStorage.removeItem("user");
+          //localStorage.removeItem("token");
+          //localStorage.removeItem("email");
+          this.props.history.push("/MainPage");
         }
         this.setState({_notificationSystem: this.refs.notificationSystem});
         var _notificationSystem = this.refs.notificationSystem;

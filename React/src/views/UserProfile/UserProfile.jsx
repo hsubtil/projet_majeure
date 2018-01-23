@@ -14,6 +14,8 @@ import {style} from "../../variables/Variables.jsx";
 
 import avatar from "../../assets/img/default-avatar.png";
 
+import CONFIG from '../../config.json';
+
 class UserProfile extends Component {
 
     constructor(props) {
@@ -58,7 +60,7 @@ class UserProfile extends Component {
     handleSubmit(){
         console.log("handleSubmit");
 
-        axios.post('http://localhost:1337/admin/updateProfil',{'email':this.state.searchValue,'profil':this.state.fetchInfo})
+        axios.post('http://'+ CONFIG.nodeserver +':' + CONFIG.port + '/admin/updateProfil',{'email':this.state.searchValue,'profil':this.state.fetchInfo})
           .then( (response) => {
             console.log("response", response);
             // Affichage pop up
@@ -97,7 +99,7 @@ class UserProfile extends Component {
       postUserRequest() {
           console.log("postUserRequest");
           console.log(this.state.searchValue);
-        axios.post('http://localhost:1337/admin/userInfo',{'email':this.state.searchValue})
+        axios.post('http://'+ CONFIG.nodeserver +':' + CONFIG.port + '/admin/userInfo',{'email':this.state.searchValue})
           .then( (response) => {
             console.log("response", response);
             this.setState({

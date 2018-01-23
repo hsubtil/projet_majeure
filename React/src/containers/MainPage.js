@@ -81,6 +81,7 @@ class MainPage extends Component {
   componentWillMount(){
     if(localStorage.getItem("token") === null)
       {
+        alert("here");
         this.props.history.push("/Login");
       }
 
