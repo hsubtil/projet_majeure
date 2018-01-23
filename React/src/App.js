@@ -16,8 +16,12 @@ constructor(props) {
     adminIsAuthenticated: false
   };
 
-  if(localStorage.getItem("token") != null){
+  if(localStorage.getItem("token") != null && localStorage.getItem("user_role") === "USER"){
     this.state.isAuthenticated = true;
+  }
+
+  if(localStorage.getItem("token") != null && localStorage.getItem("user_role") === "ADMIN"){
+    this.state.adminIsAuthenticated = true;
   }
 
   var Comm = require('./tool/comm.js');
@@ -43,6 +47,7 @@ handleLogout = event => {
   localStorage.removeItem("email");
   localStorage.removeItem("selectedgroup_code");
   localStorage.removeItem("selectedgroup_name");
+  localStorage.removeItem("user_role");
 
   this.props.history.push("/Login");
 }

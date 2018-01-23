@@ -149,7 +149,7 @@ class Meteo extends Component {
       <div className="SelectedGroup">
         <div className="lander">
           <h1> METEO </h1>
-          <p>Nom : {this.state.meteo_name}</p>
+          <p>Nom : {this.state.meteo_name} &emsp; </p>
           <p>Meteo : {this.state.meteo_main}</p>
           <img src={this.state.meteo_icon} alt="meteo"></img>
         </div>
