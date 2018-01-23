@@ -19,6 +19,9 @@ import {
     legendBar
 } from '../../variables/Variables.jsx';
 
+import CONFIG from '../../config.json';
+
+
 class Dashboard extends Component {
     constructor(props) {
         super(props);
@@ -45,7 +48,7 @@ class Dashboard extends Component {
 
     
       fetchInfo() {
-            axios.get('http://localhost:1337/admin/info')
+            axios.get('http://'+ CONFIG.nodeserver +':' + CONFIG.port + '/admin/info')
             .then( (response) => {
                 //console.log("response", response);
                 this.setState({
@@ -59,7 +62,7 @@ class Dashboard extends Component {
       }
 
       fetchServicesInfo() {
-        axios.get('http://localhost:1337/admin/services')
+        axios.get('http://'+ CONFIG.nodeserver +':' + CONFIG.port + '/admin/services')
           .then( (response) => {
             //console.log("response services", response);
             this.setState({

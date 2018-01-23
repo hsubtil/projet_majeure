@@ -1,5 +1,5 @@
+var CONFIG = require('../config.json');
 var io = require('socket.io-client');
-var request_url = "http://192.168.1.100:1337";
 
 class Comm {
    constructor() {
@@ -26,6 +26,7 @@ class Comm {
    }
 
    socketConnection(uuid) {
+       var request_url = "http://"+ CONFIG.nodeserver + ":" + CONFIG.port;
        this.socket = io.connect(request_url); //process.env.SOCKET_URL
        console.log("SOCKETCONNECTION");
        this.comm.io.uuid = uuid;

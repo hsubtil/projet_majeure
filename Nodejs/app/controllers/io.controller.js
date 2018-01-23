@@ -73,7 +73,9 @@ this.listen = function (server) {
             REQUEST.connection(socket, json_object, function (err, res) {
                 if (!err) {
                     // Protection if profile is not provided 
-                    if (!coord) {   // Test. Changed  from !profile !coord
+                    LOG.debug("Before if chelou.");
+                    if (!coord || coord.lat === "") {   // Test. Changed  from !profile !coord
+                        LOG.debug("In if chelou.");
                         createToken(json_object['email'], res['role'], function (err, token) {
                             if (!err) {
                                 socket.emit('auth_success', token);
@@ -81,15 +83,15 @@ this.listen = function (server) {
                                 socket.emit('auth_failed');
                         });
                     } else {
-                        DB.updateUser(json_object['email'], profile, function (err) {
-                            createToken(json_object['email'], res['role'], function (err, token) {
-                                if (!err) {
-                                    STATS.addAuthRequest();
-                                    socket.emit('auth_success', token);
-                                } else
-                                    socket.emit('auth_failed');
+                            DB.updateUser(json_object['email'], profile, function (err) {
+                                createToken(json_object['email'], res['role'], function (err, token) {
+                                    if (!err) {
+                                        STATS.addAuthRequest();
+                                        socket.emit('auth_success', token);
+                                    } else
+                                        socket.emit('auth_failed');
+                                });
                             });
-                        });
                     }
                     // Emit connection for chat
                 }
@@ -267,8 +269,7 @@ this.listen = function (server) {
                     STATS.addFamilyRequest();
                     var i = 0;
                     for (var element in families_map['families']) {
-                        LOG.debug(i);
-                        LOG.debug(element);
+                        //LOG.debug(element);
                         if (families_map['families'][element]['socket'] === socket) {
                             families_map['families'].splice(i, 1);  // Remove from family array
                             families_map['families'].push({ 'code': json_object['next_family_id'], 'socket': socket });  // add to family array
@@ -529,12 +530,13 @@ this.listen = function (server) {
         * param : JSON {'token':,'code':} // add to doc
         */
         socket.on('family_position', function (json_object) {
-            LOG.log("[SOCKET] Get family position");
+            LOG.warning("[SOCKET] Get family position");
             var positionJson = {};
             var lock_increment = 0;
             checkToken(json_object['token'], socket, function (err) {
                 if (!err) {
                     DB.getMemberOfFamily(json_object['code'], function (err, family_members) {
+                        LOG.debug("IN GET MEMBER FAMILY");
                         if (!err) {
                             for (var member in family_members) {
                                 LOG.debug(member);
@@ -544,13 +546,16 @@ this.listen = function (server) {
                                     var name = profile['name'];
                                     positionJson[name] = profile['coord'];
                                     if (lock_increment === family_members.length) {
+                                        LOG.warning("EMIT family_position_reply");
                                         socket.emit('family_position_reply', positionJson);
                                     }
                                 });
                             }
                         }
-                        else
+                        else {
+                            LOG.warning("EMIT family_position_reply");
                             socket.emit('family_position_err');
+                        }
                     });
                 }
             });
