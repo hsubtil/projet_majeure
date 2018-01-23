@@ -48,7 +48,7 @@ export default class Login extends Component {
         console.log("Admin authentificated");
         this.props.adminHasAuthenticated(true);
 
-
+        localStorage.setItem("user_role","ADMIN");
         localStorage.setItem("user",jjson.datas.name);
         localStorage.setItem("token", jjson.datas.token);
         localStorage.setItem("email", json.email);
@@ -61,9 +61,8 @@ export default class Login extends Component {
 
         console.log("User authentificated");
         this.props.userHasAuthenticated(true);
-
-
-
+        
+        localStorage.setItem("user_role","USER");
         localStorage.setItem("user",jjson.datas.name);
         localStorage.setItem("token", jjson.datas.token);
         localStorage.setItem("email", json.email);

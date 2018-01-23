@@ -158,14 +158,6 @@ export default class Profil extends Component {
               onChange={this.handleChange}
             />
         </FormGroup>
-        <FormGroup controlId="email" bsSize="large">
-            <ControlLabel>Email</ControlLabel>
-            <FormControl
-              type="email"
-              value={this.state.email}
-              onChange={this.handleChange}
-            />
-        </FormGroup>
           <Button block bsSize="large" className="yellowBtn" type="submit">
               Modifier
             </Button>
