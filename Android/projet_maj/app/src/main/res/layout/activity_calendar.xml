@@ -47,21 +47,16 @@
             app:compactCalendarMultiEventIndicatorColor="#fff"
             />
 
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/btnAddEvent"
-            android:layout_below="@id/compactcalendar_view"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginTop="300dp"
+            android:layout_marginRight="16dp"
             android:clickable="true"
             android:src="@android:drawable/ic_input_add"/>
-        <!--<CalendarView
-            android:id="@+id/calendarView"
-            android:layout_below="@+id/title_calendar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>-->
         <ScrollView
             android:layout_below="@id/compactcalendar_view"
             android:id="@+id/scroll_messages"

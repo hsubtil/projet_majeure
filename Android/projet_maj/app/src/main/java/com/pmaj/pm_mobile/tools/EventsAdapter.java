@@ -137,8 +137,9 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 Event ev = new Event(Color.RED, eventRemoved.getDate(), eventRemoved.getSummary());
                 CalendarActivity.getCalendar().removeEvent(ev, false);
                 CalendarActivity.getlistEvents().remove(index - 1);
-                eventRemoved = null;
             }
+            eventRemoved = null;
+
 
             return;
         }
