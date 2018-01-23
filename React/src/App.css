@@ -6,7 +6,20 @@ body {
     background-color: #639fb6!important;
     color:white!important;
 }
-.btn{
+
+.yellowBtn{
+  color:white!important;
+  border-color:white!important;
+  background-color:#f9c10f!important;
+}
+
+.yellowBtnSpe .btn{
+  color:white!important;
+  border-color:white!important;
+  background-color:#f9c10f!important;
+}
+
+.dropdown-menu a{
   color:white!important;
   border-color:white!important;
   background-color:#f9c10f!important;
