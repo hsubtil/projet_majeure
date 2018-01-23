@@ -117,11 +117,13 @@ export default class Login extends Component {
               type="password"
             />
           </FormGroup>
+
           <Button
             block
             bsSize="large"
             disabled={!this.validateForm()}
             type="submit"
+            className="yellowBtn"
           >
             Login
           </Button>
