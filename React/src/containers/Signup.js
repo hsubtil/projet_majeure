@@ -63,7 +63,7 @@ export default class Signup extends Component {
       this.state_true.password = this.state.password;
       this.state_true.name = this.state.name;
       this.state_true.surname = this.state.surname;
-      this.state_true.adress = this.state.adress;
+      this.state_true.address = this.state.address;
       this.state_true.cp = this.state.cp;
       this.state_true.city = this.state.city;
       this.state_true.country = this.state.country;
@@ -110,11 +110,11 @@ export default class Signup extends Component {
               onChange={this.handleChange}
             />
         </FormGroup>
-        <FormGroup controlId="adress" bsSize="large">
-            <ControlLabel>Adress</ControlLabel>
+        <FormGroup controlId="address" bsSize="large">
+            <ControlLabel>Address</ControlLabel>
             <FormControl
               type="text"
-              value={this.state.adress}
+              value={this.state.address}
               onChange={this.handleChange}
             />
         </FormGroup>
