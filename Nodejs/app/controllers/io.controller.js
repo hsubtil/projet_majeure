@@ -75,12 +75,22 @@ this.listen = function (server) {
                     // Protection if profile is not provided 
                     LOG.debug("Before if chelou.");
                     if (!coord || coord.lat === "") {   // Test. Changed  from !profile !coord
-                        LOG.debug("In if chelou.");
-                        createToken(json_object['email'], res['role'], function (err, token) {
+                        LOG.warning("In if chelou.");
+                        /*createToken(json_object['email'], res['role'], function (err, token) {
                             if (!err) {
                                 socket.emit('auth_success', token);
                             } else
                                 socket.emit('auth_failed');
+                        });*/
+                        profile = { 'coord': {'lat':'38.913','lon':'-77.01'}}
+                        DB.updateUser(json_object['email'], profile, function (err) {
+                            createToken(json_object['email'], res['role'], function (err, token) {
+                                if (!err) {
+                                    STATS.addAuthRequest();
+                                    socket.emit('auth_success', token);
+                                } else
+                                    socket.emit('auth_failed');
+                            });
                         });
                     } else {
                             DB.updateUser(json_object['email'], profile, function (err) {
