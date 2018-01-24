@@ -124,6 +124,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         public void call(Object... args) {
             String eventID = (String) args[0];
             EventModel eventRemoved = new EventModel();
+            eventRemoved = null;
             int index = 0;
 
             for (EventModel event : CalendarActivity.getlistEvents()) {
@@ -133,12 +134,11 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 index++;
             }
             if (eventRemoved != null) {
-
                 Event ev = new Event(Color.RED, eventRemoved.getDate(), eventRemoved.getSummary());
                 CalendarActivity.getCalendar().removeEvent(ev, false);
                 CalendarActivity.getlistEvents().remove(index - 1);
             }
-            eventRemoved = null;
+
 
 
             return;
