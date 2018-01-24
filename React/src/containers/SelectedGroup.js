@@ -93,26 +93,31 @@ export default class SelectedGroup extends Component {
 
       <div className="SelectedGroup">
 
-        <div className="lander">
+        
+
+        <div class="container">
+
+        <div className="groupeName">
           <h1>Groupe {this.state.name}</h1>
           <p>Code : {this.state.code}</p>
         </div>
-
-        <div class="container">
           <div class="col-lg-12">
 
+            
              <div class="row">
               <Calendar socket={this.state.socket}/>
             </div>
 
-            
+            <br/>
 
             <div class="row">
               <div class="col-lg-4">
                 <Chatroom socket={this.state.socket}/>
               </div>
 
+              
               <div class="col-lg-8">
+              <div className="borderArrondie">
                 <h1> METEO </h1>
                 <Table hover>
                   <thead>
@@ -128,14 +133,17 @@ export default class SelectedGroup extends Component {
                      { contentsList }
                   </tbody>
                 </Table>
+                </div> 
 
                 <div class="row">
                   <div class="col-lg-8">
                     <Map socket={this.state.socket}/>                   
-                  </div>  
-                </div>
-              </div>  
+                  </div> 
+                </div> 
+              </div>
+               
             </div>
+
           </div>    
         </div>  
       </div>
