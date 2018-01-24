@@ -41,7 +41,7 @@ export default class Map extends Component {
 
 
       }catch(e){
-        alert(e);
+        //alert(e);
       }
 
     var mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');

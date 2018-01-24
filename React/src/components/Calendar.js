@@ -27,7 +27,7 @@ class Calendar extends React.Component {
             endDateTimeEvent: null,
             startDateTimeString: null,
             endDateTimeString: null,
-            _notificationSystem: null,
+            _notificationSystem: null
 
         };  
         this.socket =  props.socket.socket;        
@@ -47,7 +47,7 @@ class Calendar extends React.Component {
             console.log('google_list_events_err');       
             //alert("Error while retrieving the events, please reload the page !");
             self.state._notificationSystem.addNotification({
-                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                title: (<span data-notify="icon" className="pe-7s-close-circle"></span>),
                 message: (
                     <div>
                         <b>Error while retrieving the events, please reload the page !</b>
@@ -64,7 +64,7 @@ class Calendar extends React.Component {
             console.log('google_set_event_err');
             //alert("Error while creating the event, please try again or reload the page !");
             self.state._notificationSystem.addNotification({
-                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                title: (<span data-notify="icon" className="pe-7s-close-circle"></span>),
                 message: (
                     <div>
                         <b>Error while creating the event, please try again or reload the page !</b>
@@ -99,7 +99,7 @@ class Calendar extends React.Component {
             console.log('google_remove_event_err');
             //alert("Error while removing the event, please try again or reload the page!");
             self.state._notificationSystem.addNotification({
-                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                title: (<span data-notify="icon" className="pe-7s-close-circle"></span>),
                 message: (
                     <div>
                         <b>Error while removing the event, please try again or reload the page !</b>

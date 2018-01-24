@@ -35,13 +35,13 @@ class MainPage extends Component {
       console.log(json);
       var jjson = await this.comm.emitConnect_gen2(json, "new_family");
       if(jjson.result === true){
-        alert("Groupe créé !")
+        //alert("Groupe créé !")
       }
       else{
-        alert("Groupe non créé !")
+        //alert("Groupe non créé !")
       }
     }catch(e){
-      alert(e);
+      //alert(e);
     }
     window.location.reload();
   }
@@ -57,13 +57,13 @@ class MainPage extends Component {
       console.log(json);
       var jjson = await this.comm.emitConnect_gen2(json, "add_family_to_user");
       if(jjson.result === true){
-        alert("Groupe ajouté !")
+        //alert("Groupe ajouté !")
       }
       else{
-        alert("Groupe non ajouté !")
+        //alert("Groupe non ajouté !")
       }
     }catch(e){
-      alert(e);
+      //alert(e);
     }
     window.location.reload();
   }
@@ -78,7 +78,7 @@ class MainPage extends Component {
   componentWillMount(){
     if(localStorage.getItem("token") === null)
       {
-        alert("here");
+        //alert("here");
         this.props.history.push("/Login");
       }
 
@@ -103,7 +103,7 @@ class MainPage extends Component {
 
 
       }catch(e){
-        alert(e);
+        //alert(e);
       }
   }
 

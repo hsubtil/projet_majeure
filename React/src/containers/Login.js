@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "./Login.css";
+import NotificationSystem from 'react-notification-system';
+import {style} from "../variables/Variables.jsx";
 
 var io = require('socket.io-client');
 
@@ -12,12 +14,19 @@ export default class Login extends Component {
       email: "",
       password: "",
       lat:"",
-      lon:""
+      lon:"",
+      _notificationSystem: null
     };
 
   this.comm = props.socket;
     
   }
+
+  componentDidMount(){
+        this.setState({
+            _notificationSystem : this.refs.notificationSystem
+        });
+    }
 
   validateForm() {
     return this.state.email.length > 0 && this.state.password.length > 0;
@@ -68,7 +77,7 @@ export default class Login extends Component {
         localStorage.setItem("email", json.email);
 
 
-        alert("authentificated !");
+        //alert("authentificated !");
         this.props.history.push("/MainPage");
 
 
@@ -76,11 +85,22 @@ export default class Login extends Component {
       }
       else{
         console.log("not authentificated");
-        alert("Not authentificated !");
+        //alert("Not authentificated !");
+        this.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-close-circle"></span>),
+                message: (
+                    <div>
+                        <b>Authentification failed ! Please try again ...</b>
+                    </div>
+                ),
+                level: 'error',
+                position: "tc",
+                autoDismiss: 4,
+        });
       }
     } catch (e) {
       console.log("CATCH");
-      alert(e);
+      //alert(e);
     }
   }
 
@@ -98,6 +118,8 @@ export default class Login extends Component {
   render() {
     return (
       <div className="Login">
+        <NotificationSystem ref="notificationSystem" style={style}/>
+
         <form onSubmit={this.handleSubmit}>
           <FormGroup controlId="email" bsSize="large">
             <ControlLabel>Email</ControlLabel>

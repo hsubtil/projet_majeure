@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import "./Profil.css";
+import NotificationSystem from 'react-notification-system';
+import {style} from "../variables/Variables.jsx";
 
 export default class Profil extends Component {
   constructor(props) {
@@ -14,7 +16,8 @@ export default class Profil extends Component {
       'cp': "",
       'city': "",
       'country': "",
-      'birthday': ""
+      'birthday': "",
+      _notificationSystem: null
     };
 
   this.comm = props.socket;
@@ -37,13 +40,35 @@ export default class Profil extends Component {
       console.log(json);
       var jjson = await this.comm.emitConnect_gen2(json, "update_user_profil");
       if(jjson.result === true){
-        alert("Modifications effectuées !")
+        //alert("Modifications effectuées !")
+        this.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-check"></span>),
+                message: (
+                    <div>
+                        <b>Modifications effectuées !</b>
+                    </div>
+                ),
+                level: 'error',
+                position: "tc",
+                autoDismiss: 4,
+            }); 
       }
       else{
-        alert("Modifications non effectuées !")
+        //alert("Modifications non effectuées !")
+        this.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-close-circle"></span>),
+                message: (
+                    <div>
+                        <b>Modifications non effectuées ! Please try again or reload the page !</b>
+                    </div>
+                ),
+                level: 'error',
+                position: "tc",
+                autoDismiss: 4,
+            }); 
       }
     }catch(e){
-      alert(e);
+      //alert(e);
     }
     window.location.reload();
   }
@@ -92,14 +117,21 @@ export default class Profil extends Component {
 
 
       }catch(e){
-        alert(e);
+        //alert(e);
       }
   }
+
+  componentDidMount(){
+        this.setState({
+            _notificationSystem : this.refs.notificationSystem
+        });
+    }
 
   render() {
 
     const profil = (
       <div class="profil">
+        <NotificationSystem ref="notificationSystem" style={style}/>
         <form onSubmit={this.handleRequestProfilUpdate}>
         <FormGroup controlId="name" bsSize="large">
             <ControlLabel>Name</ControlLabel>

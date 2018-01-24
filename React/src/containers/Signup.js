@@ -7,6 +7,8 @@ import {
   Button
 } from "react-bootstrap";
 import "./Signup.css";
+import NotificationSystem from 'react-notification-system';
+import {style} from "../variables/Variables.jsx";
 
 export default class Signup extends Component {
   constructor(props) {
@@ -23,7 +25,8 @@ export default class Signup extends Component {
     'cp': "",
     'city': "",
     'country': "",
-    'birthday': ""
+    'birthday': "",
+    _notificationSystem : null
   };
 
     this.state_true = {
@@ -39,6 +42,12 @@ export default class Signup extends Component {
   };
 
   }
+
+  componentDidMount(){
+        this.setState({
+            _notificationSystem : this.refs.notificationSystem
+        });
+    }
 
   validateForm() {
     return (
@@ -75,23 +84,35 @@ export default class Signup extends Component {
       jjson = JSON.parse(jjson);
       if(jjson.result === true){
         console.log("signed");
-        alert("Signed in !")
+        //alert("Signed in !")
         this.props.history.push("/Login");
 
       }
       else{
         console.log("not signed");
-        alert("Signed in Failed")
+        //alert("Signed in Failed")
+        this.state._notificationSystem.addNotification({
+                title: (<span data-notify="icon" className="pe-7s-close-circle"></span>),
+                message: (
+                    <div>
+                        <b>Signed in Failed ! Email already used !</b>
+                    </div>
+                ),
+                level: 'error',
+                position: "tc",
+                autoDismiss: 4,
+        });
       }
     } catch (e) {
       console.log("CATCH");
-      alert(e);
+      //alert(e);
     }
   }
 
   render() {
     return (
       <div class="Signup">
+      <NotificationSystem ref="notificationSystem" style={style}/>
         <form onSubmit={this.handleSubmit}>
         <FormGroup controlId="name" bsSize="large">
             <ControlLabel>Name</ControlLabel>

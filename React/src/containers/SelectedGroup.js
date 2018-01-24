@@ -39,7 +39,7 @@ export default class SelectedGroup extends Component {
 
 
       }catch(e){
-        alert(e);
+        //alert(e);
       }
 
       try{
@@ -62,7 +62,7 @@ export default class SelectedGroup extends Component {
 
 
       }catch(e){
-        alert(e);
+        //alert(e);
       }
 
   }
