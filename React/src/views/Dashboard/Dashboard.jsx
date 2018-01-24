@@ -6,17 +6,9 @@ import { Grid, Row, Col } from 'react-bootstrap';
 
 import {Card} from '../../components/Card/Card.jsx';
 import {StatsCard} from '../../components/StatsCard/StatsCard.jsx';
-import {Tasks} from '../../components/Tasks/Tasks.jsx';
 import {
-    dataPie,
-    legendPie,
-    dataSales,
-    optionsSales,
-    responsiveSales,
-    legendSales,
     optionsBar,
-    responsiveBar,
-    legendBar
+    responsiveBar
 } from '../../variables/Variables.jsx';
 
 import CONFIG from '../../config.json';
@@ -237,23 +229,7 @@ class Dashboard extends Component {
                                     </div>
                                 }*/
                             />
-                        </Col>
-
-                        <Col md={6}>
-                            <Card
-                                title="Tasks"
-                                category="Backend development"
-                                stats="Updated now"
-                                statsIcon="fa fa-history"
-                                content={
-                                    <div className="table-full-width">
-                                        <table className="table">
-                                            <Tasks />
-                                        </table>
-                                    </div>
-                                }
-                            />
-                        </Col>
+                        </Col>                       
                     </Row>
 
                 </Grid>

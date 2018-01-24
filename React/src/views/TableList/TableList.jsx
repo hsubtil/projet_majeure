@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Grid, Row, Col, Table } from 'react-bootstrap';
 
 import Card from '../../components/Card/Card.jsx';
-import {thArray, tdArray} from '../../variables/Variables.jsx';
 import CONFIG from '../../config.json';
 
 class TableList extends Component {

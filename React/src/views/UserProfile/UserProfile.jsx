@@ -2,18 +2,13 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import {
     Grid, Row, Col,
-    FormGroup, ControlLabel, FormControl
 } from 'react-bootstrap';
 
 import {Card} from '../../components/Card/Card.jsx';
 import {FormInputs} from '../../components/FormInputs/FormInputs.jsx';
-import {UserCard} from '../../components/UserCard/UserCard.jsx';
 import Button from '../../elements/CustomButton/CustomButton.jsx';
 import NotificationSystem from 'react-notification-system';
 import {style} from "../../variables/Variables.jsx";
-
-import avatar from "../../assets/img/default-avatar.png";
-
 import CONFIG from '../../config.json';
 
 class UserProfile extends Component {

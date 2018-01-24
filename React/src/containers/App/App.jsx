@@ -6,7 +6,6 @@ import {
 } from 'react-router-dom';
 import NotificationSystem from 'react-notification-system';
 
-import Header from '../../components/Header/Header.jsx';
 import Footer from '../../components/Footer/Footer.jsx';
 import Sidebar from '../../components/Sidebar/Sidebar.jsx';
 
@@ -60,7 +59,7 @@ class App extends Component {
     }
     componentDidMount(){
 
-        alert(this.state._isAuth);
+        //alert(this.state._isAuth);
 
         if(localStorage.getItem("token") === null || this.state._isAuth != true )
         {
