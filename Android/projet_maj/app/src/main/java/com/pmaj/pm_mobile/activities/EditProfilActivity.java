@@ -1,5 +1,6 @@
 package com.pmaj.pm_mobile.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -127,8 +128,16 @@ public class EditProfilActivity extends AppCompatActivity {
 
         @Override
         public void call(Object... args) {
-            final JSONObject obk = (JSONObject) args[0];
-
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Dialog dialog = new Dialog(EditProfilActivity.this);
+                    dialog.setContentView(R.layout.pop_up_window_event_status);
+                    TextView status = (TextView) dialog.findViewById(R.id.title);
+                    status.setText("Ouuups there was an error during updating. Please Try Again");
+                    dialog.show();
+                }
+            });
             return;
         }
     };

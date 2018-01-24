@@ -1,5 +1,6 @@
 package com.pmaj.pm_mobile.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
@@ -161,9 +163,20 @@ public class SignUpActivity extends AppCompatActivity {
 
         @Override
         public void call(Object... args) {
-            //Redirection to Login page
-            Intent intentLogged = new Intent(SignUpActivity.this, LoginActivity.class);
-            startActivity(intentLogged);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Dialog dialog = new Dialog(SignUpActivity.this);
+                    dialog.setContentView(R.layout.pop_up_window_event_status);
+                    TextView status = (TextView) dialog.findViewById(R.id.title);
+                    status.setText("You are now registered");
+                    dialog.show();
+                    //Redirection to Login page
+                    Intent intentLogged = new Intent(SignUpActivity.this, LoginActivity.class);
+                    startActivity(intentLogged);
+                }
+            });
+
 
             return;
         }
@@ -172,7 +185,19 @@ public class SignUpActivity extends AppCompatActivity {
     private Emitter.Listener onSignUpFail = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Dialog dialog = new Dialog(SignUpActivity.this);
+                    dialog.setContentView(R.layout.pop_up_window_event_status);
+                    TextView status = (TextView) dialog.findViewById(R.id.title);
+                    status.setText("Ouuuups an error occured please try again");
+                    dialog.show();
+                    //Redirection to Login page
+                    Intent intentLogged = new Intent(SignUpActivity.this, SignUpActivity.class);
+                    startActivity(intentLogged);
+                }
+            });
             return;
         }
     };

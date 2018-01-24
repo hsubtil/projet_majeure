@@ -47,28 +47,6 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mPrefs = getSharedPreferences("authToken", 0);
-        /*
-        * Nav Bar */
-        calendar = (TextView) findViewById(R.id.calendar);
-        family = (TextView) findViewById(R.id.family);
-
-
-        calendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Redicrection to Calendar page
-                Intent intentLogged = new Intent(HomeActivity.this, CalendarActivity.class);
-                startActivity(intentLogged);
-            }
-        });
-
-        family.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // Intent intentLogged = new Intent(HomeActivity.this,ChatActivity.class);
-                //startActivity(intentLogged);
-            }
-        });
 
         add_family = (Button) findViewById(R.id.add_family);
 
@@ -101,8 +79,15 @@ public class HomeActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 String SnameFamily = codeFamily.getText().toString();
-                                LoginActivity.getSocketInstance().emitCreateFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""),SnameFamily);
-                                createFamilyDialog.dismiss();
+                                if(codeFamily.getText().toString().equals("")){
+                                    codeFamily.setError("You have to fill this field.");
+                                }
+                                else{
+                                    LoginActivity.getSocketInstance().emitCreateFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""),SnameFamily);
+                                    createFamilyDialog.dismiss();
+                                }
+
+
                             }
                         });
                     }
@@ -125,8 +110,13 @@ public class HomeActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 String ScodeFamily = codeFamily.getText().toString();
-                                LoginActivity.getSocketInstance().emitJoinFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""),ScodeFamily);
-                                joinFamilyDialog.dismiss();
+                                if(codeFamily.getText().toString().equals("")){
+                                    codeFamily.setError("You have to fill this field.");
+                                }
+                                else{
+                                    LoginActivity.getSocketInstance().emitJoinFamily(mPrefs.getString("token", ""), mPrefs.getString("email", ""),ScodeFamily);
+                                    joinFamilyDialog.dismiss();
+                                }
                             }
                         });
                     }
@@ -181,6 +171,16 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Dialog dialog = new Dialog(HomeActivity.this);
+                    dialog.setContentView(R.layout.pop_up_window_event_status);
+                    TextView status = (TextView) dialog.findViewById(R.id.title);
+                    status.setText("Your Family has been correctly added");
+                    dialog.show();
+                }
+            });
             JSONObject obk = (JSONObject) args[0];
 
             try {

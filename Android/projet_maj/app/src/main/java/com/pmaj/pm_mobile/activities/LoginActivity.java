@@ -1,5 +1,6 @@
 package com.pmaj.pm_mobile.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pmaj.pm_mobile.R;
@@ -51,19 +53,6 @@ public class LoginActivity extends AppCompatActivity {
         socket.getmSocket().on("auth_failed", onAuthFail);
 
 
-       /*//TODO JUSTE POUR TESTER LA REDIRECTION DE PAGE ET LES AUTRES PAGES
-        //Redicrection to Home page
-        SharedPreferences.Editor TempEditor = mPrefs.edit();
-        // Shared preference declaration
-        TempEditor.putString("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YTNiY2FhYTExYmE5MTAwNWFlMTZhMzkiLCJlbWFpbCI6Im5hYmlsLmZla2lyQG9sLmNvbSIsIm5hbWUiOiJuYWJpbCIsInN1cm5hbWUiOiJmZWtpciIsImFkZHJlc3MiOiJBdmVudWUgZHUgc3RhZGUiLCJjcCI6IjY5MTEwIiwiY2l0eSI6IkRlY2luZXMiLCJjb3VudHJ5IjoiRnJhbmNlIiwiYmlydGhkYXkiOiIxOS0xMi0xOTkzIiwiaWF0IjoxNTE0MzkyODI4fQ.p3mOK9yNA4kwukTSKHP5bGnw2joUFQj_DhkefSRp3PI").apply();
-        TempEditor.putString("name","Nabil").apply();
-
-        Intent intentLogged = new Intent(LoginActivity.this, HomeActivity.class);
-        intentLogged.putExtra("email","test.fekir@ol.com");
-        mPrefs.edit().putLong("lastLogin", new Date().getTime());                 // Add a time to check timeout
-
-        startActivity(intentLogged);*/
-
 
         checkConnectionToken();
 
@@ -72,10 +61,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                SharedPreferences.Editor mEditor = mPrefs.edit();
-                mEditor.putLong("lastLogin", new Date().getTime());                 // Add a time to check timeout
-                mEditor.putString("authLogin", email.getText().toString());     // Add Login
-                mEditor.commit();
                 socket.emitConnect(email.getText().toString(), password.getText().toString());
                 //Toast.makeText(LoginActivity.this, "Login Attempt", Toast.LENGTH_LONG).show();
 
@@ -107,8 +92,11 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+
             SharedPreferences.Editor mEditor = mPrefs.edit();
             // Shared preference declaration
+            mEditor.putLong("lastLogin", new Date().getTime());                 // Add a time to check timeout
+            mEditor.putString("authLogin", email.getText().toString());     // Add Login
             mEditor.putString("token", token).apply();
             mEditor.putString("name",userName).apply();
             mEditor.putString("email",email.getText().toString()).apply();
@@ -125,6 +113,16 @@ public class LoginActivity extends AppCompatActivity {
     private Emitter.Listener onAuthFail = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Dialog dialog = new Dialog(LoginActivity.this);
+                    dialog.setContentView(R.layout.pop_up_window_event_status);
+                    TextView status = (TextView) dialog.findViewById(R.id.title);
+                    status.setText("Ouuuups an error occured please try again");
+                    dialog.show();
+                }
+            });
             return;
         }
     };

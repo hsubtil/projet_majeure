@@ -1,5 +1,6 @@
 package com.pmaj.pm_mobile.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -35,8 +36,6 @@ import java.util.List;
 
 import io.socket.emitter.Emitter;
 
-//TODO SCROLL BOTTOM POUR AVOIR LES MESSAGES LES PLUS RECENTS
-//TODO AFFICHAGE DE LA BAR D'ENVOIE DES MESSAGES CONSTAMMENT.
 public class ChatActivity extends AppCompatActivity {
     private TextView familyName;
 
@@ -134,24 +133,22 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-        //Stop refreshing when all messages retrieved
-        //mSwipeRefreshLayout.setRefreshing(false);
-
-        // Implementation of Swipe to Refresh
-        /*mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Refresh items
-                LoginActivity.getSocketInstance().emitGetMessages(mPrefs.getString("token",""), getIntent().getStringExtra("family_code"));
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });*/
 
     }
 
     private Emitter.Listener onSelectFamilyFail = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final Dialog dialog = new Dialog(ChatActivity.this);
+                    dialog.setContentView(R.layout.pop_up_window_event_status);
+                    TextView status = (TextView) dialog.findViewById(R.id.title);
+                    status.setText("Ouuuups we couldn't reach your family. PLease Try again ! ");
+                    dialog.show();
+                }
+            });
             return;
         }
     };
