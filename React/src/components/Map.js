@@ -117,7 +117,7 @@ export default class Map extends Component {
             },
             properties: {
               title: keys[i],
-              description: 'Here'
+              description: this.state.fam_pos[keys[i]].lon + ", " + this.state.fam_pos[keys[i]].lat
             }
           }
           this.state.json_family_position.features.push(arraybis);
@@ -129,7 +129,11 @@ export default class Map extends Component {
     this.state.json_family_position.features.forEach(function(marker) {
 
       // make a marker for each feature and add to the map
-      new mapboxgl.Marker().setLngLat(marker.geometry.coordinates).addTo(this.state.map);
+      new mapboxgl.Marker()
+      .setLngLat(marker.geometry.coordinates)
+      .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+      .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
+      .addTo(this.state.map);
     }.bind(this));
 
 
