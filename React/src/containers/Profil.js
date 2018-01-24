@@ -106,7 +106,9 @@ export default class Profil extends Component {
           self.country = json_profil.country;
           self.birthday = json_profil.birthday;
           
-          this.setState({email: json_profil.email});
+          this.setState({email: json_profil.email,
+               _notificationSystem : this.refs.notificationSystem
+          });
 
         }
         else{
@@ -121,17 +123,11 @@ export default class Profil extends Component {
       }
   }
 
-  componentDidMount(){
-        this.setState({
-            _notificationSystem : this.refs.notificationSystem
-        });
-    }
-
   render() {
 
     const profil = (
       <div class="profil">
-        <NotificationSystem ref="notificationSystem" style={style}/>
+        
         <form onSubmit={this.handleRequestProfilUpdate}>
         <FormGroup controlId="name" bsSize="large">
             <ControlLabel>Name</ControlLabel>

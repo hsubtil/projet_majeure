@@ -129,13 +129,14 @@ class MainPage extends Component {
 
     return (
       <div className="MainPage">
-        <div className="lander">
+        <div className="lander ">
           <h1>Groupes</h1>
-          <p>Tout vos groupes à porté de main ! </p>
+          <p>Tous vos groupes à portée de main ! </p>
           <br />
           <div class="listGroup">
             <ul>{ contentsList }</ul>
           <br />
+            <div className="borderArrondie">
             <form onSubmit={this.newFamily}>
             <FormGroup controlId="new_name_family" bsSize="large">
                 <ControlLabel>Nom nouveau groupe </ControlLabel>
@@ -145,6 +146,7 @@ class MainPage extends Component {
                   onChange={this.handleChange}
                 />
             </FormGroup>
+            
 
             <Button
               bsSize="large"
@@ -153,8 +155,11 @@ class MainPage extends Component {
               Créer un groupe
             </Button>
             </form>
+            </div>
+
             <br />
 
+            <div className="borderArrondie">
             <form onSubmit={this.joinFamily}>   
             <FormGroup controlId="join_code" bsSize="large">
                 <ControlLabel>Code groupe </ControlLabel>
@@ -173,6 +178,9 @@ class MainPage extends Component {
             </Button>
 
             </form>
+            </div>
+
+
           </div>
         </div>
       </div>
