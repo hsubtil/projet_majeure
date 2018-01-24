@@ -182,6 +182,12 @@ class Comm {
           var json = { result : true, datas : data};
           resolve(json);          
         });
+        this.socket.on('add_family_to_user_error', function(data) {
+          console.log("add_family_to_user_error");
+
+          var json = { result : false, datas : data};
+          resolve(json);          
+        });
 
     })
    }

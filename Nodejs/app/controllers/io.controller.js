@@ -312,7 +312,7 @@ this.listen = function (server) {
                                         DB.addFamilyToUser(user, reply['code'], reply, function (err, res) {
                                             if (!err) {
                                                 STATS.addFamilyRequest();
-                                                LOG.warning("AVANT EMIT")
+                                                LOG.debug("AVANT EMIT");
                                                 socket.emit('new_family_success', family.getFamilyJson());
                                             }
                                             else {
@@ -346,19 +346,22 @@ this.listen = function (server) {
                 if (!err) {
                     DB.getFamilyWithCode(json_object['code'], function (err, res) {
                         if (!err) {
-                            DB.addFamilyToUser(json_object['email'], json_object['code'], res, function (err,reply) {
+                            DB.addFamilyToUser(json_object['email'], json_object['code'], res, function (err, reply) {
                                 if (!err) {
                                     STATS.addFamilyRequest();
-                                    LOG.debug("[SOCKET] Emit family to user success")
+                                    LOG.debug("[SOCKET] Emit family to user success");
                                     socket.emit('add_family_to_user_success', res);
                                 }
                                 else {
-                                    LOG.error("[SOCKET] Add family to user error. User :" + json_object['email'])
+                                    LOG.error("[SOCKET] Add family to user error. User :" + json_object['email']);
+                                    socket.emit('add_family_to_user_err');
                                 }
                             });
                         }
-                        else
+                        else {
                             LOG.error("[SOCKET] Add family to user error. User :" + json_object['email']);
+                            socket.emit('add_family_to_user_err');
+                         }
                     });
                 }
             });
@@ -589,7 +592,7 @@ this.listen = function (server) {
         *  @TODO: Meteo is not working.
         */
         socket.on('request_family_meteo', function (json_object) {
-            LOG.log("[SOCKET] Request family members");
+            LOG.log("[SOCKET] Request family Meteo");
             var meteoRequestJson = {};
             var lock_increment = 0;
             checkToken(json_object['token'], socket, function (err) {
@@ -602,13 +605,17 @@ this.listen = function (server) {
                                 LOG.debug(profile);
                                 var name = profile['name'];
                                 meteoRequestJson[name] = profile['coord'];
+                                LOG.warning("BEFOR IF !");
+                                console.log(lock_increment);
+                                console.log("Length " + family_members.length);
                                 if (profile['coord']) {
                                     lock_increment++;  // Increment lock_increment
+                                    LOG.debug("[METEO] Météo pour cet utilisateur");
                                     if (lock_increment === family_members.length) {
                                         METEO.get_meteo(meteoRequestJson, function (err, msgs) {
                                             LOG.debug("[METEO] IN");
                                             if (!err) {
-                                                LOG.log("[SOCKET] Resultat Final : " + JSON.stringify(msgs));
+                                                LOG.debug("[METEO] Resultat Final : " + JSON.stringify(msgs));
                                                 STATS.addMeteoRequest();
                                                 socket.emit("request_family_meteo_reply", msgs);
                                             } else {
@@ -618,6 +625,7 @@ this.listen = function (server) {
                                         });
                                     }
                                 } else {
+                                    lock_increment++;
                                     LOG.warning("[METEO] Pas de météo pour cet utilisateur");
                                 }
                             });
