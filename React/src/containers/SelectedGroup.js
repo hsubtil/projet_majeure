@@ -3,7 +3,9 @@ import "./SelectedGroup.css";
 import Calendar from "../components/Calendar";
 import Chatroom from "../components/Chatroom";
 import Map from "../components/Map";
+import {Table} from 'react-bootstrap';
 <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
+
 
 export default class SelectedGroup extends Component {
   constructor(props) {
@@ -76,14 +78,14 @@ export default class SelectedGroup extends Component {
           for(var k in this.state.meteo) keys.push(k);
 
           for (var i = 0; i < keys.length; i++) {
-            var arraybis = [keys[i], this.state.meteo[keys[i]].main, this.state.meteo[keys[i]].icon];
+            var arraybis = [keys[i], this.state.meteo[keys[i]].main, this.state.meteo[keys[i]].icon, this.state.meteo[keys[i]].description, parseInt(this.state.meteo[keys[i]].temp-273.15)];
             json_meteo_content.push(arraybis);
           }
 
 
     var contentsList = json_meteo_content.map(function(content){
         return (
-          <Meteo meteo_name={content[0]} meteo_main={content[1]} meteo_icon={content[2]} />
+          <Meteo meteo_name={content[0]} meteo_main={content[1]} meteo_icon={content[2]} meteo_description={content[3]} meteo_temp={content[4]}/>
           )
     });
 
@@ -111,9 +113,21 @@ export default class SelectedGroup extends Component {
               </div>
 
               <div class="col-lg-8">
-                <div class="row">
-                   { contentsList }
-                </div>
+                <h1> METEO </h1>
+                <Table hover>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Main</th>
+                      <th>Description</th>
+                      <th>Icon</th>
+                      <th>Temperature</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                     { contentsList }
+                  </tbody>
+                </Table>
 
                 <div class="row">
                   <div class="col-lg-8">
@@ -138,23 +152,23 @@ class Meteo extends Component {
     this.state = {
       'meteo_name': props.meteo_name,
       'meteo_main': props.meteo_main,
-      'meteo_icon': props.meteo_icon
+      'meteo_icon': props.meteo_icon,
+      'meteo_description': props.meteo_description,
+      'meteo_temp': props.meteo_temp,
     };
   }
 
   render(){
 
     return(
-
-      <div className="SelectedGroup">
-        <div className="lander">
-          <h1> METEO </h1>
-          <p>Nom : {this.state.meteo_name} &emsp; </p>
-          <p>Meteo : {this.state.meteo_main}</p>
-          <img src={this.state.meteo_icon} alt="meteo"></img>
-        </div>
-      </div>
-
+        
+        <tr>      
+          <td>{this.state.meteo_name} &emsp; </td>
+          <td>{this.state.meteo_main}</td>
+          <td>{this.state.meteo_description}</td>
+          <td><img src={this.state.meteo_icon} alt="meteo"></img></td>
+          <td>{this.state.meteo_temp}</td>
+        </tr>
     )
   }
 }
